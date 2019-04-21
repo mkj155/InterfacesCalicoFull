@@ -3,6 +3,6 @@
 /RESTEasy-Hello-World-Example/Servers/
 /RESTEasy-Hello-World-Example/RESTfulExample/.settings/
 /RESTEasy-Hello-World-Example/RESTfulExample/target/
-/calico/InterfacesCalico/InterfacesCalico/obj/
-/calico/InterfacesCalico/InterfacesCalico/bin/
-/calico/InterfacesCalico/.vs/
+/calico/InterfacesCalico/Calico/obj
+/calico/InterfacesCalico/Calico/bin
+/calico/InterfacesCalico/.vs
