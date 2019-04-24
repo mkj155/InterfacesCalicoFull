@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="calicoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="calicoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BIANCHI_PROCESS">
           <Key>
             <PropertyRef Name="id" />
@@ -16,12 +16,13 @@
           <Property Name="estado" Type="varchar" MaxLength="50" />
           <Property Name="process_id" Type="numeric" Precision="18" Scale="0" />
           <Property Name="maquina" Type="varchar" MaxLength="50" />
+          <Property Name="interface" Type="varchar" MaxLength="50" />
+          <Property Name="fecha_ultima" Type="datetime" />
         </EntityType>
         <EntityContainer Name="calicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="calicoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -36,6 +37,8 @@
           <Property Name="estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="process_id" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="maquina" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="interface" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="fecha_ultima" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityContainer Name="calicoEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" />
@@ -49,6 +52,8 @@
           <EntitySetMapping Name="BIANCHI_PROCESS">
             <EntityTypeMapping TypeName="calicoModel.BIANCHI_PROCESS">
               <MappingFragment StoreEntitySet="BIANCHI_PROCESS">
+                <ScalarProperty Name="fecha_ultima" ColumnName="fecha_ultima" />
+                <ScalarProperty Name="interface" ColumnName="interface" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="inicio" ColumnName="inicio" />
                 <ScalarProperty Name="fin" ColumnName="fin" />

@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calico", "Calico\Calico.csproj", "{67CD13DF-88BE-40C0-8C18-746EBFEE4E3E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tablas", "Tablas", "{586957B2-9E02-4F4A-910B-C5EAAC806EFC}"
+	ProjectSection(SolutionItems) = preProject
+		CREATE_TABLE.sql = CREATE_TABLE.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

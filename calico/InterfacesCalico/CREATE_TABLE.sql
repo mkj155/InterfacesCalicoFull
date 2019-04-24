@@ -6,6 +6,8 @@
 	[estado] [varchar](50) NULL,
 	[process_id] [numeric](18, 0) NULL,
 	[maquina] [varchar](50) NULL,
+	[interface] [varchar](50) NULL,
+	[fecha_ultima] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

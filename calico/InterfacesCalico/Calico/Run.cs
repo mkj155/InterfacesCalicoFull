@@ -11,22 +11,87 @@ namespace InterfacesCalico
     {
        
         /* Example select with Entity framework */
-        public static void selectExample()
+        public static DbSet<BIANCHI_PROCESS> findAllProcess()
         {
             using (calicoEntities context = new calicoEntities())
             {
                 /* Obtengo todos los registros de la tabla de esta manera */
                 var rows = context.Set<BIANCHI_PROCESS>();
-                /* Recorro los registros */
-                foreach (var row in rows)
-                {
-                    decimal? cant_lineas = row.cant_lineas;
-                }
+                return rows;
             }
         }
+
+        public static void saveProcess(BIANCHI_PROCESS obj)
+        {
+            using (calicoEntities context = new calicoEntities())
+            {
+                context.BIANCHI_PROCESS.Add(obj);
+                context.SaveChanges();
+
+            }
+        }
+
+        public static void deleteProcess(int id)
+        {
+            using (calicoEntities context = new calicoEntities())
+            {
+                BIANCHI_PROCESS obj = new BIANCHI_PROCESS { id = id };
+                context.BIANCHI_PROCESS.Attach(obj);
+                context.BIANCHI_PROCESS.Remove(obj);
+                context.SaveChanges();
+            }
+        }
+
+        public static void updateProcess(BIANCHI_PROCESS obj)
+        {
+            using (calicoEntities context = new calicoEntities())
+            {
+                var result = context.BIANCHI_PROCESS.Find(obj.id);
+                if (result == null) return;
+                context.Entry(result).CurrentValues.SetValues(obj);
+                context.SaveChanges();
+            }
+        }
+
+        public static BIANCHI_PROCESS findById(int id)
+        {
+            using (calicoEntities context = new calicoEntities())
+            {
+                return context.BIANCHI_PROCESS.Find(id);
+            }
+        }
+
+        public static BIANCHI_PROCESS getObjectTest()
+        {
+            BIANCHI_PROCESS obj = new BIANCHI_PROCESS();
+            obj.inicio = new DateTime(2008, 5, 1, 8, 30, 52);
+            obj.fin = new DateTime(2008, 5, 1, 9, 30, 52);
+            obj.cant_lineas = 20;
+            obj.estado = "ok";
+            obj.maquina = "windows";
+            obj.process_id = 1234;
+            obj.fecha_ultima = DateTime.Now;
+            obj.@interface = "cliente";
+
+            return obj;
+        }
+
+
         static void Main(string[] args)
         {
-            selectExample();
+            BIANCHI_PROCESS obj = getObjectTest();
+            /* Example find all Entity Framework */
+            DbSet<BIANCHI_PROCESS> list = findAllProcess();
+            /* Example save Entity Framework */
+            saveProcess(obj);
+            /* Example find by id Entity Framework */
+            BIANCHI_PROCESS process = findById(obj.id);
+            /* Example update Entity Framework */
+            obj.cant_lineas = 50;
+            updateProcess(obj);
+            /* Example delete Entity Framework */
+            deleteProcess(obj.id);
+
 
             InterfaceGeneric programa = new InterfaceCliente();
             List<String> parameters = new List<string>();
