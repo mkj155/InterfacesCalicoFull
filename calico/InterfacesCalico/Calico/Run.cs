@@ -1,4 +1,5 @@
 ﻿using Calico;
+using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -79,6 +80,12 @@ namespace InterfacesCalico
 
         static void Main(string[] args)
         {
+            IConfigSource source = new IniConfigSource("MyApp.ini");
+
+            string fileName = source.Configs["Logging"].Get("File Name");
+            int columns = source.Configs["Logging"].GetInt("MessageColumns");
+            long fileSize = source.Configs["Logging"].GetLong("MaxFileSize");
+
             BIANCHI_PROCESS obj = getObjectTest();
             /* Example find all Entity Framework */
             DbSet<BIANCHI_PROCESS> list = findAllProcess();
