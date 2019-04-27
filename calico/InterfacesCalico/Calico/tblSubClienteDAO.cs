@@ -44,21 +44,7 @@ namespace Calico
             using (calicoEntities context = new calicoEntities())
             {
                 context.tblSubCliente.Add(obj);
-                try
-                {
-                    context.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    foreach (var entityValidationErrors in ex.EntityValidationErrors)
-                    {
-                        foreach (var validationError in entityValidationErrors.ValidationErrors)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
-                        }
-                    }
-                }
-
+                context.SaveChanges();
             }
         }
 
