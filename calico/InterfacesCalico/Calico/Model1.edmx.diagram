@@ -5,7 +5,8 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="d8e979b4b21e4003838dbfd23f85e8bb" Name="Diagram1" ZoomLevel="99">
-        <EntityTypeShape EntityType="calicoModel.BIANCHI_PROCESS" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="calicoModel.tblSubCliente" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="calicoModel.BIANCHI_PROCESS" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

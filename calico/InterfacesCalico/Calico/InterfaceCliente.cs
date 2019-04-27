@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Calico;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -8,6 +9,25 @@ namespace InterfacesCalico
 {
     public class InterfaceCliente : InterfaceGeneric
     {
+        BianchiService service = new BianchiService();
+        public const String NAME_INTERFACE = "Clientes";
+
+        public string process(String url, List<String> parameters,DateTime dateLast)
+        {
+            /* Inicio el proceso con process_id,name machine,fecha init,etc */
+            BIANCHI_PROCESS process = service.getProcessInit(dateLast, NAME_INTERFACE);
+            /* process interface */
+            sendRequest(url, parameters);
+
+            /* Update fields process */
+            process.fin = DateTime.Now;
+            process.cant_lineas = 20;
+            process.estado = "ok";
+            service.save(process);
+
+            return "ok";
+        }
+
         public void sendRequest(String url, List<String> parameters)
         {
             StringBuilder concat = new StringBuilder();

@@ -25,6 +25,7 @@ namespace Calico
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
         public virtual DbSet<BIANCHI_PROCESS> BIANCHI_PROCESS { get; set; }
     }
 }

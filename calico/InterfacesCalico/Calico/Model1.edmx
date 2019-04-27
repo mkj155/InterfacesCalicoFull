@@ -19,13 +19,56 @@
           <Property Name="interface" Type="varchar" MaxLength="50" />
           <Property Name="fecha_ultima" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblSubCliente">
+          <Key>
+            <PropertyRef Name="subc_proc_id" />
+          </Key>
+          <Property Name="subc_proc_id" Type="int" Nullable="false" />
+          <Property Name="subc_codigo" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="subc_codigoCliente" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="subc_razonSocial" Type="char" MaxLength="60" Nullable="false" />
+          <Property Name="subc_domicilio" Type="char" MaxLength="250" Nullable="false" />
+          <Property Name="subc_localidad" Type="char" MaxLength="40" Nullable="false" />
+          <Property Name="subc_codigoPostal" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="subc_areaMuelle" Type="char" MaxLength="6" Nullable="false" />
+          <Property Name="subc_telefono" Type="char" MaxLength="25" Nullable="false" />
+          <Property Name="subc_diasVencimiento" Type="numeric" Precision="3" Scale="0" Nullable="false" />
+          <Property Name="subc_esProveedor" Type="bit" Nullable="false" />
+          <Property Name="subc_cuit" Type="char" MaxLength="13" />
+          <Property Name="subc_iva" Type="char" MaxLength="2" />
+          <Property Name="subc_correoElectronico" Type="text" />
+        </EntityType>
         <EntityContainer Name="calicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="calicoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="calicoEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tblSubCliente" EntityType="calicoModel.tblSubCliente" />
+          <EntitySet Name="BIANCHI_PROCESS" EntityType="calicoModel.BIANCHI_PROCESS" />
+        </EntityContainer>
+        <EntityType Name="tblSubCliente">
+          <Key>
+            <PropertyRef Name="subc_proc_id" />
+          </Key>
+          <Property Name="subc_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="subc_codigo" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="subc_codigoCliente" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="subc_razonSocial" Type="String" Nullable="false" MaxLength="60" FixedLength="true" Unicode="false" />
+          <Property Name="subc_domicilio" Type="String" Nullable="false" MaxLength="250" FixedLength="true" Unicode="false" />
+          <Property Name="subc_localidad" Type="String" Nullable="false" MaxLength="40" FixedLength="true" Unicode="false" />
+          <Property Name="subc_codigoPostal" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="subc_areaMuelle" Type="String" Nullable="false" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="subc_telefono" Type="String" Nullable="false" MaxLength="25" FixedLength="true" Unicode="false" />
+          <Property Name="subc_diasVencimiento" Type="Decimal" Nullable="false" Precision="3" Scale="0" />
+          <Property Name="subc_esProveedor" Type="Boolean" Nullable="false" />
+          <Property Name="subc_cuit" Type="String" MaxLength="13" FixedLength="true" Unicode="false" />
+          <Property Name="subc_iva" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="subc_correoElectronico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
         <EntityType Name="BIANCHI_PROCESS">
           <Key>
             <PropertyRef Name="id" />
@@ -40,27 +83,44 @@
           <Property Name="interface" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="fecha_ultima" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityContainer Name="calicoEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" />
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="calicoModelStoreContainer" CdmEntityContainer="calicoEntities">
+        <EntitySetMapping Name="tblSubCliente">
+            <EntityTypeMapping TypeName="calicoModel.tblSubCliente">
+              <MappingFragment StoreEntitySet="tblSubCliente">
+                <ScalarProperty Name="subc_correoElectronico" ColumnName="subc_correoElectronico" />
+                <ScalarProperty Name="subc_iva" ColumnName="subc_iva" />
+                <ScalarProperty Name="subc_cuit" ColumnName="subc_cuit" />
+                <ScalarProperty Name="subc_esProveedor" ColumnName="subc_esProveedor" />
+                <ScalarProperty Name="subc_diasVencimiento" ColumnName="subc_diasVencimiento" />
+                <ScalarProperty Name="subc_telefono" ColumnName="subc_telefono" />
+                <ScalarProperty Name="subc_areaMuelle" ColumnName="subc_areaMuelle" />
+                <ScalarProperty Name="subc_codigoPostal" ColumnName="subc_codigoPostal" />
+                <ScalarProperty Name="subc_localidad" ColumnName="subc_localidad" />
+                <ScalarProperty Name="subc_domicilio" ColumnName="subc_domicilio" />
+                <ScalarProperty Name="subc_razonSocial" ColumnName="subc_razonSocial" />
+                <ScalarProperty Name="subc_codigoCliente" ColumnName="subc_codigoCliente" />
+                <ScalarProperty Name="subc_codigo" ColumnName="subc_codigo" />
+                <ScalarProperty Name="subc_proc_id" ColumnName="subc_proc_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="BIANCHI_PROCESS">
             <EntityTypeMapping TypeName="calicoModel.BIANCHI_PROCESS">
               <MappingFragment StoreEntitySet="BIANCHI_PROCESS">
                 <ScalarProperty Name="fecha_ultima" ColumnName="fecha_ultima" />
                 <ScalarProperty Name="interface" ColumnName="interface" />
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="inicio" ColumnName="inicio" />
-                <ScalarProperty Name="fin" ColumnName="fin" />
-                <ScalarProperty Name="cant_lineas" ColumnName="cant_lineas" />
-                <ScalarProperty Name="estado" ColumnName="estado" />
-                <ScalarProperty Name="process_id" ColumnName="process_id" />
                 <ScalarProperty Name="maquina" ColumnName="maquina" />
+                <ScalarProperty Name="process_id" ColumnName="process_id" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="cant_lineas" ColumnName="cant_lineas" />
+                <ScalarProperty Name="fin" ColumnName="fin" />
+                <ScalarProperty Name="inicio" ColumnName="inicio" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
