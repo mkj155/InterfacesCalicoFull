@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Calico.Persistencia;
+using System;
 using System.Data.Entity;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calico
 {
@@ -36,11 +33,11 @@ namespace Calico
             dao.update(obj);
         }
 
-        public BIANCHI_PROCESS getProcessInit(DateTime fechaUltima, String interfaceName)
+        public BIANCHI_PROCESS getProcessInit(DateTime? fechaUltima, String interfaceName)
         {
             BIANCHI_PROCESS obj = new BIANCHI_PROCESS();
             obj.inicio = DateTime.Now;
-            obj.maquina = System.Environment.MachineName;
+            obj.maquina = Environment.MachineName;
             obj.process_id = Process.GetCurrentProcess().Id;
             obj.fecha_ultima = fechaUltima;
             obj.@interface = interfaceName;

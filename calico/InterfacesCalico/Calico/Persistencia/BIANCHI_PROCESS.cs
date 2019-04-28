@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Calico
+namespace Calico.Persistencia
 {
     using System;
     using System.Collections.Generic;

@@ -70,60 +70,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils.cs" />
-    <Compile Include="tblSubClienteService.cs" />
-    <Compile Include="tblSubClienteDAO.cs" />
+    <Compile Include="common\Constants.cs" />
+    <Compile Include="common\InterfaceFactory.cs" />
+    <Compile Include="Persistencia\BIANCHI_PROCESS.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Persistencia\ModelCalico.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCalico.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Persistencia\ModelCalico.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Persistencia\ModelCalico.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelCalico.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Persistencia\tblSubCliente.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="common\Utils.cs" />
+    <Compile Include="clientes\tblSubClienteService.cs" />
+    <Compile Include="clientes\tblSubClienteDAO.cs" />
     <Compile Include="BianchiProcessDAO.cs" />
     <Compile Include="BianchiService.cs" />
-    <Compile Include="BIANCHI_PROCESS.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Dao.cs" />
-    <Compile Include="InterfaceCliente.cs" />
-    <Compile Include="InterfaceGeneric.cs" />
-    <Compile Include="Model1.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Model1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="generic\Dao.cs" />
+    <Compile Include="clientes\InterfaceCliente.cs" />
+    <Compile Include="generic\InterfaceGeneric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Run.cs" />
-    <Compile Include="tblSubCliente.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Model1.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Model1.edmx.diagram">
-      <DependentUpon>Model1.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Model1.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Model1.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model1.edmx</DependentUpon>
-      <LastGenOutput>Model1.cs</LastGenOutput>
-    </Content>
+    <EntityDeploy Include="Persistencia\ModelCalico.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelCalico.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Persistencia\ModelCalico.edmx.diagram">
+      <DependentUpon>ModelCalico.edmx</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -139,6 +129,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Persistencia\ModelCalico.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelCalico.edmx</DependentUpon>
+      <LastGenOutput>ModelCalico.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Persistencia\ModelCalico.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelCalico.edmx</DependentUpon>
+      <LastGenOutput>ModelCalico.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

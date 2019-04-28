@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Calico.Persistencia;
+using System;
 using System.Data.Entity;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Calico
+namespace Calico.clientes
 {
     class tblSubClienteService
     {
@@ -34,6 +30,11 @@ namespace Calico
         public void update(tblSubCliente obj)
         {
             dao.update(obj);
+        }
+
+        public void callProcedure(String nombre)
+        {
+            dao.callProcedure(nombre);
         }
 
         public void examplePersist()

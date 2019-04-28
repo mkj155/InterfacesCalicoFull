@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Calico.Persistencia;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calico
 {
@@ -11,7 +7,7 @@ namespace Calico
     {
         public void delete(int id)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 BIANCHI_PROCESS obj = new BIANCHI_PROCESS { id = id };
                 context.BIANCHI_PROCESS.Attach(obj);
@@ -22,7 +18,7 @@ namespace Calico
 
         public DbSet<BIANCHI_PROCESS> findAll()
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 /* Obtengo todos los registros de la tabla de esta manera */
                 var rows = context.Set<BIANCHI_PROCESS>();
@@ -32,7 +28,7 @@ namespace Calico
 
         public BIANCHI_PROCESS findById(int id)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 return context.BIANCHI_PROCESS.Find(id);
             }
@@ -40,17 +36,16 @@ namespace Calico
 
         public void save(BIANCHI_PROCESS obj)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 context.BIANCHI_PROCESS.Add(obj);
                 context.SaveChanges();
-
             }
         }
 
         public void update(BIANCHI_PROCESS obj)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 var result = context.BIANCHI_PROCESS.Find(obj.id);
                 if (result == null) return;

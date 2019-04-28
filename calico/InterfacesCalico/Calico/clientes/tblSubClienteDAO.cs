@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Calico.Persistencia;
+using System;
 using System.Data.Entity;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Calico
+namespace Calico.clientes
 {
     class tblSubClienteDAO : Dao<tblSubCliente>
     {
         public void delete(int id)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 tblSubCliente obj = new tblSubCliente { subc_proc_id = id };
                 context.tblSubCliente.Attach(obj);
@@ -23,7 +19,7 @@ namespace Calico
 
         public DbSet<tblSubCliente> findAll()
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 /* Obtengo todos los registros de la tabla de esta manera */
                 var rows = context.Set<tblSubCliente>();
@@ -33,7 +29,7 @@ namespace Calico
 
         public tblSubCliente findById(int id)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 return context.tblSubCliente.Find(id);
             }
@@ -41,7 +37,7 @@ namespace Calico
 
         public void save(tblSubCliente obj)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 context.tblSubCliente.Add(obj);
                 context.SaveChanges();
@@ -50,7 +46,7 @@ namespace Calico
 
         public void update(tblSubCliente obj)
         {
-            using (calicoEntities context = new calicoEntities())
+            using (CalicoEntities context = new CalicoEntities())
             {
                 var result = context.tblSubCliente.Find(obj.subc_proc_id);
                 if (result == null) return;
@@ -58,5 +54,14 @@ namespace Calico
                 context.SaveChanges();
             }
         }
+
+        public void callProcedure(String nombre)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                context.INTERFAZ_TESTPROCEDURE(nombre);
+            }
+        }
+
     }
 }

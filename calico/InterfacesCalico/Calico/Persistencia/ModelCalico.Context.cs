@@ -7,16 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Calico
+namespace Calico.Persistencia
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
-    public partial class calicoEntities : DbContext
+    public partial class CalicoEntities : DbContext
     {
-        public calicoEntities()
-            : base("name=calicoEntities")
+        public CalicoEntities()
+            : base("name=CalicoEntities")
         {
         }
     
@@ -25,7 +27,16 @@ namespace Calico
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
         public virtual DbSet<BIANCHI_PROCESS> BIANCHI_PROCESS { get; set; }
+        public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
+    
+        public virtual ObjectResult<Nullable<System.DateTime>> INTERFAZ_TESTPROCEDURE(string nombre)
+        {
+            var nombreParameter = nombre != null ?
+                new ObjectParameter("Nombre", nombre) :
+                new ObjectParameter("Nombre", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<System.DateTime>>("INTERFAZ_TESTPROCEDURE", nombreParameter);
+        }
     }
 }

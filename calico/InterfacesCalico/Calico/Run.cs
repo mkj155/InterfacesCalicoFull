@@ -1,10 +1,8 @@
 ﻿using Calico;
+using Calico.common;
 using Nini.Config;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.IO;
-using System.Net;
 
 namespace InterfacesCalico
 {
@@ -13,19 +11,40 @@ namespace InterfacesCalico
 
         static void Main(string[] args)
         {
+            // Validamos la existencia de argumentos
+            String message = null;
+            if (!Utils.validateArgs(args, out message))
+            {
+                Console.Error.WriteLine(message);
+                return;
+            }
+
+            // Se loguea si un argumento es "/l"
+            Utils.instanceConsole(args);
+
+            // Validacion de fecha
+            DateTime? dateTime = Utils.getDate(args);
+            if (dateTime == null)
+            {
+                Console.WriteLine("Se va a procesar una interfaz sin especificar fecha");
+            }
+
+            // Cargamos archivo con parametros propios para cada interface
             IConfigSource source = new IniConfigSource("calico_config.ini");
-            string urlPath = source.Configs["Clientes"].Get("url");
 
-            BianchiService serviceProcess = new BianchiService();
-            serviceProcess.examplePersist();
-            tblSubClienteService serviceCliente = new tblSubClienteService();
-            serviceCliente.examplePersist();
+            // Instanciamos la interface que llego como primer argumento
+            InterfaceGeneric interfaz = (args != null && args.Length > 0) ? InterfaceFactory.getInterfaz(args[0]) : null;
+            if (interfaz == null)
+            {
+                Console.Error.WriteLine("interface inexistente");
+                return;
+            }
 
-            InterfaceGeneric programa = new InterfaceCliente();
-            List<String> parameters = new List<string>();
-            parameters.Add("20190305"); // YYYYMMDD
-            programa.sendRequest(urlPath,parameters);
-            System.Console.WriteLine("Termino exitosamente");
+            // Procesamos
+            interfaz.process(source, dateTime);
+            Console.WriteLine("Termino exitosamente");
         }
+
     }
+
 }
