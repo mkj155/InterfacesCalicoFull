@@ -3,7 +3,7 @@ using System;
 using System.Data.Entity;
 using System.Diagnostics;
 
-namespace Calico
+namespace Calico.common
 {
     class BianchiService
     {
@@ -45,6 +45,15 @@ namespace Calico
             return obj;
         }
 
+        public bool updateEnCurso(string interfaz)
+        {
+            return dao.updateEnCurso(interfaz);
+        }
+        public bool validarSiPuedoProcesar(string interfaz)
+        {
+            return dao.validarSiPuedoProcesar(interfaz);
+        }
+
         public void examplePersist()
         {
             BIANCHI_PROCESS obj = getProcessInit(DateTime.Now, "Cliente");
@@ -61,8 +70,5 @@ namespace Calico
             /* Example delete Entity Framework */
             delete(obj.id);
         }
-
-
-
     }
 }

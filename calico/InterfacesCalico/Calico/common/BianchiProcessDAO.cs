@@ -1,7 +1,8 @@
 ﻿using Calico.Persistencia;
 using System.Data.Entity;
+using System.Linq;
 
-namespace Calico
+namespace Calico.common
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {
@@ -53,5 +54,32 @@ namespace Calico
                 context.SaveChanges();
             }
         }
+
+        public bool updateEnCurso(string interfaz)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                var query = from BP in context.BIANCHI_PROCESS
+                            where BP.@interface == interfaz
+                            select BP;
+                var result = query.FirstOrDefault<BIANCHI_PROCESS>();
+                if (result == null) return false;
+                result.estado = Constants.ESTADO_EN_CURSO;
+                context.Entry(result);
+                context.SaveChanges();
+                return true;
+            }
+        }
+
+        public bool validarSiPuedoProcesar(string interfaz)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                if (result == null) return true;
+                return !Constants.ESTADO_EN_CURSO.Equals(result.estado);
+            }
+        }
+
     }
 }

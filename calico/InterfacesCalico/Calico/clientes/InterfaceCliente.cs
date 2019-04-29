@@ -20,8 +20,25 @@ namespace InterfacesCalico.clientes
         
         public bool process(IConfigSource source, DateTime? dateTime)
         {
+            bool existProcess = false;
+            // Si el estado es "EN_CURSO" cancelamos la ejecucion
+            if (!service.validarSiPuedoProcesar(INTERFACE)) {
+                Console.WriteLine("La interface " + INTERFACE + " se esta ejecutando actualmente.");
+                return false;
+            }
+
+            // Si esta OK para ejecutar tomamos control del proceso y actualizamos la tabla BIANCHI_PROCESS
+            existProcess = (service.updateEnCurso(INTERFACE));
+
             // Inicio del proceso (inicializacion del objeto de la Tabla BIANCHI_PROCESS)
             BIANCHI_PROCESS process = service.getProcessInit(dateTime, INTERFACE);
+
+            // Si nunca se ejecuto insertamos el registro con estado "EN_CURSO"
+            if (!existProcess)
+            {
+                process.estado = Constants.ESTADO_EN_CURSO;
+                service.save(process);
+            }
 
             // Obtenemos la url del archivo externo
             string urlPath = source.Configs[INTERFACE].Get("url");
@@ -53,10 +70,11 @@ namespace InterfacesCalico.clientes
             // Agregamos datos faltantes
             process.fin = DateTime.Now;
             process.cant_lineas = 20;
-            process.estado = "OK";
+            process.estado = Constants.ESTADO_OK;
 
             // Actualizamos la tabla BIANCHI_PROCESS
-            service.save(process);
+            // service.save(process);
+            service.update(process);
 
             return true;
         }
