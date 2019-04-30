@@ -1,27 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Calico.common
 {
     class Utils
     {
-        private static Boolean validateDate(String date)
+        private static Boolean validateDate(String date, String format)
         {
             try {
-                DateTime.ParseExact(date, "yyyy/MM/dd", null);
+                DateTime.ParseExact(date, format, null);
             } catch (Exception) {
                 return false;
             }
             return true;
         }
 
-        private static DateTime? parseDate(String date, String format)
+        private static DateTime parseDate(String date, String format)
         {
-            try {
-                return DateTime.ParseExact(date, format, null);
-            } catch (Exception) { 
-                return null;
-            }
+            return DateTime.ParseExact(date, format, null);
         }
 
         private static String formatDate(String possibleDate)
@@ -37,6 +34,13 @@ namespace Calico.common
             return date;
         }
 
+        public static String convertDateTimeInString(DateTime dateTime)
+        {
+            String year = dateTime.Year.ToString("D4");
+            String month = dateTime.Month.ToString("D2");
+            String day = dateTime.Day.ToString("D2");
+            return year + month + day;
+        }
 
         public static DateTime? getDate(string[] args)
         {
@@ -46,9 +50,9 @@ namespace Calico.common
                 foreach (String arg in args)
                 {
                     String date = formatDate(arg);
-                    if (date.Length > 0 && validateDate(date))
+                    if (date.Length > 0 && validateDate(date, "yyyy/MM/dd"))
                     {
-                        dateTime = parseDate(date, "yyyy/MM/dd");
+                        return parseDate(date, "yyyy/MM/dd");
                     }
                 }
             }
@@ -81,6 +85,16 @@ namespace Calico.common
                 }
             }
             if(!mustWrite) Console.SetOut(TextWriter.Null);
+        }
+
+        public static String buildUrl(String urlParam, Dictionary<String, String> parameters)
+        {
+            String url = String.Empty;
+            foreach (KeyValuePair<string, string> entry in parameters)
+            {
+                url = urlParam.Replace(entry.Key, entry.Value);
+            }
+            return url;
         }
 
     }

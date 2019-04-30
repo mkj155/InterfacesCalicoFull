@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="Persistencia\BIANCHI_PROCESS.cs">
@@ -96,8 +97,8 @@
     <Compile Include="common\Utils.cs" />
     <Compile Include="clientes\tblSubClienteService.cs" />
     <Compile Include="clientes\tblSubClienteDAO.cs" />
-    <Compile Include="BianchiProcessDAO.cs" />
-    <Compile Include="BianchiService.cs" />
+    <Compile Include="common\BianchiProcessDAO.cs" />
+    <Compile Include="common\BianchiService.cs" />
     <Compile Include="generic\Dao.cs" />
     <Compile Include="clientes\InterfaceCliente.cs" />
     <Compile Include="generic\InterfaceGeneric.cs" />
@@ -106,6 +107,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="calico_config.ini" />
+    <None Include="connections.config" />
     <None Include="packages.config" />
     <EntityDeploy Include="Persistencia\ModelCalico.edmx">
       <Generator>EntityModelCodeGenerator</Generator>

@@ -11,5 +11,9 @@ namespace Calico.common
         public const String ESTADO_EN_CURSO = "EN_CURSO";
         public const String ESTADO_OK = "OK";
         public const String ESTADO_ERROR = "ERROR";
+        public const String URLS = "URLs";
+        public const String MLNM = "MLNM";
+        public const String TAX = "TAX";
+        public const String PARAM_FECHA = "{fecha}";
     }
 }

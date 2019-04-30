@@ -33,6 +33,11 @@ namespace Calico.common
             dao.update(obj);
         }
 
+        public DateTime? getProcessDate(string interfaz)
+        {
+            return dao.getProcessDate(interfaz);
+        }
+
         public BIANCHI_PROCESS getProcessInit(DateTime? fechaUltima, String interfaceName)
         {
             BIANCHI_PROCESS obj = new BIANCHI_PROCESS();

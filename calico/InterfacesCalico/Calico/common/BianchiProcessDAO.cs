@@ -1,4 +1,5 @@
 ﻿using Calico.Persistencia;
+using System;
 using System.Data.Entity;
 using System.Linq;
 
@@ -78,6 +79,15 @@ namespace Calico.common
                 var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
                 if (result == null) return true;
                 return !Constants.ESTADO_EN_CURSO.Equals(result.estado);
+            }
+        }
+
+        public DateTime? getProcessDate(string interfaz)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                return result.fecha_ultima;
             }
         }
 

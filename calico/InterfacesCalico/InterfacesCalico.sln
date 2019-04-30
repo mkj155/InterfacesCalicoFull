@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tablas", "Tablas", "{586957B2-9E02-4F4A-910B-C5EAAC806EFC}"
 	ProjectSection(SolutionItems) = preProject
 		CREATE_TABLE.sql = CREATE_TABLE.sql
+		INTERFAZ_TESTPROCEDURE.sql = INTERFAZ_TESTPROCEDURE.sql
 	EndProjectSection
 EndProject
 Global

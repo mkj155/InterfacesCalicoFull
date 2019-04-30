@@ -16,16 +16,28 @@ namespace InterfacesCalico.clientes
     {
         private BianchiService service = new BianchiService();
         private tblSubClienteService serviceCliente = new tblSubClienteService();
-        public const String INTERFACE = Constants.INTERFACE_CLIENTES;
+        private const String INTERFACE = Constants.INTERFACE_CLIENTES;
+        private ClientesUtils clientesUtils = new ClientesUtils();
         
         public bool process(IConfigSource source, DateTime? dateTime)
         {
+            // Obtenemos la fecha
+            DateTime lastTime;
+            if (dateTime == null) {
+                lastTime = Convert.ToDateTime(service.getProcessDate(INTERFACE));
+            } else {
+                lastTime = Convert.ToDateTime(dateTime);
+            }
+
             bool existProcess = false;
             // Si el estado es "EN_CURSO" cancelamos la ejecucion
-            if (!service.validarSiPuedoProcesar(INTERFACE)) {
+            if (/*!service.validarSiPuedoProcesar(INTERFACE)*/ false) {
                 Console.WriteLine("La interface " + INTERFACE + " se esta ejecutando actualmente.");
                 return false;
             }
+
+            // Convierto DateTime a String
+            String lastStringTime = Utils.convertDateTimeInString(lastTime);
 
             // Si esta OK para ejecutar tomamos control del proceso y actualizamos la tabla BIANCHI_PROCESS
             existProcess = (service.updateEnCurso(INTERFACE));
@@ -40,20 +52,18 @@ namespace InterfacesCalico.clientes
                 service.save(process);
             }
 
-            // Obtenemos la url del archivo externo
-            string urlPath = source.Configs[INTERFACE].Get("url");
+            // Obtenemos las keys de las URLs del archivo externo
+            String[] URLkeys = source.Configs[INTERFACE+"."+Constants.URLS].GetKeys();
 
-            // Preparamos los parametros
-            List<String> parameters = new List<string>();
-            if (dateTime != null)
+            // Preparamos la URL con sus parametros y llamamos al servicio
+            String urlPath = String.Empty;
+            foreach (String key in URLkeys)
             {
-                String param = Regex.Replace(dateTime.ToString(), @"\s+", "%20");
-                // Reemplazamos por el momento la fecha por un String (HARDCODE pasar parametro correspondiente)
-                parameters.Add("20190503");
+                String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
+                // Obtenemos los datos
+                sendRequest(urlPath);
             }
-
-            // Obtenemos los datos
-            sendRequest(urlPath, parameters);
 
             // ACA DEBERIAMOS PROCESAR LA INTERFACE
             // CREACION DE CLIENTES
@@ -79,18 +89,36 @@ namespace InterfacesCalico.clientes
             return true;
         }
 
-        public void sendRequest(String url, List<String> parameters)
+        public void sendRequest(String url)
         {
-            StringBuilder concat = new StringBuilder();
-            int count = 0;
-            foreach (String param in parameters)
-            {
-                if (count > 0) concat.Append("/");
-                concat.Append(param);
-                count++;
-            }
-            HttpWebRequest request = WebRequest.Create(url + concat) as HttpWebRequest;
+            //var webRequest = WebRequest.Create(url);
+            //webRequest.Credentials = new NetworkCredential("userName", "password");
+            //using (var webResponse = webRequest.GetResponse())
+            //{
+            //    using (var responseStream = webResponse.GetResponseStream())
+            //    {
+            //        new StreamReader(responseStream).ReadToEnd();
+            //    }
+            //}
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Credentials = new NetworkCredential("CALICO", "C4l1c02020");
             request.Method = Constants.METHOD_GET;
+            /**/
+            //Uri myUri = new Uri(url);
+            //WebRequest myWebRequest = WebRequest.Create(myUri);
+            //HttpWebRequest myHttpWebRequest = (HttpWebRequest)myWebRequest;
+            //NetworkCredential myNetworkCredential = new NetworkCredential("CALICO", "C4l1c02020");
+            //CredentialCache myCredentialCache = new CredentialCache();
+            //myCredentialCache.Add(myUri, "Basic", myNetworkCredential);
+            //myHttpWebRequest.PreAuthenticate = true;
+            //myHttpWebRequest.Credentials = myCredentialCache;
+            //WebResponse myWebResponse = myWebRequest.GetResponse();
+            //Stream responseStream = myWebResponse.GetResponseStream();
+            //StreamReader myStreamReader = new StreamReader(responseStream, Encoding.Default);
+            //string pageContent = myStreamReader.ReadToEnd();
+            //responseStream.Close();
+            //myWebResponse.Close();
+            /**/
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
             StreamReader reader = new StreamReader(response.GetResponseStream());
             string body = reader.ReadToEnd();

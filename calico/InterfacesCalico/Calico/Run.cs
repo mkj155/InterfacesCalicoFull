@@ -26,7 +26,7 @@ namespace InterfacesCalico
             DateTime? dateTime = Utils.getDate(args);
             if (dateTime == null)
             {
-                Console.WriteLine("Se va a procesar una interfaz sin especificar fecha");
+                Console.WriteLine("Fecha no indicada se tomará de la tabla BIANCHI_PROCESS");
             }
 
             // Cargamos archivo con parametros propios para cada interface
