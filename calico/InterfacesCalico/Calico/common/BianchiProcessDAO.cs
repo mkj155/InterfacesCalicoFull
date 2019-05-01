@@ -2,6 +2,7 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Transactions;
 
 namespace Calico.common
 {
@@ -9,50 +10,86 @@ namespace Calico.common
     {
         public void delete(int id)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
             {
-                BIANCHI_PROCESS obj = new BIANCHI_PROCESS { id = id };
-                context.BIANCHI_PROCESS.Attach(obj);
-                context.BIANCHI_PROCESS.Remove(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    BIANCHI_PROCESS obj = new BIANCHI_PROCESS { id = id };
+                    context.BIANCHI_PROCESS.Attach(obj);
+                    context.BIANCHI_PROCESS.Remove(obj);
+                    context.SaveChanges();
+                }
+
+                scope.Complete();
             }
         }
 
         public DbSet<BIANCHI_PROCESS> findAll()
         {
-            using (CalicoEntities context = new CalicoEntities())
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
             {
-                /* Obtengo todos los registros de la tabla de esta manera */
-                var rows = context.Set<BIANCHI_PROCESS>();
+                DbSet<BIANCHI_PROCESS> rows;
+
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    /* Obtengo todos los registros de la tabla de esta manera */
+                    rows = context.Set<BIANCHI_PROCESS>();
+                }
+
+                scope.Complete();
+
                 return rows;
             }
         }
 
         public BIANCHI_PROCESS findById(int id)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            BIANCHI_PROCESS process;
+
+            using (CalicoEntities entities = new CalicoEntities())
+            using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
-                return context.BIANCHI_PROCESS.Find(id);
+                //Lock the table during this transaction
+                entities.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM BIANCHI_PROCESS WITH (TABLOCKX)");
+
+                //Do your work with the locked table here...
+                process = entities.BIANCHI_PROCESS.Find(id);
+
+                //Complete the scope here to commit, otherwise it will rollback
+                //The table lock will be released after we exit the TransactionScope block
+                scope.Commit();
+
+                return process;
             }
         }
 
         public void save(BIANCHI_PROCESS obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
             {
-                context.BIANCHI_PROCESS.Add(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    context.BIANCHI_PROCESS.Add(obj);
+                    context.SaveChanges();
+                }
+
+                scope.Complete();
             }
         }
 
         public void update(BIANCHI_PROCESS obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
             {
-                var result = context.BIANCHI_PROCESS.Find(obj.id);
-                if (result == null) return;
-                context.Entry(result).CurrentValues.SetValues(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    var result = context.BIANCHI_PROCESS.Find(obj.id);
+                    if (result == null) return;
+                    context.Entry(result).CurrentValues.SetValues(obj);
+                    context.SaveChanges();
+                }
+
+                scope.Complete();
             }
         }
 

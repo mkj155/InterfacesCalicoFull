@@ -1,8 +1,10 @@
 ﻿using Calico;
 using Calico.common;
+using Calico.Persistencia;
 using Nini.Config;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace InterfacesCalico
 {
@@ -11,6 +13,11 @@ namespace InterfacesCalico
 
         static void Main(string[] args)
         {
+
+            BianchiService service = new BianchiService();
+            BIANCHI_PROCESS process = service.findById(1);
+
+
             // Validamos la existencia de argumentos
             String message = null;
             if (!Utils.validateArgs(args, out message))
