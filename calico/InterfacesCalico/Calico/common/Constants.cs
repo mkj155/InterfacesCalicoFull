@@ -14,6 +14,9 @@ namespace Calico.common
         public const String URLS = "URLs";
         public const String MLNM = "MLNM";
         public const String TAX = "TAX";
+        public const String USER = "user";
+        public const String PASS = "pass";
+        public const String BASIC_AUTH = "BasicAuth";
         public const String PARAM_FECHA = "{fecha}";
     }
 }
