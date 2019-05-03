@@ -76,17 +76,29 @@ namespace InterfacesCalico.clientes
             // TODO AGREGAR LLAMADO A SU SP NumeroInterface
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
             int? tipoMensaje = 0;
+            int count = 0;
 
             foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
             {
                 int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
                 entry.Value.subc_proc_id = sub_proc_id;
-                serviceCliente.save(entry.Value);
+                // VERY HARDCODE
+                // Me los pidio como valores obligatorios.
+                // Comente esto porque el Procedure siempre me devuelve el mismo ID y rompe por constrain al momento de hacer el insert.
+                //entry.Value.subc_iva = "21";
+                //entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
+                //entry.Value.subc_domicilio = "Peron 2579";
+                //entry.Value.subc_localidad = "San Vicente";
+                //entry.Value.subc_codigoPostal = "1642";
+                //entry.Value.subc_areaMuelle = "Area17";
+                //entry.Value.subc_telefono = "1512349876";
+                //serviceCliente.save(entry.Value);
+                count++;
             }
 
             // Agregamos datos faltantes de la tabla de procesos
             process.fin = DateTime.Now;
-            process.cant_lineas = 20;
+            process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
 
             // Actualizamos la tabla BIANCHI_PROCESS

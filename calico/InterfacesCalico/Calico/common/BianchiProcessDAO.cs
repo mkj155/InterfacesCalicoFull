@@ -58,7 +58,7 @@ namespace Calico.common
                 //Complete the scope here to commit, otherwise it will rollback
                 //The table lock will be released after we exit the TransactionScope block
                 scope.Commit();
-
+                
                 return process;
             }
         }
