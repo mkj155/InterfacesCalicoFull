@@ -79,17 +79,12 @@ namespace Calico.common
 
         public void update(BIANCHI_PROCESS obj)
         {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
+            using (CalicoEntities context = new CalicoEntities())
             {
-                using (CalicoEntities context = new CalicoEntities())
-                {
-                    var result = context.BIANCHI_PROCESS.Find(obj.id);
-                    if (result == null) return;
-                    context.Entry(result).CurrentValues.SetValues(obj);
-                    context.SaveChanges();
-                }
-
-                scope.Complete();
+                var result = context.BIANCHI_PROCESS.Find(obj.id);
+                if (result == null) return;
+                context.Entry(result).CurrentValues.SetValues(obj);
+                context.SaveChanges();
             }
         }
 

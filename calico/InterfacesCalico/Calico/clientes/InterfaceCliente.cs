@@ -80,11 +80,13 @@ namespace InterfacesCalico.clientes
 
             foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
             {
+                // Me está devolviendo el mismo ID, falta verificar porque ¿?
                 int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
+                // Si hacemos los insert pincha por constrains de PK ya que el ID devuelto por el SP siempre retorna lo mismo
                 entry.Value.subc_proc_id = sub_proc_id;
-                // VERY HARDCODE
+
+                // VERY_HARDCODE
                 // Me los pidio como valores obligatorios.
-                // Comente esto porque el Procedure siempre me devuelve el mismo ID y rompe por constrain al momento de hacer el insert.
                 //entry.Value.subc_iva = "21";
                 //entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
                 //entry.Value.subc_domicilio = "Peron 2579";
@@ -92,7 +94,7 @@ namespace InterfacesCalico.clientes
                 //entry.Value.subc_codigoPostal = "1642";
                 //entry.Value.subc_areaMuelle = "Area17";
                 //entry.Value.subc_telefono = "1512349876";
-                //serviceCliente.save(entry.Value);
+                serviceCliente.save(entry.Value);
                 count++;
             }
 
