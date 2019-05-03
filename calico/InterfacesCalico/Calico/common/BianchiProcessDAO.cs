@@ -10,8 +10,7 @@ namespace Calico.common
     {
         public void delete(int id)
         {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
-            {
+
                 using (CalicoEntities context = new CalicoEntities())
                 {
                     BIANCHI_PROCESS obj = new BIANCHI_PROCESS { id = id };
@@ -20,61 +19,37 @@ namespace Calico.common
                     context.SaveChanges();
                 }
 
-                scope.Complete();
-            }
+
         }
 
         public DbSet<BIANCHI_PROCESS> findAll()
         {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
-            {
-                DbSet<BIANCHI_PROCESS> rows;
 
                 using (CalicoEntities context = new CalicoEntities())
                 {
                     /* Obtengo todos los registros de la tabla de esta manera */
-                    rows = context.Set<BIANCHI_PROCESS>();
+                    return context.Set<BIANCHI_PROCESS>();
                 }
 
-                scope.Complete();
-
-                return rows;
-            }
         }
 
         public BIANCHI_PROCESS findById(int id)
         {
-            BIANCHI_PROCESS process;
-
             using (CalicoEntities entities = new CalicoEntities())
-            using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
-                //Lock the table during this transaction
-                entities.Database.ExecuteSqlCommand("SELECT TOP 0 NULL FROM BIANCHI_PROCESS WITH (TABLOCKX)");
-
-                //Do your work with the locked table here...
-                process = entities.BIANCHI_PROCESS.Find(id);
-
-                //Complete the scope here to commit, otherwise it will rollback
-                //The table lock will be released after we exit the TransactionScope block
-                scope.Commit();
-                
-                return process;
+                return entities.BIANCHI_PROCESS.Find(id);
             }
         }
 
         public void save(BIANCHI_PROCESS obj)
         {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
-            {
+
                 using (CalicoEntities context = new CalicoEntities())
                 {
                     context.BIANCHI_PROCESS.Add(obj);
                     context.SaveChanges();
                 }
 
-                scope.Complete();
-            }
         }
 
         public void update(BIANCHI_PROCESS obj)
@@ -101,6 +76,18 @@ namespace Calico.common
                 context.Entry(result);
                 context.SaveChanges();
                 return true;
+            }
+        }
+
+        public BIANCHI_PROCESS findByName(string interfaz)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                var query = from BP in context.BIANCHI_PROCESS
+                            where BP.@interface == interfaz
+                            select BP;
+
+                return query.FirstOrDefault<BIANCHI_PROCESS>();
             }
         }
 

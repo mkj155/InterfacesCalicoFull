@@ -20,6 +20,7 @@ namespace Calico.Persistencia
         public CalicoEntities()
             : base("name=CalicoEntities")
         {
+            this.Database.CommandTimeout = 0;        
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

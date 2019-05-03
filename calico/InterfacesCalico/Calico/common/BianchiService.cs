@@ -38,6 +38,7 @@ namespace Calico.common
             return dao.getProcessDate(interfaz);
         }
 
+
         public BIANCHI_PROCESS getProcessInit(DateTime? fechaUltima, String interfaceName)
         {
             BIANCHI_PROCESS obj = new BIANCHI_PROCESS();
@@ -57,6 +58,11 @@ namespace Calico.common
         public bool validarSiPuedoProcesar(string interfaz)
         {
             return dao.validarSiPuedoProcesar(interfaz);
+        }
+
+        public BIANCHI_PROCESS findByName(String interfaz)
+        {
+            return dao.findByName(interfaz);
         }
 
         public void examplePersist()

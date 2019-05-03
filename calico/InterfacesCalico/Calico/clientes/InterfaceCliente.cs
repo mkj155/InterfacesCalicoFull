@@ -1,14 +1,16 @@
 ﻿using Calico.clientes;
 using Calico.common;
 using Calico.Persistencia;
-using Nini.Config;
 using System;
+using Nini.Config;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Net;
 using Calico.common.mapping;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace InterfacesCalico.clientes
 {
@@ -18,95 +20,98 @@ namespace InterfacesCalico.clientes
         private tblSubClienteService serviceCliente = new tblSubClienteService();
         private const String INTERFACE = Constants.INTERFACE_CLIENTES;
         private ClientesUtils clientesUtils = new ClientesUtils();
-
-        public bool process(IConfigSource source, DateTime? dateTime)
+        
+        public bool process(DateTime? dateTime)
         {
-            // Obtenemos la fecha
-            DateTime lastTime;
-            if (dateTime == null) {
-                lastTime = Convert.ToDateTime(service.getProcessDate(INTERFACE));
-            } else {
-                lastTime = Convert.ToDateTime(dateTime);
-            }
-
-            bool existProcess = false;
-            // Si el estado es "EN_CURSO" cancelamos la ejecucion
-            // SE ESTA CAMBIANDO LA VALIDACION POR LOCKEO, FALTA CODEO Y TEST
-            if (/*!service.validarSiPuedoProcesar(INTERFACE)*/ false) {
-                Console.WriteLine("La interface " + INTERFACE + " se esta ejecutando actualmente.");
-                return false;
-            }
-
-            // Convierto DateTime a String
-            String lastStringTime = Utils.convertDateTimeInString(lastTime);
-
-            // Si esta OK para ejecutar tomamos control del proceso y actualizamos la tabla BIANCHI_PROCESS
-            existProcess = (service.updateEnCurso(INTERFACE));
-
-            // Inicio del proceso (inicializacion del objeto de la Tabla BIANCHI_PROCESS)
-            BIANCHI_PROCESS process = service.getProcessInit(dateTime, INTERFACE);
-
-            // Si nunca se ejecuto insertamos el registro con estado "EN_CURSO"
-            if (!existProcess)
+            using (CalicoEntities entities = new CalicoEntities())
+            using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
-                process.estado = Constants.ESTADO_EN_CURSO;
-                service.save(process);
+                    DateTime lastTime;
+                    BIANCHI_PROCESS process = service.findByName(INTERFACE);
+
+                    /* Inicializamos los datos del proceso */
+                    process.inicio = DateTime.Now;
+                    process.maquina = Environment.MachineName;
+                    process.process_id = Process.GetCurrentProcess().Id;
+
+                    /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada,
+                       quedara esperando hasta que se desbloquee */
+                    Utils.blockRow(process.id);
+
+                    /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
+                    entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
+
+                    /* Obtenemos la fecha */
+                    if (dateTime == null){
+                        lastTime = Convert.ToDateTime(process.fecha_ultima);
+                    }else{
+                        lastTime = Convert.ToDateTime(dateTime);
+                    }
+
+                    /* Convierto DateTime a String */
+                    String lastStringTime = Utils.convertDateTimeInString(lastTime);
+
+                    /* Cargamos archivo con parametros propios para cada interface */
+                    IConfigSource source = new IniConfigSource("calico_config.ini");
+                    // Obtenemos las keys de las URLs del archivo externo
+                    String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
+
+                    // Preparamos la URL con sus parametros y llamamos al servicio
+                    String urlPath = String.Empty;
+                    String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
+                    String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+
+                    // Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes
+                    Dictionary<String, tblSubCliente> diccionary = new Dictionary<string, tblSubCliente>();
+                    foreach (String key in URLkeys)
+                    {
+                        // Obtenemos las URLs
+                        String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                        // Armamos la URL
+                        urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
+                        // obtenemos los datos y armamos los objetos Clientes
+                        sendRequest(urlPath, user, pass, key, diccionary);
+                    }
+
+                    // TODO AGREGAR LLAMADO A SU SP NumeroInterface
+                    int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
+                    int? tipoMensaje = 0;
+                    int count = 0;
+
+                    foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
+                    {
+                        // Me está devolviendo el mismo ID, falta verificar porque ¿?
+                        int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
+                        // Si hacemos los insert pincha por constrains de PK ya que el ID devuelto por el SP siempre retorna lo mismo
+                        entry.Value.subc_proc_id = sub_proc_id;
+
+                        // VERY_HARDCODE
+                        // Me los pidio como valores obligatorios.
+                        //entry.Value.subc_iva = "21";
+                        //entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
+                        //entry.Value.subc_domicilio = "Peron 2579";
+                        //entry.Value.subc_localidad = "San Vicente";
+                        //entry.Value.subc_codigoPostal = "1642";
+                        //entry.Value.subc_areaMuelle = "Area17";
+                        //entry.Value.subc_telefono = "1512349876";
+                        serviceCliente.save(entry.Value);
+                        count++;
+                    }
+
+                    // Agregamos datos faltantes de la tabla de procesos
+                    process.fin = DateTime.Now;
+                    process.cant_lineas = count;
+                    process.estado = Constants.ESTADO_OK;
+
+                    /* Liberamos la row, para que la tome otra interface */
+                    scope.Commit();
+              
+                    /* Actualizamos la tabla BIANCHI_PROCESS */
+                    service.update(process);
+
+                    return true;
+                
             }
-
-            // Obtenemos las keys de las URLs del archivo externo
-            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
-
-            // Preparamos la URL con sus parametros y llamamos al servicio
-            String urlPath = String.Empty;
-            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
-            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
-
-            // Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes
-            Dictionary<String, tblSubCliente> diccionary = new Dictionary<string, tblSubCliente>();
-            foreach (String key in URLkeys)
-            {
-                // Obtenemos las URLs
-                String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
-                // Armamos la URL
-                urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
-                // obtenemos los datos y armamos los objetos Clientes
-                sendRequest(urlPath, user, pass, key, diccionary);
-            }
-
-            // TODO AGREGAR LLAMADO A SU SP NumeroInterface
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
-            int? tipoMensaje = 0;
-            int count = 0;
-
-            foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
-            {
-                // Me está devolviendo el mismo ID, falta verificar porque ¿?
-                int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
-                // Si hacemos los insert pincha por constrains de PK ya que el ID devuelto por el SP siempre retorna lo mismo
-                entry.Value.subc_proc_id = sub_proc_id;
-
-                // VERY_HARDCODE
-                // Me los pidio como valores obligatorios.
-                //entry.Value.subc_iva = "21";
-                //entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
-                //entry.Value.subc_domicilio = "Peron 2579";
-                //entry.Value.subc_localidad = "San Vicente";
-                //entry.Value.subc_codigoPostal = "1642";
-                //entry.Value.subc_areaMuelle = "Area17";
-                //entry.Value.subc_telefono = "1512349876";
-                serviceCliente.save(entry.Value);
-                count++;
-            }
-
-            // Agregamos datos faltantes de la tabla de procesos
-            process.fin = DateTime.Now;
-            process.cant_lineas = count;
-            process.estado = Constants.ESTADO_OK;
-
-            // Actualizamos la tabla BIANCHI_PROCESS
-            service.update(process);
-
-            return true;
         }
 
         public void sendRequest(string url, String user, String pass, String key, Dictionary<String, tblSubCliente> diccionary)
