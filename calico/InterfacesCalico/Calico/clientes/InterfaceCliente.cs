@@ -1,5 +1,4 @@
-﻿using Calico;
-using Calico.clientes;
+﻿using Calico.clientes;
 using Calico.common;
 using Calico.Persistencia;
 using Nini.Config;
@@ -8,9 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Calico.common.mapping;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace InterfacesCalico.clientes
 {
@@ -20,7 +18,7 @@ namespace InterfacesCalico.clientes
         private tblSubClienteService serviceCliente = new tblSubClienteService();
         private const String INTERFACE = Constants.INTERFACE_CLIENTES;
         private ClientesUtils clientesUtils = new ClientesUtils();
-        
+
         public bool process(IConfigSource source, DateTime? dateTime)
         {
             // Obtenemos la fecha
@@ -56,33 +54,33 @@ namespace InterfacesCalico.clientes
             }
 
             // Obtenemos las keys de las URLs del archivo externo
-            String[] URLkeys = source.Configs[INTERFACE+"."+Constants.URLS].GetKeys();
+            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
 
             // Preparamos la URL con sus parametros y llamamos al servicio
             String urlPath = String.Empty;
             String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
             String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
 
-            // VERY HARDCODE NO FUNCIONABA URL CALICO
-            List<Rowset> rowsetList = sendRequest("http://localhost:8080/calico/rest/message/", user, pass);
-            //foreach (String key in URLkeys)
-            //{
-            //    String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
-            //    urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
-            //    // Obtenemos los datos
-            //    sendRequest(urlPath, user, pass);
-            //}
+            // Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes
+            Dictionary<String, tblSubCliente> diccionary = new Dictionary<string, tblSubCliente>();
+            foreach (String key in URLkeys)
+            {
+                // Obtenemos las URLs
+                String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                // Armamos la URL
+                urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
+                // obtenemos los datos y armamos los objetos Clientes
+                sendRequest(urlPath, user, pass, key, diccionary);
+            }
 
-            // ACA DEBERIAMOS PROCESAR LA INTERFACE
-            // MAPEAR CLIENTE CON ROWSET
-
-            // llamamos a un STORE PROCEDURE de prueba
-            // TODO AGREGAR LLAMADO A SU SP
-            serviceCliente.callProcedure("Nombre");
+            // TODO AGREGAR LLAMADO A SU SP NumeroInterface
+            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
+            int? tipoMensaje = 0;
+            serviceCliente.callProcedure(tipoProceso, tipoMensaje);
 
             // Actualizamos el cliente
             // VAMOS A EJECUTAR UNA PRUEBA DE CREACION, ACTUALIZACION Y BORRADO DE UN CLIENTE SOLO PARA VER FUNCIONALIDAD
-            serviceCliente.examplePersist();
+            // serviceCliente.examplePersist();
 
             // Agregamos datos faltantes
             process.fin = DateTime.Now;
@@ -96,78 +94,124 @@ namespace InterfacesCalico.clientes
             return true;
         }
 
-        public List<Rowset> sendRequest(String url, String user, String pass)
+        public void sendRequest(string url, String user, String pass, String key, Dictionary<String, tblSubCliente> diccionary)
         {
             List<Rowset> rowsetList = new List<Rowset>();
-            //var webRequest = WebRequest.Create(url);
-            //webRequest.Credentials = new NetworkCredential("userName", "password");
-            //using (var webResponse = webRequest.GetResponse())
-            //{
-            //    using (var responseStream = webResponse.GetResponseStream())
-            //    {
-            //        new StreamReader(responseStream).ReadToEnd();
-            //    }
-            //}
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            // request.Credentials = new NetworkCredential("CALICO", "C4l1c02020");
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(user + ":" + pass));
+            request.Headers.Add("Authorization", "Basic " + encoded);
             request.Method = Constants.METHOD_GET;
-            /**/
-            //Uri myUri = new Uri(url);
-            //WebRequest myWebRequest = WebRequest.Create(myUri);
-            //HttpWebRequest myHttpWebRequest = (HttpWebRequest)myWebRequest;
-            //NetworkCredential myNetworkCredential = new NetworkCredential(user, pass);
-            //CredentialCache myCredentialCache = new CredentialCache();
-            //myCredentialCache.Add(myUri, "Basic", myNetworkCredential);
-            //myHttpWebRequest.PreAuthenticate = true;
-            //myHttpWebRequest.Credentials = myCredentialCache;
-            //WebResponse myWebResponse = myWebRequest.GetResponse();
-            //Stream responseStream = myWebResponse.GetResponseStream();
-            //StreamReader myStreamReader = new StreamReader(responseStream, Encoding.Default);
-            //string pageContent = myStreamReader.ReadToEnd();
-            //responseStream.Close();
-            //myWebResponse.Close();
-            /**/
-            try {
+            try
+            {
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
                 StreamReader reader = new StreamReader(response.GetResponseStream());
                 string myJsonString = reader.ReadToEnd();
-                rowsetList = TestSimpleMapping(myJsonString);
+                simpleMapping(myJsonString, key, diccionary);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            return rowsetList;
         }
-     
-        private List<Rowset> TestSimpleMapping(String myJsonString)
+
+        private String getHeaderJson(String key)
         {
-            List<Rowset> rowsetList = new List<Rowset>();
+            String header = String.Empty;
 
-            // var myJsonString = "{\"fs_DATABROWSER_F0101\": {\"title\": \"Data Browser - F0101 [Address Book Master]\",\"data\": {\"gridData\": {\"id\": 59,\"fullGridId\": \"59\",\"columns\": {\"F0101_AN8\": \"Address Number\",\"F0101_ALKY\": \"Long Address\",\"F0101_TAX\": \"Tax ID\",\"F0101_ALPH\": \"Alpha Name\",\"F0101_MCU\": \"Business Unit\",\"F0101_AT1\": \"Sch Typ\",\"F0101_AC01\": \"Cat Code 1\",\"F0101_AC29\": \"CC 29\"},\"rowset\": [{\"F0101_AT1\": \"O\",\"F0101_AN8\": 1,\"F0101_TAX\": \"430788490\",\"F0101_ALKY\": \" \",\"F0101_AC29\": \" \",\"F0101_ALPH\": \"Financial/Distribution Company\",\"F0101_MCU\": \" 1\",\"F0101_AC01\": \" \"},{\"F0101_AT1\": \"O\",\"F0101_AN8\": 9,\"F0101_TAX\": \"238794511\",\"F0101_ALKY\": \" \",\"F0101_AC29\": \" \",\"F0101_ALPH\": \"Multi-Site Target Company\",\"F0101_MCU\": \" 1\",\"F0101_AC01\": \" \"}],\"summary\": {\"records\": 2,\"moreRecords\": false}}},\"errors\": [],\"warnings\": []},\"stackId\": 1,\"stateId\": 1,\"rid\": \"18036bd3bf70bb7a\",\"currentApp\": \"DATABROWSE_F0101\",\"timeStamp\": \"2019-02-08:14.58.31\",\"sysErrors\": [],\"totalMS\": 510,\"renderMS\": 360}";
-
-            var json = JObject.Parse(myJsonString);
-            var rootJ = json["fs_DATABROWSER_F0101"];
-            var dataJ = rootJ["data"];
-            var gridDataJ = dataJ["gridData"];
-            var rowsetJ = gridDataJ["rowset"];
-            
-            while(rowsetJ.First != null)
+            if (Constants.MLNM.Equals(key))
             {
-                Rowset rowset = new Rowset();
-                rowset.F0101_AC01 = rowsetJ.First["F0101_AC01"].ToString();
-                rowset.F0101_AN8 = rowsetJ.First["F0101_AN8"].ToString();
-                rowset.F0101_TAX = rowsetJ.First["F0101_TAX"].ToString();
-                rowset.F0101_ALKY = rowsetJ.First["F0101_ALKY"].ToString();
-                rowset.F0101_AC29 = rowsetJ.First["F0101_AC29"].ToString();
-                rowset.F0101_ALPH = rowsetJ.First["F0101_ALPH"].ToString();
-                rowset.F0101_MCU = rowsetJ.First["F0101_MCU"].ToString();
-                rowset.F0101_AC01 = rowsetJ.First["F0101_AC01"].ToString();
-                rowsetList.Add(rowset);
-                rowsetJ.First.Remove();
+                header = Constants.JSON_PREFIX + Constants.JSON_SUBFIX_MLNM;
             }
-            return rowsetList;
+            else if (Constants.TAX.Equals(key))
+            {
+                header = Constants.JSON_PREFIX + Constants.JSON_SUBFIX_TAX;
+            }
+
+            return header;
         }
+
+        private void addDataToDictionary(Dictionary<String, tblSubCliente> dictionary, String id, String data, String key)
+        {
+            tblSubCliente cliente = null;
+            dictionary.TryGetValue(id, out cliente);
+            if (cliente == null)
+            {
+                cliente = new tblSubCliente();
+                dictionary.Add(id, cliente);
+            }
+            if (Constants.MLNM.Equals(key))
+            {
+                cliente.subc_razonSocial = data;
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                cliente.subc_cuit = data;
+            }
+        }
+
+        private void simpleMapping(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
+        {
+            var json = JObject.Parse(myJsonString);
+            var root = json[getHeaderJson(key)];
+            var data = root[Constants.JSON_TAG_DATA];
+            var gridData = data[Constants.JSON_TAG_GRIDDATA];
+            var rowset = gridData[Constants.JSON_TAG_ROWSET];
+
+            String AN8 = String.Empty;
+            String value = String.Empty;
+
+            if (Constants.MLNM.Equals(key))
+            {
+                while (rowset.First != null)
+                {
+                    AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
+                    value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
+                    addDataToDictionary(diccionary, AN8, value, key);
+                    rowset.First.Remove();
+                }
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                while (rowset.First != null)
+                {
+                    AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
+                    value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
+                    addDataToDictionary(diccionary, AN8, value, key);
+                    rowset.First.Remove();
+                }
+            }
+        }
+
+        //private void iterateRowset(JToken rowset, String key, Dictionary<String, tblSubCliente> diccionary)
+        //{
+        //    String AN8 = String.Empty;
+        //    String value = String.Empty;
+
+        //    while (rowset.First != null)
+        //    {
+        //        AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
+        //        value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
+        //        addDataToDictionary(diccionary, AN8, value, key);
+        //        rowset.First.Remove();
+        //    }
+        //}
+            //while (rowset.First != null)
+            //{
+            //    if (Constants.MLNM.Equals(key))
+            //    {
+            //        AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
+            //        value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
+            //    }
+            //    else if (Constants.TAX.Equals(key))
+            //    {
+            //        AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
+            //        value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
+            //    }
+            //    addDataToDictionary(diccionary, AN8, value, key);
+            //    rowset.First.Remove();
+            //}
+        
 
     }
 }

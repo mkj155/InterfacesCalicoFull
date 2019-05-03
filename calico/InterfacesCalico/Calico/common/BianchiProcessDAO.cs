@@ -98,7 +98,7 @@ namespace Calico.common
             using (CalicoEntities context = new CalicoEntities())
             {
                 var query = from BP in context.BIANCHI_PROCESS
-                            where BP.@interface == interfaz
+                            where BP.interfaz == interfaz
                             select BP;
                 var result = query.FirstOrDefault<BIANCHI_PROCESS>();
                 if (result == null) return false;
@@ -113,7 +113,7 @@ namespace Calico.common
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.interfaz == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
                 if (result == null) return true;
                 return !Constants.ESTADO_EN_CURSO.Equals(result.estado);
             }
@@ -123,7 +123,7 @@ namespace Calico.common
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.interfaz == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
                 return result.fecha_ultima;
             }
         }

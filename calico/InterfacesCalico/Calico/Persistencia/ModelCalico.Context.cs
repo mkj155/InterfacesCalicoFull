@@ -20,11 +20,6 @@ namespace Calico.Persistencia
         public CalicoEntities()
             : base("name=CalicoEntities")
         {
-            // Get the ObjectContext related to this DbContext
-            var objectContext = (this as IObjectContextAdapter).ObjectContext;
-
-            // Sets the command timeout for all the commands
-            objectContext.CommandTimeout = 0;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -35,13 +30,17 @@ namespace Calico.Persistencia
         public virtual DbSet<BIANCHI_PROCESS> BIANCHI_PROCESS { get; set; }
         public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
     
-        public virtual ObjectResult<Nullable<System.DateTime>> INTERFAZ_TESTPROCEDURE(string nombre)
+        public virtual int INTERFAZ_CrearProceso(Nullable<int> tipoProceso, Nullable<int> tipoMensaje)
         {
-            var nombreParameter = nombre != null ?
-                new ObjectParameter("Nombre", nombre) :
-                new ObjectParameter("Nombre", typeof(string));
+            var tipoProcesoParameter = tipoProceso.HasValue ?
+                new ObjectParameter("tipoProceso", tipoProceso) :
+                new ObjectParameter("tipoProceso", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<System.DateTime>>("INTERFAZ_TESTPROCEDURE", nombreParameter);
+            var tipoMensajeParameter = tipoMensaje.HasValue ?
+                new ObjectParameter("tipoMensaje", tipoMensaje) :
+                new ObjectParameter("tipoMensaje", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_CrearProceso", tipoProcesoParameter, tipoMensajeParameter);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Calico.common
             obj.maquina = Environment.MachineName;
             obj.process_id = Process.GetCurrentProcess().Id;
             obj.fecha_ultima = fechaUltima;
-            obj.@interface = interfaceName;
+            obj.interfaz = interfaceName;
 
             return obj;
         }
