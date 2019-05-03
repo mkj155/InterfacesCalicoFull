@@ -76,19 +76,20 @@ namespace InterfacesCalico.clientes
             // TODO AGREGAR LLAMADO A SU SP NumeroInterface
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
             int? tipoMensaje = 0;
-            serviceCliente.callProcedure(tipoProceso, tipoMensaje);
 
-            // Actualizamos el cliente
-            // VAMOS A EJECUTAR UNA PRUEBA DE CREACION, ACTUALIZACION Y BORRADO DE UN CLIENTE SOLO PARA VER FUNCIONALIDAD
-            // serviceCliente.examplePersist();
+            foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
+            {
+                int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
+                entry.Value.subc_proc_id = sub_proc_id;
+                serviceCliente.save(entry.Value);
+            }
 
-            // Agregamos datos faltantes
+            // Agregamos datos faltantes de la tabla de procesos
             process.fin = DateTime.Now;
             process.cant_lineas = 20;
             process.estado = Constants.ESTADO_OK;
 
             // Actualizamos la tabla BIANCHI_PROCESS
-            // service.save(process);
             service.update(process);
 
             return true;
@@ -138,6 +139,7 @@ namespace InterfacesCalico.clientes
             if (cliente == null)
             {
                 cliente = new tblSubCliente();
+                cliente.subc_codigoCliente = id;
                 dictionary.Add(id, cliente);
             }
             if (Constants.MLNM.Equals(key))
@@ -182,36 +184,6 @@ namespace InterfacesCalico.clientes
                 }
             }
         }
-
-        //private void iterateRowset(JToken rowset, String key, Dictionary<String, tblSubCliente> diccionary)
-        //{
-        //    String AN8 = String.Empty;
-        //    String value = String.Empty;
-
-        //    while (rowset.First != null)
-        //    {
-        //        AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
-        //        value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
-        //        addDataToDictionary(diccionary, AN8, value, key);
-        //        rowset.First.Remove();
-        //    }
-        //}
-            //while (rowset.First != null)
-            //{
-            //    if (Constants.MLNM.Equals(key))
-            //    {
-            //        AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
-            //        value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
-            //    }
-            //    else if (Constants.TAX.Equals(key))
-            //    {
-            //        AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
-            //        value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
-            //    }
-            //    addDataToDictionary(diccionary, AN8, value, key);
-            //    rowset.First.Remove();
-            //}
-        
 
     }
 }
