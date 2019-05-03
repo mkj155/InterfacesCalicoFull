@@ -1,5 +1,4 @@
-﻿using Calico;
-using Calico.clientes;
+﻿using Calico.clientes;
 using Calico.common;
 using Calico.Persistencia;
 using Nini.Config;
@@ -7,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using Calico.common.mapping;
+using Newtonsoft.Json.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace InterfacesCalico.clientes
 {
@@ -18,7 +18,7 @@ namespace InterfacesCalico.clientes
         private tblSubClienteService serviceCliente = new tblSubClienteService();
         private const String INTERFACE = Constants.INTERFACE_CLIENTES;
         private ClientesUtils clientesUtils = new ClientesUtils();
-        
+
         public bool process(IConfigSource source, DateTime? dateTime)
         {
             // Obtenemos la fecha
@@ -31,6 +31,7 @@ namespace InterfacesCalico.clientes
 
             bool existProcess = false;
             // Si el estado es "EN_CURSO" cancelamos la ejecucion
+            // SE ESTA CAMBIANDO LA VALIDACION POR LOCKEO, FALTA CODEO Y TEST
             if (/*!service.validarSiPuedoProcesar(INTERFACE)*/ false) {
                 Console.WriteLine("La interface " + INTERFACE + " se esta ejecutando actualmente.");
                 return false;
@@ -53,76 +54,149 @@ namespace InterfacesCalico.clientes
             }
 
             // Obtenemos las keys de las URLs del archivo externo
-            String[] URLkeys = source.Configs[INTERFACE+"."+Constants.URLS].GetKeys();
+            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
 
             // Preparamos la URL con sus parametros y llamamos al servicio
             String urlPath = String.Empty;
+            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
+            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+
+            // Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes
+            Dictionary<String, tblSubCliente> diccionary = new Dictionary<string, tblSubCliente>();
             foreach (String key in URLkeys)
             {
+                // Obtenemos las URLs
                 String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                // Armamos la URL
                 urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
-                // Obtenemos los datos
-                sendRequest(urlPath);
+                // obtenemos los datos y armamos los objetos Clientes
+                sendRequest(urlPath, user, pass, key, diccionary);
             }
 
-            // ACA DEBERIAMOS PROCESAR LA INTERFACE
-            // CREACION DE CLIENTES
-            // VALIDACIONES VARIAS SOBRE LOS DATOS CLIENTES
-            // ETC...
+            // TODO AGREGAR LLAMADO A SU SP NumeroInterface
+            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
+            int? tipoMensaje = 0;
+            int count = 0;
 
-            // llamamos a un STORE PROCEDURE de prueba
-            serviceCliente.callProcedure("Nombre");
+            foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
+            {
+                // Me está devolviendo el mismo ID, falta verificar porque ¿?
+                int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
+                // Si hacemos los insert pincha por constrains de PK ya que el ID devuelto por el SP siempre retorna lo mismo
+                entry.Value.subc_proc_id = sub_proc_id;
 
-            // Actualizamos el cliente
-            // VAMOS A EJECUTAR UNA PRUEBA DE CREACION, ACTUALIZACION Y BORRADO DE UN CLIENTE SOLO PARA VER FUNCIONALIDAD
-            serviceCliente.examplePersist();
+                // VERY_HARDCODE
+                // Me los pidio como valores obligatorios.
+                //entry.Value.subc_iva = "21";
+                //entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
+                //entry.Value.subc_domicilio = "Peron 2579";
+                //entry.Value.subc_localidad = "San Vicente";
+                //entry.Value.subc_codigoPostal = "1642";
+                //entry.Value.subc_areaMuelle = "Area17";
+                //entry.Value.subc_telefono = "1512349876";
+                serviceCliente.save(entry.Value);
+                count++;
+            }
 
-            // Agregamos datos faltantes
+            // Agregamos datos faltantes de la tabla de procesos
             process.fin = DateTime.Now;
-            process.cant_lineas = 20;
+            process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
 
             // Actualizamos la tabla BIANCHI_PROCESS
-            // service.save(process);
             service.update(process);
 
             return true;
         }
 
-        public void sendRequest(String url)
+        public void sendRequest(string url, String user, String pass, String key, Dictionary<String, tblSubCliente> diccionary)
         {
-            //var webRequest = WebRequest.Create(url);
-            //webRequest.Credentials = new NetworkCredential("userName", "password");
-            //using (var webResponse = webRequest.GetResponse())
-            //{
-            //    using (var responseStream = webResponse.GetResponseStream())
-            //    {
-            //        new StreamReader(responseStream).ReadToEnd();
-            //    }
-            //}
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            request.Credentials = new NetworkCredential("CALICO", "C4l1c02020");
+            List<Rowset> rowsetList = new List<Rowset>();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(user + ":" + pass));
+            request.Headers.Add("Authorization", "Basic " + encoded);
             request.Method = Constants.METHOD_GET;
-            /**/
-            //Uri myUri = new Uri(url);
-            //WebRequest myWebRequest = WebRequest.Create(myUri);
-            //HttpWebRequest myHttpWebRequest = (HttpWebRequest)myWebRequest;
-            //NetworkCredential myNetworkCredential = new NetworkCredential("CALICO", "C4l1c02020");
-            //CredentialCache myCredentialCache = new CredentialCache();
-            //myCredentialCache.Add(myUri, "Basic", myNetworkCredential);
-            //myHttpWebRequest.PreAuthenticate = true;
-            //myHttpWebRequest.Credentials = myCredentialCache;
-            //WebResponse myWebResponse = myWebRequest.GetResponse();
-            //Stream responseStream = myWebResponse.GetResponseStream();
-            //StreamReader myStreamReader = new StreamReader(responseStream, Encoding.Default);
-            //string pageContent = myStreamReader.ReadToEnd();
-            //responseStream.Close();
-            //myWebResponse.Close();
-            /**/
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            string body = reader.ReadToEnd();
-            System.Console.WriteLine(body);
+            try
+            {
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string myJsonString = reader.ReadToEnd();
+                simpleMapping(myJsonString, key, diccionary);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private String getHeaderJson(String key)
+        {
+            String header = String.Empty;
+
+            if (Constants.MLNM.Equals(key))
+            {
+                header = Constants.JSON_PREFIX + Constants.JSON_SUBFIX_MLNM;
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                header = Constants.JSON_PREFIX + Constants.JSON_SUBFIX_TAX;
+            }
+
+            return header;
+        }
+
+        private void addDataToDictionary(Dictionary<String, tblSubCliente> dictionary, String id, String data, String key)
+        {
+            tblSubCliente cliente = null;
+            dictionary.TryGetValue(id, out cliente);
+            if (cliente == null)
+            {
+                cliente = new tblSubCliente();
+                cliente.subc_codigoCliente = id;
+                dictionary.Add(id, cliente);
+            }
+            if (Constants.MLNM.Equals(key))
+            {
+                cliente.subc_razonSocial = data;
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                cliente.subc_cuit = data;
+            }
+        }
+
+        private void simpleMapping(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
+        {
+            var json = JObject.Parse(myJsonString);
+            var root = json[getHeaderJson(key)];
+            var data = root[Constants.JSON_TAG_DATA];
+            var gridData = data[Constants.JSON_TAG_GRIDDATA];
+            var rowset = gridData[Constants.JSON_TAG_ROWSET];
+
+            String AN8 = String.Empty;
+            String value = String.Empty;
+
+            if (Constants.MLNM.Equals(key))
+            {
+                while (rowset.First != null)
+                {
+                    AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
+                    value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
+                    addDataToDictionary(diccionary, AN8, value, key);
+                    rowset.First.Remove();
+                }
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                while (rowset.First != null)
+                {
+                    AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
+                    value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
+                    addDataToDictionary(diccionary, AN8, value, key);
+                    rowset.First.Remove();
+                }
+            }
         }
 
     }

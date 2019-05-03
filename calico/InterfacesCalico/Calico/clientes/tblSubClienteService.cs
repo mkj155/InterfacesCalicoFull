@@ -32,9 +32,9 @@ namespace Calico.clientes
             dao.update(obj);
         }
 
-        public void callProcedure(String nombre)
+        public int callProcedure(int? tipoProceso, int? tipoMensaje)
         {
-            dao.callProcedure(nombre);
+            return dao.callProcedure(tipoProceso, tipoMensaje);
         }
 
         public void examplePersist()

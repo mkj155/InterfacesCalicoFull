@@ -58,7 +58,7 @@ namespace Calico.common
                 //Complete the scope here to commit, otherwise it will rollback
                 //The table lock will be released after we exit the TransactionScope block
                 scope.Commit();
-
+                
                 return process;
             }
         }
@@ -79,17 +79,12 @@ namespace Calico.common
 
         public void update(BIANCHI_PROCESS obj)
         {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead }))
+            using (CalicoEntities context = new CalicoEntities())
             {
-                using (CalicoEntities context = new CalicoEntities())
-                {
-                    var result = context.BIANCHI_PROCESS.Find(obj.id);
-                    if (result == null) return;
-                    context.Entry(result).CurrentValues.SetValues(obj);
-                    context.SaveChanges();
-                }
-
-                scope.Complete();
+                var result = context.BIANCHI_PROCESS.Find(obj.id);
+                if (result == null) return;
+                context.Entry(result).CurrentValues.SetValues(obj);
+                context.SaveChanges();
             }
         }
 
@@ -98,7 +93,7 @@ namespace Calico.common
             using (CalicoEntities context = new CalicoEntities())
             {
                 var query = from BP in context.BIANCHI_PROCESS
-                            where BP.@interface == interfaz
+                            where BP.interfaz == interfaz
                             select BP;
                 var result = query.FirstOrDefault<BIANCHI_PROCESS>();
                 if (result == null) return false;
@@ -113,7 +108,7 @@ namespace Calico.common
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.interfaz == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
                 if (result == null) return true;
                 return !Constants.ESTADO_EN_CURSO.Equals(result.estado);
             }
@@ -123,7 +118,7 @@ namespace Calico.common
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                var result = context.BIANCHI_PROCESS.Where(bp => bp.@interface == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
+                var result = context.BIANCHI_PROCESS.Where(bp => bp.interfaz == interfaz).FirstOrDefault<BIANCHI_PROCESS>();
                 return result.fecha_ultima;
             }
         }

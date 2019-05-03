@@ -55,11 +55,11 @@ namespace Calico.clientes
             }
         }
 
-        public void callProcedure(String nombre)
+        public int callProcedure(int? tipoProceso, int? tipoMensaje)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                context.INTERFAZ_TESTPROCEDURE(nombre);
+                return context.INTERFAZ_CrearProceso(tipoProceso, tipoMensaje);
             }
         }
 

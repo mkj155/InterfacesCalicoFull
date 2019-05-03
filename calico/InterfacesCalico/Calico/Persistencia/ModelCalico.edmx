@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DB_INTERFAZModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="CalicoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BIANCHI_PROCESS">
           <Key>
             <PropertyRef Name="id" />
@@ -16,7 +16,7 @@
           <Property Name="estado" Type="varchar" MaxLength="50" />
           <Property Name="process_id" Type="numeric" Precision="18" Scale="0" />
           <Property Name="maquina" Type="varchar" MaxLength="50" />
-          <Property Name="interface" Type="varchar" MaxLength="50" />
+          <Property Name="interfaz" Type="varchar" MaxLength="50" />
           <Property Name="fecha_ultima" Type="datetime" />
         </EntityType>
         <EntityType Name="tblSubCliente">
@@ -38,10 +38,11 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
-        <Function Name="INTERFAZ_TESTPROCEDURE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Nombre" Type="varchar" Mode="In" />
+        <Function Name="INTERFAZ_CrearProceso" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="tipoProceso" Type="int" Mode="In" />
+          <Parameter Name="tipoMensaje" Type="int" Mode="In" />
         </Function>
-        <EntityContainer Name="DB_INTERFAZModelStoreContainer">
+        <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -49,7 +50,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="DB_INTERFAZModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="CalicoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="BIANCHI_PROCESS">
           <Key>
             <PropertyRef Name="id" />
@@ -61,7 +62,7 @@
           <Property Name="estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="process_id" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="maquina" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="interface" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="interfaz" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="fecha_ultima" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="tblSubCliente">
@@ -86,8 +87,9 @@
         <EntityContainer Name="CalicoEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" />
-          <FunctionImport Name="INTERFAZ_TESTPROCEDURE" ReturnType="Collection(DateTime)">
-            <Parameter Name="Nombre" Mode="In" Type="String" />
+          <FunctionImport Name="INTERFAZ_CrearProceso">
+            <Parameter Name="tipoProceso" Mode="In" Type="Int32" />
+            <Parameter Name="tipoMensaje" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -95,9 +97,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DB_INTERFAZModelStoreContainer" CdmEntityContainer="CalicoEntities">
+        <EntityContainerMapping StorageEntityContainer="CalicoModelStoreContainer" CdmEntityContainer="CalicoEntities">
           <EntitySetMapping Name="BIANCHI_PROCESS">
-            <EntityTypeMapping TypeName="DB_INTERFAZModel.BIANCHI_PROCESS">
+            <EntityTypeMapping TypeName="CalicoModel.BIANCHI_PROCESS">
               <MappingFragment StoreEntitySet="BIANCHI_PROCESS">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="inicio" ColumnName="inicio" />
@@ -106,13 +108,13 @@
                 <ScalarProperty Name="estado" ColumnName="estado" />
                 <ScalarProperty Name="process_id" ColumnName="process_id" />
                 <ScalarProperty Name="maquina" ColumnName="maquina" />
-                <ScalarProperty Name="interface" ColumnName="interface" />
+                <ScalarProperty Name="interfaz" ColumnName="interfaz" />
                 <ScalarProperty Name="fecha_ultima" ColumnName="fecha_ultima" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblSubCliente">
-            <EntityTypeMapping TypeName="DB_INTERFAZModel.tblSubCliente">
+            <EntityTypeMapping TypeName="CalicoModel.tblSubCliente">
               <MappingFragment StoreEntitySet="tblSubCliente">
                 <ScalarProperty Name="subc_proc_id" ColumnName="subc_proc_id" />
                 <ScalarProperty Name="subc_codigo" ColumnName="subc_codigo" />
@@ -131,7 +133,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="INTERFAZ_TESTPROCEDURE" FunctionName="DB_INTERFAZModel.Store.INTERFAZ_TESTPROCEDURE" />
+          <FunctionImportMapping FunctionImportName="INTERFAZ_CrearProceso" FunctionName="CalicoModel.Store.INTERFAZ_CrearProceso" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

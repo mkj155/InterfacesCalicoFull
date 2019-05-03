@@ -21,7 +21,7 @@ namespace Calico.Persistencia
         public string estado { get; set; }
         public Nullable<decimal> process_id { get; set; }
         public string maquina { get; set; }
-        public string @interface { get; set; }
+        public string interfaz { get; set; }
         public Nullable<System.DateTime> fecha_ultima { get; set; }
     }
 }

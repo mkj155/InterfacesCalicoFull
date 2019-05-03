@@ -54,6 +54,7 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="Nini, Version=1.1.0.0, Culture=neutral, PublicKeyToken=691faec150a7fa7b, processorArchitecture=MSIL">
       <HintPath>..\packages\Trove.Nini.1.1.0.0\lib\net20\Nini.dll</HintPath>
     </Reference>
@@ -62,6 +63,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +75,20 @@
     <Compile Include="clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
+    <Compile Include="common\mapping\columns.cs" />
+    <Compile Include="common\mapping\data.cs" />
+    <Compile Include="common\mapping\gridData.cs" />
+    <Compile Include="common\mapping\Root.cs" />
+    <Compile Include="common\mapping\Rowset.cs" />
+    <Compile Include="common\mapping\summary.cs" />
+    <Compile Include="common\Utils.cs" />
+    <Compile Include="clientes\tblSubClienteService.cs" />
+    <Compile Include="clientes\tblSubClienteDAO.cs" />
+    <Compile Include="common\BianchiProcessDAO.cs" />
+    <Compile Include="common\BianchiService.cs" />
+    <Compile Include="generic\Dao.cs" />
+    <Compile Include="clientes\InterfaceCliente.cs" />
+    <Compile Include="generic\InterfaceGeneric.cs" />
     <Compile Include="Persistencia\BIANCHI_PROCESS.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
@@ -94,14 +110,6 @@
     <Compile Include="Persistencia\tblSubCliente.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
-    <Compile Include="common\Utils.cs" />
-    <Compile Include="clientes\tblSubClienteService.cs" />
-    <Compile Include="clientes\tblSubClienteDAO.cs" />
-    <Compile Include="common\BianchiProcessDAO.cs" />
-    <Compile Include="common\BianchiService.cs" />
-    <Compile Include="generic\Dao.cs" />
-    <Compile Include="clientes\InterfaceCliente.cs" />
-    <Compile Include="generic\InterfaceGeneric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Run.cs" />
   </ItemGroup>
