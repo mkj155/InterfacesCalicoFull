@@ -99,18 +99,13 @@ namespace Calico.common
             return url;
         }
 
-        public static void blockRow(int id)
+        public static void blockRow(int id, String interfaz)
         {
             using (CalicoEntities entities = new CalicoEntities())
             using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
-                //Lock the table during this transaction
-                entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET interface = interface where id = " + id);
-
-                //Complete the scope here to commit, otherwise it will rollback
-                //The table lock will be released after we exit the TransactionScope block
+                entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET interfaz = '" + interfaz + "' where id = " + id);
                 scope.Commit();
-
             }
         }
 

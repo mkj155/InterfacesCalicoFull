@@ -84,7 +84,7 @@ namespace Calico.common
             using (CalicoEntities context = new CalicoEntities())
             {
                 var query = from BP in context.BIANCHI_PROCESS
-                            where BP.@interface == interfaz
+                            where BP.interfaz == interfaz
                             select BP;
 
                 return query.FirstOrDefault<BIANCHI_PROCESS>();

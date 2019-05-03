@@ -5,6 +5,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.json.simple.JSONObject;
+
+import com.calico.app.Utils;
+
 //http://localhost:8080/calico/rest/message/fecha
 @Path("/message")
 public class MessageRestService {
@@ -14,8 +18,8 @@ public class MessageRestService {
 	public Response printMessage(@PathParam("param") String msg) {
 
 		String result = "Restful example : " + msg;
-
-		return Response.status(200).entity(result).build();
+		String json = Utils.stringToJson();
+		return Response.status(200).entity(json).build();
 
 	}
 

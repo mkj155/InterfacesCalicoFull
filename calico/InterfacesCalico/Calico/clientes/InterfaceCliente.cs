@@ -11,6 +11,7 @@ using Calico.common.mapping;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace InterfacesCalico.clientes
 {
@@ -36,7 +37,7 @@ namespace InterfacesCalico.clientes
 
                     /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada,
                        quedara esperando hasta que se desbloquee */
-                    Utils.blockRow(process.id);
+                    Utils.blockRow(process.id, INTERFACE);
 
                     /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
                     entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
@@ -94,7 +95,7 @@ namespace InterfacesCalico.clientes
                         //entry.Value.subc_codigoPostal = "1642";
                         //entry.Value.subc_areaMuelle = "Area17";
                         //entry.Value.subc_telefono = "1512349876";
-                        serviceCliente.save(entry.Value);
+                        //serviceCliente.save(entry.Value);
                         count++;
                     }
 
