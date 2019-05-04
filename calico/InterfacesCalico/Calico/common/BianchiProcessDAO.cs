@@ -110,5 +110,15 @@ namespace Calico.common
             }
         }
 
+        public void blockRow(int id, String interfaz)
+        {
+            using (CalicoEntities entities = new CalicoEntities())
+            using (DbContextTransaction scope = entities.Database.BeginTransaction())
+            {
+                entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET interfaz = '" + interfaz + "' where id = " + id);
+                scope.Commit();
+            }
+        }
+
     }
 }

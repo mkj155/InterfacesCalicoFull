@@ -27,25 +27,43 @@ namespace InterfacesCalico.clientes
             using (CalicoEntities entities = new CalicoEntities())
             using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
+                    Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
+
                     DateTime lastTime;
                     BIANCHI_PROCESS process = service.findByName(INTERFACE);
 
                     /* Inicializamos los datos del proceso */
+                    Console.WriteLine("Inicializamos los datos del proceso");
+                    Console.WriteLine("Inicio : " + DateTime.Now);
+                    Console.WriteLine("Maquina: " + Environment.MachineName);
+                    Console.WriteLine("Process id: " + Process.GetCurrentProcess().Id);
                     process.inicio = DateTime.Now;
                     process.maquina = Environment.MachineName;
                     process.process_id = Process.GetCurrentProcess().Id;
 
                     /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada,
-                       quedara esperando hasta que se desbloquee */
-                    Utils.blockRow(process.id, INTERFACE);
+                    quedara esperando hasta que se desbloquee */
+                    Console.WriteLine("Se verifica que no haya otro proceso corriendo para la misma interfaz " + INTERFACE);
+                    Console.WriteLine("En caso de que haya, el proceso se bloqueara...");
+                    service.blockRow(process.id, INTERFACE);
 
                     /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
+                    Console.WriteLine("Se bloquea la row de la tabla Bianchi_process, para la interfaz " + INTERFACE);
                     entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
 
                     /* Obtenemos la fecha */
-                    if (dateTime == null){
+                    if (dateTime == null && process.fecha_ultima == null){
+                        Console.WriteLine("La fecha de la tabla bianchi_process es nula y " +
+                            "no se indico fecha como parametro, no se ejecutara el proceso");
+                        Console.WriteLine("Se libera la row de la tabla procesos");
+                        scope.Commit();
+                        return false;
+                    }else if(dateTime == null){
+                        Console.WriteLine("Se obtiene la ultima fecha enviada," +
+                            "desde Bianchi_process: " + process.fecha_ultima);
                         lastTime = Convert.ToDateTime(process.fecha_ultima);
-                    }else{
+                    }else {
+                        Console.WriteLine("Se obtiene la fecha desde los argumentos: " + dateTime);
                         lastTime = Convert.ToDateTime(dateTime);
                     }
 
@@ -54,23 +72,30 @@ namespace InterfacesCalico.clientes
 
                     /* Cargamos archivo con parametros propios para cada interface */
                     IConfigSource source = new IniConfigSource("calico_config.ini");
-                    // Obtenemos las keys de las URLs del archivo externo
+                    /* Obtenemos las keys de las URLs del archivo externo */
+                    Console.WriteLine("Se obtiene la configuración desde el archivo calico_config.ini");
                     String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
 
-                    // Preparamos la URL con sus parametros y llamamos al servicio
+                    /* Preparamos la URL con sus parametros y llamamos al servicio */
+                    Console.WriteLine("Se obtiene la configuración desde el archivo calico_config.ini");
                     String urlPath = String.Empty;
                     String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
                     String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+                    Console.WriteLine("User: " + user);
+                    Console.WriteLine("Password: " + pass);
 
-                    // Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes
+                    /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes */
                     Dictionary<String, tblSubCliente> diccionary = new Dictionary<string, tblSubCliente>();
                     foreach (String key in URLkeys)
                     {
                         // Obtenemos las URLs
                         String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                        Console.WriteLine("Url: " + url);
                         // Armamos la URL
                         urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
+                        Console.WriteLine("Armamos la url con los parametros: " + urlPath);
                         // obtenemos los datos y armamos los objetos Clientes
+                        Console.WriteLine("Llamada al servicio,obtenemos los datos y armamos los objetos " + INTERFACE);
                         sendRequest(urlPath, user, pass, key, diccionary);
                     }
 
@@ -78,8 +103,10 @@ namespace InterfacesCalico.clientes
                     int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
                     int? tipoMensaje = 0;
                     int count = 0;
+                    Console.WriteLine("Obtenemos el numero de interface desde el archivo de configuración: " + tipoProceso);
 
-                    foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
+                Console.WriteLine("Comienzo del proceso para completar el mapa de " + INTERFACE + ", y guardarlos en la base de datos");
+                foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
                     {
                         // Me está devolviendo el mismo ID, falta verificar porque ¿?
                         int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
@@ -98,17 +125,25 @@ namespace InterfacesCalico.clientes
                         //serviceCliente.save(entry.Value);
                         count++;
                     }
+                    Console.WriteLine("Finalizó el guardado de los " + INTERFACE + " en la base de datos");
 
-                    // Agregamos datos faltantes de la tabla de procesos
+                    /* Agregamos datos faltantes de la tabla de procesos */
+                    Console.WriteLine("Se agregan los datos faltantes a la tabla de procesos");
+                    Console.WriteLine("Fecha_fin: " + DateTime.Now);
+                    Console.WriteLine("Cantidad de lineas procesadas: " + count);
+                    Console.WriteLine("Estado: " + Constants.ESTADO_OK);
                     process.fin = DateTime.Now;
                     process.cant_lineas = count;
                     process.estado = Constants.ESTADO_OK;
 
                     /* Liberamos la row, para que la tome otra interface */
+                    Console.WriteLine("Se libera la row de la tabla procesos");
                     scope.Commit();
               
                     /* Actualizamos la tabla BIANCHI_PROCESS */
                     service.update(process);
+
+                    Console.WriteLine("Fin del proceso, para la interfaz " + INTERFACE);
 
                     return true;
                 

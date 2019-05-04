@@ -13,7 +13,6 @@ namespace InterfacesCalico
 
         static void Main(string[] args)
         {
-            
             // Validamos la existencia de argumentos
             String message = null;
             if (!Utils.validateArgs(args, out message))
@@ -41,8 +40,9 @@ namespace InterfacesCalico
             }
 
             // Procesamos
-            interfaz.process(dateTime);
-            Console.WriteLine("Termino exitosamente");
+            Boolean result = interfaz.process(dateTime);
+            if (result) Console.WriteLine("Finalizo satisfactoriamente");
+            else Console.WriteLine("Finalizo insatisfactoriamente");
         }
 
     }

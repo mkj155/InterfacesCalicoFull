@@ -81,5 +81,10 @@ namespace Calico.common
             /* Example delete Entity Framework */
             delete(obj.id);
         }
+
+        public void blockRow(int id, String interfaz)
+        {
+            dao.blockRow(id, interfaz);
+        }
     }
 }
