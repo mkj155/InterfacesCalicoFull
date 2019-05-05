@@ -100,6 +100,7 @@ namespace InterfacesCalico.clientes
                 // LLamando al SP por cada cliente
                 int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
                 int? tipoMensaje = 0;
+                int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
                 int count = 0;
                 int countError = 0;
                 Console.WriteLine("Codigo de interface: " + tipoProceso);
@@ -113,7 +114,7 @@ namespace InterfacesCalico.clientes
                     // VERY_HARDCODE
                     // Los pidio como valores obligatorios.
                     entry.Value.subc_iva = "21";
-                    entry.Value.subc_codigo = tipoProceso.ToString();
+                    entry.Value.subc_codigo = codigoCliente.ToString();
                     entry.Value.subc_domicilio = "Peron 2579";
                     entry.Value.subc_localidad = "San Vicente";
                     entry.Value.subc_codigoPostal = "1642";

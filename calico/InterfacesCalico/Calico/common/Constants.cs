@@ -7,6 +7,7 @@ namespace Calico.common
         // INTERFACES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_INTERFACE_CLIENTE = "NumeroInterface";
+        public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
