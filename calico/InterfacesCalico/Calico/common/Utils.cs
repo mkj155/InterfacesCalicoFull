@@ -142,7 +142,7 @@ namespace Calico.common
             return url;
         }
 
-        public static String sendRequest(string url, String user, String pass, String key, Dictionary<String, tblSubCliente> diccionary)
+        public static String sendRequest(string url, String user, String pass, String key)
         {
             String myJsonString = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);

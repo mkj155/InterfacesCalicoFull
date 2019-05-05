@@ -6,6 +6,7 @@ using Nini.Config;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Data.Entity.Validation;
 
 namespace InterfacesCalico.clientes
 {
@@ -88,9 +89,12 @@ namespace InterfacesCalico.clientes
                     urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
                     Console.WriteLine("Url: " + urlPath);
                     // Obtenemos los datos
-                    String myJsonString = Utils.sendRequest(urlPath, user, pass, key, diccionary);
+                    String myJsonString = Utils.sendRequest(urlPath, user, pass, key);
                     // Armamos los objetos Clientes
-                    clientesUtils.mappingCliente(myJsonString, key, diccionary);
+                    if (!String.Empty.Equals(myJsonString))
+                    {
+                        clientesUtils.mappingCliente(myJsonString, key, diccionary);
+                    }
                 }
 
                 // LLamando al SP por cada cliente
@@ -102,13 +106,14 @@ namespace InterfacesCalico.clientes
                 Console.WriteLine("Llamando al SP por cada cliente");
                 foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
                 {
+                    Console.WriteLine("Procesando cliente: " + entry.Value.subc_codigoCliente);
                     int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
                     entry.Value.subc_proc_id = sub_proc_id;
 
                     // VERY_HARDCODE
                     // Los pidio como valores obligatorios.
                     entry.Value.subc_iva = "21";
-                    entry.Value.subc_codigo = entry.Value.subc_codigoCliente;
+                    entry.Value.subc_codigo = tipoProceso.ToString();
                     entry.Value.subc_domicilio = "Peron 2579";
                     entry.Value.subc_localidad = "San Vicente";
                     entry.Value.subc_codigoPostal = "1642";
@@ -118,9 +123,20 @@ namespace InterfacesCalico.clientes
                     {
                         serviceCliente.save(entry.Value);
                     }
-                    catch (Exception ex)
+                    catch (DbEntityValidationException ex)
                     {
                         Console.Error.WriteLine("Error al agregar cliente: " + entry.Value.subc_codigoCliente);
+                        foreach (var errors in ex.EntityValidationErrors)
+                        {
+                            foreach (var validationError in errors.ValidationErrors)
+                            {
+                                string errorMessage = validationError.ErrorMessage;
+                                Console.Error.WriteLine(errorMessage);
+                            }
+                        }
+                        countError++;
+                    } catch (Exception ex) {
+                        Console.Error.WriteLine("Error desconocido al agregar cliente: " + entry.Value.subc_codigoCliente);
                         Console.Error.WriteLine(ex.Message);
                         countError++;
                     }
