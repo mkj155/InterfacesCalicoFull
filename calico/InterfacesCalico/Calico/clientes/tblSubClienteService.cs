@@ -1,5 +1,4 @@
 ﻿using Calico.Persistencia;
-using System;
 using System.Data.Entity;
 
 namespace Calico.clientes

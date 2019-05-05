@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Calico.Persistencia;
+using System;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calico
 {
-    interface Dao<T> where T : class
+    public interface Dao<T> where T : class
     {
         DbSet<T> findAll();
         void save(T obj);

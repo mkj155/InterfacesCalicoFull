@@ -10,7 +10,6 @@ namespace InterfacesCalico
 {
     public class Run
     {
-
         static void Main(string[] args)
         {
             // Validamos la existencia de argumentos
@@ -23,9 +22,10 @@ namespace InterfacesCalico
 
             // Se loguea si un argumento es "/l"
             Utils.instanceConsole(args);
+            Console.WriteLine("Logueo activado");
 
             // Validacion de fecha
-            DateTime? dateTime = Utils.getDate(args);
+            DateTime ? dateTime = Utils.getDate(args);
             if (dateTime == null)
             {
                 Console.WriteLine("Fecha no indicada se tomará de la tabla BIANCHI_PROCESS");
@@ -35,14 +35,12 @@ namespace InterfacesCalico
             InterfaceGeneric interfaz = (args != null && args.Length > 0) ? InterfaceFactory.getInterfaz(args[0]) : null;
             if (interfaz == null)
             {
-                Console.Error.WriteLine("interface inexistente");
+                Console.Error.WriteLine("Interface inexistente");
                 return;
             }
 
             // Procesamos
-            Boolean result = interfaz.process(dateTime);
-            if (result) Console.WriteLine("Finalizo satisfactoriamente");
-            else Console.WriteLine("Finalizo insatisfactoriamente");
+            interfaz.process(dateTime);
         }
 
     }
