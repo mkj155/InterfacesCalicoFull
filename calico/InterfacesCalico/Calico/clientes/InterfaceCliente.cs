@@ -36,7 +36,7 @@ namespace InterfacesCalico.clientes
                 Console.WriteLine("Process_id: " + process.process_id);
 
                 /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada, quedara esperando hasta que se desbloquee */
-                Console.WriteLine("verificar que no haya otro proceso corriendo para la misma interfaz: " + INTERFACE);
+                Console.WriteLine("Verificamos que no haya otro proceso corriendo para la misma interfaz: " + INTERFACE);
                 service.blockRow(process.id, INTERFACE);
 
                 /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
@@ -97,8 +97,9 @@ namespace InterfacesCalico.clientes
                 int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
                 int? tipoMensaje = 0;
                 int count = 0;
+                int countError = 0;
                 Console.WriteLine("Codigo de interface: " + tipoProceso);
-                Console.WriteLine("LLamando al SP por cada cliente");
+                Console.WriteLine("Llamando al SP por cada cliente");
                 foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
                 {
                     int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
@@ -121,11 +122,13 @@ namespace InterfacesCalico.clientes
                     {
                         Console.Error.WriteLine("Error al agregar cliente: " + entry.Value.subc_codigoCliente);
                         Console.Error.WriteLine(ex.Message);
+                        countError++;
                     }
                     count++;
                 }
 
                 Console.WriteLine("Finalizó el proceso de actualización de clientes");
+                Console.WriteLine(countError + " Clientes no pudieron ser procesados");
 
                 /* Agregamos datos faltantes de la tabla de procesos */
                 Console.WriteLine("Preparamos la actualizamos de BIANCHI_PROCESS");
