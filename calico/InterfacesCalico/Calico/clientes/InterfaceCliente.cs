@@ -27,6 +27,13 @@ namespace InterfacesCalico.clientes
                 DateTime lastTime;
                 BIANCHI_PROCESS process = service.findByName(INTERFACE);
 
+                if (process == null)
+                {
+                    Console.WriteLine("No hay configuracion en BIANCHI_PROCESS para la interface: " + INTERFACE);
+                    Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
+                    return false;
+                }
+
                 /* Inicializamos los datos del proceso */
                 Console.WriteLine("Inicializando los datos del proceso");
                 process.inicio = DateTime.Now;
@@ -94,6 +101,13 @@ namespace InterfacesCalico.clientes
                     if (!String.Empty.Equals(myJsonString))
                     {
                         clientesUtils.mappingCliente(myJsonString, key, diccionary);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Fallo el llamado al Rest Service");
+                        Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
+                        scope.Commit();
+                        return false;
                     }
                 }
 
