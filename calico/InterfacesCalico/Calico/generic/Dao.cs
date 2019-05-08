@@ -6,11 +6,11 @@ namespace Calico
 {
     public interface Dao<T> where T : class
     {
-        DbSet<T> findAll();
-        void save(T obj);
-        void delete(int id);
-        void update(T obj);
-        T findById(int id);
+        DbSet<T> FindAll();
+        void Save(T obj);
+        void Delete(int id);
+        void Update(T obj);
+        T FindById(int id);
 
     }
 }

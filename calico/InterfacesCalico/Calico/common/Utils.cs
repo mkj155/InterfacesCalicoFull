@@ -14,7 +14,7 @@ namespace Calico.common
         /// <param name="date"></param>
         /// <param name="format"></param>
         /// <returns>TRUE si la fecha esta en un formato correcto</returns>
-        private static Boolean validateDate(String date, String format)
+        private static Boolean ValidateDate(String date, String format)
         {
             try {
                 DateTime.ParseExact(date, format, null);
@@ -30,7 +30,7 @@ namespace Calico.common
         /// <param name="date"></param>
         /// <param name="format"></param>
         /// <returns>DateTime con la fecha pasada como String como parametro</returns>
-        private static DateTime parseDate(String date, String format)
+        private static DateTime ParseDate(String date, String format)
         {
             return DateTime.ParseExact(date, format, null);
         }
@@ -40,7 +40,7 @@ namespace Calico.common
         /// </summary>
         /// <param name="possibleDate"></param>
         /// <returns>Retorna la fecha en formato String "YYY/MM/DD"</returns>
-        private static String formatDate(String possibleDate)
+        private static String FormatDate(String possibleDate)
         {
             String date = String.Empty;
             if (possibleDate.Length == 8)
@@ -58,7 +58,7 @@ namespace Calico.common
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns>Retorna la fecha en String formato "YYYY/MM/DD"</returns>
-        public static String convertDateTimeInString(DateTime dateTime)
+        public static String ConvertDateTimeInString(DateTime dateTime)
         {
             String year = dateTime.Year.ToString("D4");
             String month = dateTime.Month.ToString("D2");
@@ -71,17 +71,17 @@ namespace Calico.common
         /// </summary>
         /// <param name="args"></param>
         /// <returns>Retorna la fecha (si es posible) segun el argumento ingresado por el usuario o NULL si no está en un formato correcto</returns>
-        public static DateTime? getDate(string[] args)
+        public static DateTime? GetDate(string[] args)
         {
             DateTime? dateTime = null;
             if (args != null && args.Length >= 2)
             {
                 foreach (String arg in args)
                 {
-                    String date = formatDate(arg);
-                    if (date.Length > 0 && validateDate(date, "yyyy/MM/dd"))
+                    String date = FormatDate(arg);
+                    if (date.Length > 0 && ValidateDate(date, "yyyy/MM/dd"))
                     {
-                        return parseDate(date, "yyyy/MM/dd");
+                        return ParseDate(date, "yyyy/MM/dd");
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace Calico.common
         /// <param name="args"></param>
         /// <param name="message"></param>
         /// <returns>TRUE si por lo menos hay un argumento en la ejecucion</returns>
-        public static bool validateArgs(string[] args, out String message)
+        public static bool ValidateArgs(string[] args, out String message)
         {
             bool isValid = true;
             message = String.Empty;
@@ -110,7 +110,7 @@ namespace Calico.common
         /// Instancia o NULLEA consola logueo
         /// </summary>
         /// <param name="args"></param>
-        public static void instanceConsole(string[] args)
+        public static void InstanceConsole(string[] args)
         {
             bool mustWrite = false;
             if (args != null && args.Length >= 2)
@@ -132,7 +132,7 @@ namespace Calico.common
         /// <param name="urlParam"></param>
         /// <param name="parameters"></param>
         /// <returns>Retorna un String con la URL hidrata con parametros</returns>
-        public static String buildUrl(String urlParam, Dictionary<String, String> parameters)
+        public static String BuildUrl(String urlParam, Dictionary<String, String> parameters)
         {
             String url = String.Empty;
             foreach (KeyValuePair<string, string> entry in parameters)
@@ -142,7 +142,7 @@ namespace Calico.common
             return url;
         }
 
-        public static String sendRequest(string url, String user, String pass, String key)
+        public static String SendRequest(string url, String user, String pass, String key)
         {
             String myJsonString = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);

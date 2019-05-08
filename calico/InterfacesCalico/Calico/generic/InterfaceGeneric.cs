@@ -4,6 +4,6 @@ namespace InterfacesCalico
 {
     public interface InterfaceGeneric
     {
-        bool process(DateTime? dateTime);
+        bool Process(DateTime? dateTime);
     }
 }

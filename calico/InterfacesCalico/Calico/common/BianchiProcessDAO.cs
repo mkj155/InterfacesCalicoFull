@@ -7,7 +7,7 @@ namespace Calico.common
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {
-        public void delete(int id)
+        public void Delete(int id)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -18,7 +18,7 @@ namespace Calico.common
             }
         }
 
-        public DbSet<BIANCHI_PROCESS> findAll()
+        public DbSet<BIANCHI_PROCESS> FindAll()
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -26,7 +26,7 @@ namespace Calico.common
             }
         }
 
-        public BIANCHI_PROCESS findById(int id)
+        public BIANCHI_PROCESS FindById(int id)
         {
             using (CalicoEntities entities = new CalicoEntities())
             {
@@ -34,7 +34,7 @@ namespace Calico.common
             }
         }
 
-        public void save(BIANCHI_PROCESS obj)
+        public void Save(BIANCHI_PROCESS obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -43,7 +43,7 @@ namespace Calico.common
             }
         }
 
-        public void update(BIANCHI_PROCESS obj)
+        public void Update(BIANCHI_PROCESS obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {

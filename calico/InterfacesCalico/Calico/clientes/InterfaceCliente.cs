@@ -18,14 +18,14 @@ namespace InterfacesCalico.clientes
         private tblSubClienteService serviceCliente = new tblSubClienteService();
         private ClientesUtils clientesUtils = new ClientesUtils();
         
-        public bool process(DateTime? dateTime)
+        public bool Process(DateTime? dateTime)
         {
             using (CalicoEntities entities = new CalicoEntities())
             using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
                 Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
                 DateTime lastTime;
-                BIANCHI_PROCESS process = service.findByName(INTERFACE);
+                BIANCHI_PROCESS process = service.FindByName(INTERFACE);
 
                 if (process == null)
                 {
@@ -38,14 +38,14 @@ namespace InterfacesCalico.clientes
                 Console.WriteLine("Inicializando los datos del proceso");
                 process.inicio = DateTime.Now;
                 process.maquina = Environment.MachineName;
-                process.process_id = Process.GetCurrentProcess().Id;
+                process.process_id = System.Diagnostics.Process.GetCurrentProcess().Id;
                 Console.WriteLine("Inicio: " + process.inicio);
                 Console.WriteLine("Maquina: " + process.maquina);
                 Console.WriteLine("Process_id: " + process.process_id);
 
                 /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada, quedara esperando hasta que se desbloquee */
                 Console.WriteLine("Verificamos que no haya otro proceso corriendo para la misma interfaz: " + INTERFACE);
-                service.blockRow(process.id, INTERFACE);
+                service.BlockRow(process.id, INTERFACE);
 
                 /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
                 Console.WriteLine("Bloqueamos la row de BIANCHI_PROCESS, para la interfaz " + INTERFACE);
@@ -71,7 +71,7 @@ namespace InterfacesCalico.clientes
                 }
 
                 /* Convierto DateTime a String */
-                String lastStringTime = Utils.convertDateTimeInString(lastTime);
+                String lastStringTime = Utils.ConvertDateTimeInString(lastTime);
 
                 /* Cargamos archivo con parametros propios para cada interface */
                 Console.WriteLine("Cargamos archivo de configuracion");
@@ -93,14 +93,14 @@ namespace InterfacesCalico.clientes
                     // Obtenemos las URLs
                     String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
                     // Armamos la URL
-                    urlPath = clientesUtils.buildUrl(url, key, lastStringTime);
+                    urlPath = clientesUtils.BuildUrl(url, key, lastStringTime);
                     Console.WriteLine("Url: " + urlPath);
                     // Obtenemos los datos
-                    String myJsonString = Utils.sendRequest(urlPath, user, pass, key);
+                    String myJsonString = Utils.SendRequest(urlPath, user, pass, key);
                     // Armamos los objetos Clientes
                     if (!String.Empty.Equals(myJsonString))
                     {
-                        clientesUtils.mappingCliente(myJsonString, key, diccionary);
+                        clientesUtils.MappingCliente(myJsonString, key, diccionary);
                     }
                     else
                     {
@@ -122,7 +122,7 @@ namespace InterfacesCalico.clientes
                 foreach (KeyValuePair<string, tblSubCliente> entry in diccionary)
                 {
                     Console.WriteLine("Procesando cliente: " + entry.Value.subc_codigoCliente);
-                    int sub_proc_id = serviceCliente.callProcedure(tipoProceso, tipoMensaje);
+                    int sub_proc_id = serviceCliente.CallProcedure(tipoProceso, tipoMensaje);
                     entry.Value.subc_proc_id = sub_proc_id;
 
                     // VERY_HARDCODE
@@ -136,7 +136,7 @@ namespace InterfacesCalico.clientes
                     entry.Value.subc_telefono = "1512349876";
                     try
                     {
-                        serviceCliente.save(entry.Value);
+                        serviceCliente.Save(entry.Value);
                     }
                     catch (DbEntityValidationException ex)
                     {
@@ -176,7 +176,7 @@ namespace InterfacesCalico.clientes
 
                 /* Actualizamos la tabla BIANCHI_PROCESS */
                 Console.WriteLine("Actualizamos BIANCHI_PROCESS");
-                service.update(process);
+                service.Update(process);
 
                 Console.WriteLine("Fin del proceso, para la interfaz " + INTERFACE);
                 Console.WriteLine("Proceso Finalizado correctamente");

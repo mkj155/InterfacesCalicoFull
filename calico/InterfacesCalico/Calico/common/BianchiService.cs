@@ -8,38 +8,38 @@ namespace Calico.common
     class BianchiService
     {
         BianchiProcessDAO dao = new BianchiProcessDAO();
-        public void delete(int id)
+        public void Delete(int id)
         {
-            dao.delete(id);
+            dao.Delete(id);
         }
 
-        public DbSet<BIANCHI_PROCESS> findAll()
+        public DbSet<BIANCHI_PROCESS> FindAll()
         {
-            return dao.findAll();
+            return dao.FindAll();
         }
 
-        public BIANCHI_PROCESS findById(int id)
+        public BIANCHI_PROCESS FindById(int id)
         {
-            return dao.findById(id);
+            return dao.FindById(id);
         }
 
-        public void save(BIANCHI_PROCESS obj)
+        public void Save(BIANCHI_PROCESS obj)
         {
-            dao.save(obj);
+            dao.Save(obj);
         }
 
-        public void update(BIANCHI_PROCESS obj)
+        public void Update(BIANCHI_PROCESS obj)
         {
-            dao.update(obj);
+            dao.Update(obj);
         }
 
-        public DateTime? getProcessDate(string interfaz)
+        public DateTime? GetProcessDate(string interfaz)
         {
             return dao.getProcessDate(interfaz);
         }
 
 
-        public BIANCHI_PROCESS getProcessInit(DateTime? fechaUltima, String interfaceName)
+        public BIANCHI_PROCESS GetProcessInit(DateTime? fechaUltima, String interfaceName)
         {
             BIANCHI_PROCESS obj = new BIANCHI_PROCESS();
             obj.inicio = DateTime.Now;
@@ -51,38 +51,39 @@ namespace Calico.common
             return obj;
         }
 
-        public bool updateEnCurso(string interfaz)
+        public bool UpdateEnCurso(string interfaz)
         {
             return dao.updateEnCurso(interfaz);
         }
-        public bool validarSiPuedoProcesar(string interfaz)
+
+        public bool ValidarSiPuedoProcesar(string interfaz)
         {
             return dao.validarSiPuedoProcesar(interfaz);
         }
 
-        public BIANCHI_PROCESS findByName(String interfaz)
+        public BIANCHI_PROCESS FindByName(String interfaz)
         {
             return dao.findByName(interfaz);
         }
 
-        public void examplePersist()
+        public void ExamplePersist()
         {
-            BIANCHI_PROCESS obj = getProcessInit(DateTime.Now, "Cliente");
+            BIANCHI_PROCESS obj = GetProcessInit(DateTime.Now, "Cliente");
 
             /* Example save Entity Framework */
-            save(obj);
+            Save(obj);
             /* Example find by id Entity Framework */
-            BIANCHI_PROCESS process = findById(obj.id);
+            BIANCHI_PROCESS process = FindById(obj.id);
             /* Example update Entity Framework */
             obj.cant_lineas = 50;
             obj.fin = DateTime.Now;
             obj.estado = "ok";
-            update(obj);
+            Update(obj);
             /* Example delete Entity Framework */
-            delete(obj.id);
+            Delete(obj.id);
         }
 
-        public void blockRow(int id, String interfaz)
+        public void BlockRow(int id, String interfaz)
         {
             dao.blockRow(id, interfaz);
         }

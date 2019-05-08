@@ -6,37 +6,37 @@ namespace Calico.clientes
     class tblSubClienteService
     {
         tblSubClienteDAO dao = new tblSubClienteDAO();
-        public void delete(int id)
+        public void Delete(int id)
         {
-            dao.delete(id);
+            dao.Delete(id);
         }
 
-        public DbSet<tblSubCliente> findAll()
+        public DbSet<tblSubCliente> FindAll()
         {
-            return dao.findAll();
+            return dao.FindAll();
         }
 
-        public tblSubCliente findById(int id)
+        public tblSubCliente FindById(int id)
         {
-            return dao.findById(id);
+            return dao.FindById(id);
         }
 
-        public void save(tblSubCliente obj)
+        public void Save(tblSubCliente obj)
         {
-            dao.save(obj);
+            dao.Save(obj);
         }
 
-        public void update(tblSubCliente obj)
+        public void Update(tblSubCliente obj)
         {
-            dao.update(obj);
+            dao.Update(obj);
         }
 
-        public int callProcedure(int? tipoProceso, int? tipoMensaje)
+        public int CallProcedure(int? tipoProceso, int? tipoMensaje)
         {
-            return dao.callProcedure(tipoProceso, tipoMensaje);
+            return dao.CallProcedure(tipoProceso, tipoMensaje);
         }
 
-        public void examplePersist()
+        public void ExamplePersist()
         {
             tblSubCliente obj = new tblSubCliente();
 
@@ -55,11 +55,11 @@ namespace Calico.clientes
             obj.subc_iva = "17";
             obj.subc_correoElectronico = "mkj155@gmail.com";
 
-            save(obj);
-            obj = findById(obj.subc_proc_id);
+            Save(obj);
+            obj = FindById(obj.subc_proc_id);
             obj.subc_esProveedor = false;
-            update(obj);
-            delete(obj.subc_proc_id);
+            Update(obj);
+            Delete(obj.subc_proc_id);
         }
     }
 }

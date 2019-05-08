@@ -7,7 +7,7 @@ namespace Calico.common
     {
         private InterfaceFactory() { }
 
-        public static InterfaceGeneric getInterfaz(string interfaceName)
+        public static InterfaceGeneric GetInterfaz(string interfaceName)
         {
             InterfaceGeneric interfaz = null;
             if (Constants.INTERFACE_CLIENTES.Equals(interfaceName))

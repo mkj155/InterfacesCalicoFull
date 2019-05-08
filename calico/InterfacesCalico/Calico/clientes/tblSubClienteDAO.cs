@@ -6,7 +6,7 @@ namespace Calico.clientes
 {
     class tblSubClienteDAO : Dao<tblSubCliente>
     {
-        public void delete(int id)
+        public void Delete(int id)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -17,7 +17,7 @@ namespace Calico.clientes
             }
         }
 
-        public DbSet<tblSubCliente> findAll()
+        public DbSet<tblSubCliente> FindAll()
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -27,7 +27,7 @@ namespace Calico.clientes
             }
         }
 
-        public tblSubCliente findById(int id)
+        public tblSubCliente FindById(int id)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -35,7 +35,7 @@ namespace Calico.clientes
             }
         }
 
-        public void save(tblSubCliente obj)
+        public void Save(tblSubCliente obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -44,7 +44,7 @@ namespace Calico.clientes
             }
         }
 
-        public void update(tblSubCliente obj)
+        public void Update(tblSubCliente obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -55,7 +55,7 @@ namespace Calico.clientes
             }
         }
 
-        public int callProcedure(int? tipoProceso, int? tipoMensaje)
+        public int CallProcedure(int? tipoProceso, int? tipoMensaje)
         {
             using (CalicoEntities context = new CalicoEntities())
             {

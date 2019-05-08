@@ -11,25 +11,25 @@ namespace Calico.clientes
 {
     class ClientesUtils
     {
-        public String buildUrl(String urlParam, String key, String fecha)
+        public String BuildUrl(String urlParam, String key, String fecha)
         {
             String url = String.Empty;
             Dictionary<String, String> dictionary = new Dictionary<string, string>();
             if (Constants.MLNM.Equals(key))
             {
                 dictionary.Add(Constants.PARAM_FECHA, fecha);
-                url = Utils.buildUrl(urlParam, dictionary);
+                url = Utils.BuildUrl(urlParam, dictionary);
             }
             else if (Constants.TAX.Equals(key))
             {
                 dictionary.Add(Constants.PARAM_FECHA, fecha);
-                url = Utils.buildUrl(urlParam, dictionary);
+                url = Utils.BuildUrl(urlParam, dictionary);
             }
 
             return url;
         }
 
-        private String getHeaderJson(String key)
+        private String GetHeaderJson(String key)
         {
             String header = String.Empty;
 
@@ -45,7 +45,7 @@ namespace Calico.clientes
             return header;
         }
 
-        private void addDataToDictionary(Dictionary<String, tblSubCliente> dictionary, String id, String data, String key)
+        private void AddDataToDictionary(Dictionary<String, tblSubCliente> dictionary, String id, String data, String key)
         {
             tblSubCliente cliente = null;
             dictionary.TryGetValue(id, out cliente);
@@ -65,10 +65,10 @@ namespace Calico.clientes
             }
         }
 
-        public void mappingCliente(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
+        public void MappingCliente(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
         {
             var json = JObject.Parse(myJsonString);
-            var root = json[getHeaderJson(key)];
+            var root = json[GetHeaderJson(key)];
             var data = root[Constants.JSON_TAG_DATA];
             var gridData = data[Constants.JSON_TAG_GRIDDATA];
             var rowset = gridData[Constants.JSON_TAG_ROWSET];
@@ -82,7 +82,7 @@ namespace Calico.clientes
                 {
                     AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
                     value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
-                    addDataToDictionary(diccionary, AN8, value, key);
+                    AddDataToDictionary(diccionary, AN8, value, key);
                     rowset.First.Remove();
                 }
             }
@@ -92,7 +92,7 @@ namespace Calico.clientes
                 {
                     AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
                     value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
-                    addDataToDictionary(diccionary, AN8, value, key);
+                    AddDataToDictionary(diccionary, AN8, value, key);
                     rowset.First.Remove();
                 }
             }
