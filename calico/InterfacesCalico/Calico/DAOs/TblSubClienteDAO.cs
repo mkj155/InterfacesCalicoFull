@@ -1,10 +1,9 @@
-﻿using Calico.Persistencia;
-using System;
+﻿using Calico.persistencia;
 using System.Data.Entity;
 
-namespace Calico.clientes
+namespace Calico.DAOs
 {
-    class tblSubClienteDAO : Dao<tblSubCliente>
+    class TblSubClienteDAO : Dao<tblSubCliente>
     {
         public void Delete(int id)
         {

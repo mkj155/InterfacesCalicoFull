@@ -7,6 +7,9 @@
       <Diagram DiagramId="326c45d3a10d43e29776ad25714a0339" Name="Diagram1">
         <EntityTypeShape EntityType="CalicoModel.BIANCHI_PROCESS" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CalicoModel.tblSubCliente" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CalicoModel.tblRecepcion" Width="1.5" PointX="5.375" PointY="1" />
+        <EntityTypeShape EntityType="CalicoModel.tblRecepcionDetalle" Width="1.5" PointX="7.625" PointY="1.125" />
+        <AssociationConnector Association="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

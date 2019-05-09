@@ -1,9 +1,10 @@
-﻿using Calico.Persistencia;
+﻿using Calico.DAOs;
+using Calico.persistencia;
 using System;
 using System.Data.Entity;
 using System.Diagnostics;
 
-namespace Calico.common
+namespace Calico.service
 {
     class BianchiService
     {

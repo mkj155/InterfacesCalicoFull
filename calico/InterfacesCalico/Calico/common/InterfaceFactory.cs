@@ -1,5 +1,5 @@
-﻿using InterfacesCalico;
-using InterfacesCalico.clientes;
+﻿using Calico.interfaces.clientes;
+using InterfacesCalico.generic;
 
 namespace Calico.common
 {
