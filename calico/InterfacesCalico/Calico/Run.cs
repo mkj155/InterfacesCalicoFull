@@ -1,10 +1,6 @@
-﻿using Calico;
-using Calico.common;
-using Calico.Persistencia;
-using Nini.Config;
+﻿using Calico.common;
+using InterfacesCalico.generic;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace InterfacesCalico
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InterfacesCalico
+namespace InterfacesCalico.generic
 {
     public interface InterfaceGeneric
     {

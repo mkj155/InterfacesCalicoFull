@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="CalicoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="CalicoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BIANCHI_PROCESS">
           <Key>
             <PropertyRef Name="id" />
@@ -18,6 +18,41 @@
           <Property Name="maquina" Type="varchar" MaxLength="50" />
           <Property Name="interfaz" Type="varchar" MaxLength="50" />
           <Property Name="fecha_ultima" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tblRecepcion">
+          <Key>
+            <PropertyRef Name="recc_proc_id" />
+          </Key>
+          <Property Name="recc_proc_id" Type="int" Nullable="false" />
+          <Property Name="recc_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="recc_almacen" Type="char" MaxLength="3" />
+          <Property Name="recc_trec_codigo" Type="char" MaxLength="3" />
+          <Property Name="recc_numero" Type="char" MaxLength="10" />
+          <Property Name="recc_fechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="recc_fechaEntrega" Type="datetime" Nullable="false" />
+          <Property Name="recc_proveedor" Type="char" MaxLength="10" />
+          <Property Name="recc_contacto" Type="char" MaxLength="200" />
+          <Property Name="recc_despacho" Type="char" MaxLength="20" />
+          <Property Name="recc_ordenCompra" Type="char" MaxLength="20" />
+          <Property Name="recc_motivoDevolucion" Type="char" MaxLength="6" />
+          <Property Name="recc_observaciones" Type="char" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="tblRecepcionDetalle">
+          <Key>
+            <PropertyRef Name="recd_id" />
+          </Key>
+          <Property Name="recd_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="recd_proc_id" Type="int" Nullable="false" />
+          <Property Name="recd_linea" Type="numeric" Precision="9" Scale="0" Nullable="false" />
+          <Property Name="recd_compania" Type="char" MaxLength="3" />
+          <Property Name="recd_producto" Type="char" MaxLength="15" />
+          <Property Name="recd_lote" Type="char" MaxLength="15" />
+          <Property Name="recd_fechaVencimiento" Type="datetime" Nullable="false" />
+          <Property Name="recd_serie" Type="char" MaxLength="15" />
+          <Property Name="recd_cantidad" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="recd_precioUnitario" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="recd_lineaPedido" Type="numeric" Precision="5" Scale="0" Nullable="false" />
+          <Property Name="recd_numeroPedido" Type="char" MaxLength="18" Nullable="false" />
         </EntityType>
         <EntityType Name="tblSubCliente">
           <Key>
@@ -38,16 +73,33 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
+        <Association Name="FK_tblRecepcionDetalle_tblRecepcion">
+          <End Role="tblRecepcion" Type="Self.tblRecepcion" Multiplicity="1" />
+          <End Role="tblRecepcionDetalle" Type="Self.tblRecepcionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblRecepcion">
+              <PropertyRef Name="recc_proc_id" />
+            </Principal>
+            <Dependent Role="tblRecepcionDetalle">
+              <PropertyRef Name="recd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="INTERFAZ_CrearProceso" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tipoProceso" Type="int" Mode="In" />
           <Parameter Name="tipoMensaje" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblRecepcionDetalle_tblRecepcion" Association="Self.FK_tblRecepcionDetalle_tblRecepcion">
+            <End Role="tblRecepcion" EntitySet="tblRecepcion" />
+            <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="CalicoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -91,7 +143,62 @@
             <Parameter Name="tipoProceso" Mode="In" Type="Int32" />
             <Parameter Name="tipoMensaje" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="tblRecepcion" EntityType="CalicoModel.tblRecepcion" />
+          <EntitySet Name="tblRecepcionDetalle" EntityType="CalicoModel.tblRecepcionDetalle" />
+          <AssociationSet Name="FK_tblRecepcionDetalle_tblRecepcion" Association="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion">
+            <End Role="tblRecepcion" EntitySet="tblRecepcion" />
+            <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="tblRecepcion">
+          <Key>
+            <PropertyRef Name="recc_proc_id" />
+          </Key>
+          <Property Name="recc_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="recc_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="recc_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="recc_trec_codigo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="recc_numero" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="recc_fechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="recc_fechaEntrega" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="recc_proveedor" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="recc_contacto" Type="String" MaxLength="200" FixedLength="true" Unicode="false" />
+          <Property Name="recc_despacho" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="recc_ordenCompra" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="recc_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="recc_observaciones" Type="String" MaxLength="500" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="tblRecepcionDetalle" Relationship="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" FromRole="tblRecepcion" ToRole="tblRecepcionDetalle" />
+        </EntityType>
+        <EntityType Name="tblRecepcionDetalle">
+          <Key>
+            <PropertyRef Name="recd_id" />
+          </Key>
+          <Property Name="recd_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="recd_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="recd_linea" Type="Decimal" Nullable="false" Precision="9" Scale="0" />
+          <Property Name="recd_compania" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="recd_producto" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="recd_lote" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="recd_fechaVencimiento" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="recd_serie" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="recd_cantidad" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="recd_precioUnitario" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="recd_lineaPedido" Type="Decimal" Nullable="false" Precision="5" Scale="0" />
+          <Property Name="recd_numeroPedido" Type="String" Nullable="false" MaxLength="18" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="tblRecepcion" Relationship="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" FromRole="tblRecepcionDetalle" ToRole="tblRecepcion" />
+        </EntityType>
+        <Association Name="FK_tblRecepcionDetalle_tblRecepcion">
+          <End Type="CalicoModel.tblRecepcion" Role="tblRecepcion" Multiplicity="1" />
+          <End Type="CalicoModel.tblRecepcionDetalle" Role="tblRecepcionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblRecepcion">
+              <PropertyRef Name="recc_proc_id" />
+            </Principal>
+            <Dependent Role="tblRecepcionDetalle">
+              <PropertyRef Name="recd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -134,6 +241,43 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="INTERFAZ_CrearProceso" FunctionName="CalicoModel.Store.INTERFAZ_CrearProceso" />
+          <EntitySetMapping Name="tblRecepcion">
+            <EntityTypeMapping TypeName="CalicoModel.tblRecepcion">
+              <MappingFragment StoreEntitySet="tblRecepcion">
+                <ScalarProperty Name="recc_observaciones" ColumnName="recc_observaciones" />
+                <ScalarProperty Name="recc_motivoDevolucion" ColumnName="recc_motivoDevolucion" />
+                <ScalarProperty Name="recc_ordenCompra" ColumnName="recc_ordenCompra" />
+                <ScalarProperty Name="recc_despacho" ColumnName="recc_despacho" />
+                <ScalarProperty Name="recc_contacto" ColumnName="recc_contacto" />
+                <ScalarProperty Name="recc_proveedor" ColumnName="recc_proveedor" />
+                <ScalarProperty Name="recc_fechaEntrega" ColumnName="recc_fechaEntrega" />
+                <ScalarProperty Name="recc_fechaEmision" ColumnName="recc_fechaEmision" />
+                <ScalarProperty Name="recc_numero" ColumnName="recc_numero" />
+                <ScalarProperty Name="recc_trec_codigo" ColumnName="recc_trec_codigo" />
+                <ScalarProperty Name="recc_almacen" ColumnName="recc_almacen" />
+                <ScalarProperty Name="recc_emplazamiento" ColumnName="recc_emplazamiento" />
+                <ScalarProperty Name="recc_proc_id" ColumnName="recc_proc_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblRecepcionDetalle">
+            <EntityTypeMapping TypeName="CalicoModel.tblRecepcionDetalle">
+              <MappingFragment StoreEntitySet="tblRecepcionDetalle">
+                <ScalarProperty Name="recd_numeroPedido" ColumnName="recd_numeroPedido" />
+                <ScalarProperty Name="recd_lineaPedido" ColumnName="recd_lineaPedido" />
+                <ScalarProperty Name="recd_precioUnitario" ColumnName="recd_precioUnitario" />
+                <ScalarProperty Name="recd_cantidad" ColumnName="recd_cantidad" />
+                <ScalarProperty Name="recd_serie" ColumnName="recd_serie" />
+                <ScalarProperty Name="recd_fechaVencimiento" ColumnName="recd_fechaVencimiento" />
+                <ScalarProperty Name="recd_lote" ColumnName="recd_lote" />
+                <ScalarProperty Name="recd_producto" ColumnName="recd_producto" />
+                <ScalarProperty Name="recd_compania" ColumnName="recd_compania" />
+                <ScalarProperty Name="recd_linea" ColumnName="recd_linea" />
+                <ScalarProperty Name="recd_proc_id" ColumnName="recd_proc_id" />
+                <ScalarProperty Name="recd_id" ColumnName="recd_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

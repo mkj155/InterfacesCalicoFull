@@ -74,39 +74,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="clientes\ClientesUtils.cs" />
+    <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
-    <Compile Include="clientes\tblSubClienteService.cs" />
-    <Compile Include="clientes\tblSubClienteDAO.cs" />
-    <Compile Include="common\BianchiProcessDAO.cs" />
-    <Compile Include="common\BianchiService.cs" />
-    <Compile Include="generic\Dao.cs" />
-    <Compile Include="clientes\InterfaceCliente.cs" />
-    <Compile Include="generic\InterfaceGeneric.cs" />
-    <Compile Include="Persistencia\BIANCHI_PROCESS.cs">
+    <Compile Include="persistencia\tblRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
-    <Compile Include="Persistencia\ModelCalico.Context.cs">
+    <Compile Include="persistencia\tblRecepcionDetalle.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="service\TblSubClienteService.cs" />
+    <Compile Include="DAOs\TblSubClienteDAO.cs" />
+    <Compile Include="DAOs\BianchiProcessDAO.cs" />
+    <Compile Include="service\BianchiService.cs" />
+    <Compile Include="DAOs\Dao.cs" />
+    <Compile Include="interfaces\clientes\InterfaceCliente.cs" />
+    <Compile Include="generic\InterfaceGeneric.cs" />
+    <Compile Include="persistencia\BIANCHI_PROCESS.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\ModelCalico.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelCalico.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Persistencia\ModelCalico.cs">
+    <Compile Include="persistencia\ModelCalico.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
-    <Compile Include="Persistencia\ModelCalico.Designer.cs">
+    <Compile Include="persistencia\ModelCalico.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelCalico.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Persistencia\tblSubCliente.cs">
+    <Compile Include="persistencia\tblSubCliente.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="interfaces\recepcion\InterfaceRecepcion.cs" />
+    <Compile Include="interfaces\recepcion\RecepcionUtils.cs" />
+    <Compile Include="DAOs\TblRecepcionDAO.cs" />
+    <Compile Include="service\TblRecepcionService.cs" />
     <Compile Include="Run.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,11 +124,11 @@
     <None Include="calico_config.ini" />
     <None Include="connections.config" />
     <None Include="packages.config" />
-    <EntityDeploy Include="Persistencia\ModelCalico.edmx">
+    <EntityDeploy Include="persistencia\ModelCalico.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelCalico.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="Persistencia\ModelCalico.edmx.diagram">
+    <None Include="persistencia\ModelCalico.edmx.diagram">
       <DependentUpon>ModelCalico.edmx</DependentUpon>
     </None>
   </ItemGroup>
@@ -138,12 +148,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Persistencia\ModelCalico.Context.tt">
+    <Content Include="persistencia\ModelCalico.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelCalico.edmx</DependentUpon>
       <LastGenOutput>ModelCalico.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Persistencia\ModelCalico.tt">
+    <Content Include="persistencia\ModelCalico.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelCalico.edmx</DependentUpon>
       <LastGenOutput>ModelCalico.cs</LastGenOutput>
@@ -151,9 +161,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Debug"
-xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Release"
-xcopy "$(ProjectDir)connections.config" "$(ProjectDir)bin\Debug"
-xcopy "$(ProjectDir)connections.config" "$(ProjectDir)bin\Release"</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Debug" /Y
+xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Release" /Y
+xcopy "$(ProjectDir)connections.config" "$(ProjectDir)bin\Debug" /Y
+xcopy "$(ProjectDir)connections.config" "$(ProjectDir)bin\Release" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

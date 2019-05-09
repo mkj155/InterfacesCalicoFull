@@ -1,21 +1,21 @@
-﻿using Calico.clientes;
-using Calico.common;
-using Calico.Persistencia;
+﻿using Calico.common;
 using System;
 using Nini.Config;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Data.Entity.Validation;
+using InterfacesCalico.generic;
+using Calico.service;
+using Calico.persistencia;
 
-namespace InterfacesCalico.clientes
+namespace Calico.interfaces.clientes
 {
     public class InterfaceCliente : InterfaceGeneric
     {
         private const String INTERFACE = Constants.INTERFACE_CLIENTES;
 
         private BianchiService service = new BianchiService();
-        private tblSubClienteService serviceCliente = new tblSubClienteService();
+        private TblSubClienteService serviceCliente = new TblSubClienteService();
         private ClientesUtils clientesUtils = new ClientesUtils();
         
         public bool Process(DateTime? dateTime)

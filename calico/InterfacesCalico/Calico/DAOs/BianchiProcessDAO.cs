@@ -1,9 +1,10 @@
-﻿using Calico.Persistencia;
+﻿using Calico.common;
+using Calico.persistencia;
 using System;
 using System.Data.Entity;
 using System.Linq;
 
-namespace Calico.common
+namespace Calico.DAOs
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {

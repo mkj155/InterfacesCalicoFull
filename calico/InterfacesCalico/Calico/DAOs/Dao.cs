@@ -1,8 +1,6 @@
-﻿using Calico.Persistencia;
-using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 
-namespace Calico
+namespace Calico.DAOs
 {
     public interface Dao<T> where T : class
     {
