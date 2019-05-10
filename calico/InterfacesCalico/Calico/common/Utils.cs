@@ -23,6 +23,24 @@ namespace Calico.common
             return true;
         }
 
+        public static DateTime? ValidateDates(DateTime? dateArg,DateTime? dateProcess)
+        {
+            if (dateArg == null && dateProcess == null)
+            {
+                return null;
+            }
+            else if (dateArg == null)
+            {
+                return Convert.ToDateTime(dateProcess);
+            }
+            else
+            {
+                return Convert.ToDateTime(dateArg);
+            }
+        }
+
+
+
         /// <summary>
         /// DateTime con la fecha pasada como String como parametro
         /// </summary>

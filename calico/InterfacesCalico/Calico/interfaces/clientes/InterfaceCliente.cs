@@ -24,7 +24,7 @@ namespace Calico.interfaces.clientes
             using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
                 Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
-                DateTime lastTime;
+                DateTime? lastTime;
                 BIANCHI_PROCESS process = service.FindByName(INTERFACE);
 
                 if (process == null)
@@ -52,26 +52,22 @@ namespace Calico.interfaces.clientes
                 entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
 
                 /* Obtenemos la fecha */
-                if (dateTime == null && process.fecha_ultima == null)
+                lastTime = Utils.ValidateDates(dateTime, process.fecha_ultima);
+                if (lastTime == null)
                 {
-                    Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso para la interfaz :" + INTERFACE);
-                    Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
-                    scope.Commit();
+                    Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico una fecha" +
+                                      " como parametro, no se ejecutara el proceso");
+                    Console.WriteLine("Se libera la row de BIANCHI_PROCESS, para otro proceso" +
+                                      " si es que existe");
                     return false;
                 }
-                else if (dateTime == null)
-                {
-                    Console.WriteLine("Se procesará la interfaz: " + INTERFACE + " con la fecha de BIANCHI_PROCESS: " + process.fecha_ultima);
-                    lastTime = Convert.ToDateTime(process.fecha_ultima);
-                }
-                else
-                {
-                    Console.WriteLine("Se procesará la interfaz: " + INTERFACE + " con la fecha pasada como argumentos: " + dateTime);
-                    lastTime = Convert.ToDateTime(dateTime);
-                }
+                if (lastTime.Equals(dateTime))
+                    Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + lastTime);
+                if (lastTime.Equals(process.fecha_ultima))
+                    Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + lastTime);
 
                 /* Convierto DateTime a String */
-                String lastStringTime = Utils.ConvertDateTimeInString(lastTime);
+                String lastStringTime = Utils.ConvertDateTimeInString(Convert.ToDateTime(lastTime));
 
                 /* Cargamos archivo con parametros propios para cada interface */
                 Console.WriteLine("Cargamos archivo de configuracion");
