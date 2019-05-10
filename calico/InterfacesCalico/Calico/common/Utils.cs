@@ -23,7 +23,7 @@ namespace Calico.common
             return true;
         }
 
-        public static DateTime? ValidateDates(DateTime? dateArg,DateTime? dateProcess)
+        public static DateTime? ValidateDates(DateTime? dateArg, DateTime? dateProcess)
         {
             if (dateArg == null && dateProcess == null)
             {
@@ -31,12 +31,17 @@ namespace Calico.common
             }
             else if (dateArg == null)
             {
-                return Convert.ToDateTime(dateProcess);
+                DateTime dateTime = Convert.ToDateTime(dateProcess);
+                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateTime);
+                return dateTime;
             }
             else
             {
-                return Convert.ToDateTime(dateArg);
+                DateTime dateTime = Convert.ToDateTime(dateArg);
+                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + lastTime);
+                return dateTime;
             }
+
         }
 
 

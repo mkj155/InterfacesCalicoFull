@@ -55,16 +55,11 @@ namespace Calico.interfaces.clientes
                 lastTime = Utils.ValidateDates(dateTime, process.fecha_ultima);
                 if (lastTime == null)
                 {
-                    Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico una fecha" +
-                                      " como parametro, no se ejecutara el proceso");
-                    Console.WriteLine("Se libera la row de BIANCHI_PROCESS, para otro proceso" +
-                                      " si es que existe");
+                    Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso para la interfaz :" + INTERFACE);
+                    Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
+                    scope.Commit();
                     return false;
                 }
-                if (lastTime.Equals(dateTime))
-                    Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + lastTime);
-                if (lastTime.Equals(process.fecha_ultima))
-                    Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + lastTime);
 
                 /* Convierto DateTime a String */
                 String lastStringTime = Utils.ConvertDateTimeInString(Convert.ToDateTime(lastTime));
@@ -108,7 +103,7 @@ namespace Calico.interfaces.clientes
                 }
 
                 // LLamando al SP por cada cliente
-                int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE_CLIENTE);
+                int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
                 int? tipoMensaje = 0;
                 int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
                 int count = 0;

@@ -5,9 +5,9 @@ namespace Calico.common
     public class Constants
     {
         /* INTERFACES */
+        public const String NUMERO_INTERFACE = "NumeroInterface";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
-        public const String NUMERO_INTERFACE_CLIENTE = "NumeroInterface";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
         // RECEPCION
         public const String INTERFACE_RECEPCION = "Recepcion";

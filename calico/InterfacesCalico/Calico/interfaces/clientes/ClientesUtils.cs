@@ -70,7 +70,7 @@ namespace Calico.interfaces.clientes
             }
         }
 
-        public void SetValues(JToken rowset, String key, Dictionary<String, tblSubCliente> diccionary, String columnId, String columnValue)
+        private void SetValues(JToken rowset, String key, Dictionary<String, tblSubCliente> diccionary, String columnId, String columnValue)
         {
             while (rowset.First != null)
             {
