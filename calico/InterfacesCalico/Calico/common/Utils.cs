@@ -23,28 +23,44 @@ namespace Calico.common
             return true;
         }
 
-        public static DateTime? ValidateDates(DateTime? dateArg, DateTime? dateProcess)
+        /// <summary>
+        /// Obtenemos la fecha correcta para el procesamiento
+        /// </summary>
+        /// <param name="dateArg"></param>
+        /// <param name="dateProcess"></param>
+        /// <returns>retorna la fechacorrecta para el procesamiento de la itnerface</returns>
+        public static DateTime GetDateToProcess(DateTime? dateArg, DateTime? dateProcess)
         {
-            if (dateArg == null && dateProcess == null)
+            DateTime dateTime;
+            if (dateArg == null)
             {
-                return null;
-            }
-            else if (dateArg == null)
-            {
-                DateTime dateTime = Convert.ToDateTime(dateProcess);
-                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateTime);
-                return dateTime;
+                dateTime = Convert.ToDateTime(dateProcess);
+                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateArg);
             }
             else
             {
-                DateTime dateTime = Convert.ToDateTime(dateArg);
-                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + lastTime);
-                return dateTime;
+                dateTime = Convert.ToDateTime(dateArg);
+                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + dateProcess);   
             }
-
+            return dateTime;
         }
 
-
+        /// <summary>
+        /// Valida que haya una fecha valida para poder procesar la interface
+        /// </summary>
+        /// <param name="dateArg"></param>
+        /// <param name="dateProcess"></param>
+        /// <returns>TRUE si no hay una fecha valida para poder procesar la interface</returns>
+        public static bool IsInvalidateDates(DateTime? dateArg, DateTime? dateProcess)
+        {
+            if (dateArg == null && dateProcess == null)
+            {
+                Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso");
+                Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// DateTime con la fecha pasada como String como parametro

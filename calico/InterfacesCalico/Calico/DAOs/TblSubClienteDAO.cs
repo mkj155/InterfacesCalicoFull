@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace Calico.DAOs
 {
-    class TblSubClienteDAO : Dao<tblSubCliente>
+    class TblSubClienteDAO : CommonDAO, Dao<tblSubCliente>
     {
         public void Delete(int id)
         {
@@ -51,14 +51,6 @@ namespace Calico.DAOs
                 if (result == null) return;
                 context.Entry(result).CurrentValues.SetValues(obj);
                 context.SaveChanges();
-            }
-        }
-
-        public int CallProcedure(int? tipoProceso, int? tipoMensaje)
-        {
-            using (CalicoEntities context = new CalicoEntities())
-            {
-                return context.INTERFAZ_CrearProceso(tipoProceso, tipoMensaje);
             }
         }
 

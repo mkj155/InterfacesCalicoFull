@@ -24,7 +24,7 @@ namespace Calico.interfaces.clientes
             using (DbContextTransaction scope = entities.Database.BeginTransaction())
             {
                 Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
-                DateTime? lastTime;
+                DateTime lastTime;
                 BIANCHI_PROCESS process = service.FindByName(INTERFACE);
 
                 if (process == null)
@@ -52,17 +52,14 @@ namespace Calico.interfaces.clientes
                 entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
 
                 /* Obtenemos la fecha */
-                lastTime = Utils.ValidateDates(dateTime, process.fecha_ultima);
-                if (lastTime == null)
+                if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
                 {
-                    Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso para la interfaz :" + INTERFACE);
-                    Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
                     scope.Commit();
-                    return false;
                 }
+                lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 
                 /* Convierto DateTime a String */
-                String lastStringTime = Utils.ConvertDateTimeInString(Convert.ToDateTime(lastTime));
+                String lastStringTime = lastStringTime = Utils.ConvertDateTimeInString(lastTime);
 
                 /* Cargamos archivo con parametros propios para cada interface */
                 Console.WriteLine("Cargamos archivo de configuracion");

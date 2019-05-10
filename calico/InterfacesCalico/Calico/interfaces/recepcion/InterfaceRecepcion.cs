@@ -22,7 +22,7 @@ namespace Calico.interfaces.recepcion
         public bool Process(DateTime? dateTime)
         {
             Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
-            DateTime? lastTime;
+            DateTime lastTime;
             BIANCHI_PROCESS process = service.FindByName(INTERFACE);
 
             if (process == null)
@@ -50,14 +50,10 @@ namespace Calico.interfaces.recepcion
             // entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
 
             /* Obtenemos la fecha */
-            lastTime = Utils.ValidateDates(dateTime, process.fecha_ultima);
-            if (lastTime == null)
-            {
-                Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso para la interfaz :" + INTERFACE);
-                Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
+            if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima)) {
                 // scope.Commit();
-                return false;
             }
+            lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 
             /* Convierto DateTime a String */
             String lastStringTime = lastStringTime = Utils.ConvertDateTimeInString(lastTime);
@@ -102,7 +98,7 @@ namespace Calico.interfaces.recepcion
 
             // LLamando al SP por cada cliente
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            int? tipoMensaje = 0;
+            // int? tipoMensaje = 0;
             // int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
             int count = 0;
             int countError = 0;
