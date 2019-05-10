@@ -106,16 +106,6 @@ namespace Calico.DAOs
             }
         }
 
-        public void blockRow(int id, String interfaz)
-        {
-            using (CalicoEntities entities = new CalicoEntities())
-            using (DbContextTransaction scope = entities.Database.BeginTransaction())
-            {
-                entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET INTERFAZ = '" + interfaz + "' WHERE ID = " + id);
-                scope.Commit();
-            }
-        }
-
         public void LockRow(int id)
         {
             this.entity = new CalicoEntities();

@@ -84,11 +84,6 @@ namespace Calico.service
             Delete(obj.id);
         }
 
-        public void BlockRow(int id, String interfaz)
-        {
-            dao.blockRow(id, interfaz);
-        }
-
         public void LockRow(int id)
         {
             dao.LockRow(id);

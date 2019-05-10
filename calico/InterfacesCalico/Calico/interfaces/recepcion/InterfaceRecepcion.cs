@@ -41,17 +41,14 @@ namespace Calico.interfaces.recepcion
             Console.WriteLine("Maquina: " + process.maquina);
             Console.WriteLine("Process_id: " + process.process_id);
 
-            /* Trata de ejecutar un update a la fila de la interface, si la row se encuentra bloqueada, quedara esperando hasta que se desbloquee */
-            Console.WriteLine("Verificamos que no haya otro proceso corriendo para la misma interfaz: " + INTERFACE);
-            service.BlockRow(process.id, INTERFACE);
-
-            /* Bloquea la row, para que no pueda ser actualizada por otra interfaz */
-            Console.WriteLine("Bloqueamos la row de BIANCHI_PROCESS, para la interfaz " + INTERFACE);
-            // entities.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + process.id);
+            /* Bloquea la row, para que no pueda ser actualizada por otra ejecucion de la misma interface */
+            Console.WriteLine("Si hay otro proceso ejecutandose para la interface " + INTERFACE + " esperamos a que termine");
+            Console.WriteLine("Bloqueando la row de BIANCHI_PROCESS, para la interfaz " + INTERFACE);
+            service.LockRow(process.id);
 
             /* Obtenemos la fecha */
             if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima)) {
-                // scope.Commit();
+                service.UnlockRow();
             }
             lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 
@@ -91,7 +88,7 @@ namespace Calico.interfaces.recepcion
                 {
                     Console.WriteLine("Fallo el llamado al Rest Service");
                     Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
-                    // scope.Commit();
+                    service.UnlockRow();
                     return false;
                 }
             }
@@ -121,13 +118,13 @@ namespace Calico.interfaces.recepcion
             Console.WriteLine("Cantidad de Recepciones procesadas: " + process.cant_lineas);
             Console.WriteLine("Estado: " + process.estado);
 
-            /* Liberamos la row, para que la tome otra interface */
-            Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
-            // scope.Commit();
-
             /* Actualizamos la tabla BIANCHI_PROCESS */
             Console.WriteLine("Actualizamos BIANCHI_PROCESS");
             service.Update(process);
+
+            /* Liberamos la row, para que la tome otra interface */
+            Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
+            service.UnlockRow();
 
             Console.WriteLine("Fin del proceso, para la interfaz " + INTERFACE);
             Console.WriteLine("Proceso Finalizado correctamente");
