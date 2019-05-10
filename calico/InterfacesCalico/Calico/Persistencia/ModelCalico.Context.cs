@@ -19,9 +19,10 @@ namespace Calico.persistencia
 
     public partial class CalicoEntities : DbContext
     {
-        public CalicoEntities()
-            : base("name=CalicoEntities")
+        public CalicoEntities() : base("name=CalicoEntities")
         {
+            // Cuanto tiempo de time out?
+            ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 180;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

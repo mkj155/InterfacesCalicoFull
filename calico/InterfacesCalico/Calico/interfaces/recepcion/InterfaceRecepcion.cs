@@ -71,7 +71,7 @@ namespace Calico.interfaces.recepcion
             String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
-            /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes */
+            /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos */
             Dictionary<String, tblRecepcion> diccionary = new Dictionary<string, tblRecepcion>();
             foreach (String key in URLkeys)
             {
@@ -82,7 +82,7 @@ namespace Calico.interfaces.recepcion
                 Console.WriteLine("Url: " + urlPath);
                 // Obtenemos los datos
                 String myJsonString = Utils.SendRequest(urlPath, user, pass, key);
-                // Armamos los objetos Clientes
+                // CABEZERA O DETALLE
                 if (!String.Empty.Equals(myJsonString))
                 {
                     recepcionUtils.MappingRecepcion(myJsonString, key, diccionary);
@@ -96,7 +96,7 @@ namespace Calico.interfaces.recepcion
                 }
             }
 
-            // LLamando al SP por cada cliente
+            // LLamamos al SP
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             // int? tipoMensaje = 0;
             // int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);

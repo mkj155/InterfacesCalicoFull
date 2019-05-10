@@ -88,5 +88,15 @@ namespace Calico.service
         {
             dao.blockRow(id, interfaz);
         }
+
+        public void LockRow(int id)
+        {
+            dao.LockRow(id);
+        }
+
+        public void UnlockRow() {
+            dao.UnlockRow();
+        }
+
     }
 }

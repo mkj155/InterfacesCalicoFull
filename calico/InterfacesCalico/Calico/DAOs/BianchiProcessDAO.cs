@@ -8,6 +8,10 @@ namespace Calico.DAOs
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {
+
+        private CalicoEntities entity;
+        private DbContextTransaction scope;
+
         public void Delete(int id)
         {
             using (CalicoEntities context = new CalicoEntities())
@@ -110,6 +114,19 @@ namespace Calico.DAOs
                 entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET INTERFAZ = '" + interfaz + "' WHERE ID = " + id);
                 scope.Commit();
             }
+        }
+
+        public void LockRow(int id)
+        {
+            this.entity = new CalicoEntities();
+            scope = entity.Database.BeginTransaction();
+            entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + id);
+        }
+
+        public void UnlockRow()
+        {
+            scope.Commit();
+            entity.Dispose();
         }
 
     }
