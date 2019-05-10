@@ -45,6 +45,42 @@ namespace Calico.interfaces.clientes
             return header;
         }
 
+        public void MappingCliente(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
+        {
+            var json = JObject.Parse(myJsonString);
+            var root = json[GetHeaderJson(key)];
+            var data = root[Constants.JSON_TAG_DATA];
+            var gridData = data[Constants.JSON_TAG_GRIDDATA];
+            var rowset = gridData[Constants.JSON_TAG_ROWSET];
+
+            String AN8 = String.Empty;
+            String value = String.Empty;
+
+            if (Constants.MLNM.Equals(key))
+            {
+                String columnId = Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8;
+                String columnValue = Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM;
+                SetValues(rowset, key, diccionary, columnId, columnValue);
+            }
+            else if (Constants.TAX.Equals(key))
+            {
+                String columnId = Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8;
+                String columnValue = Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX;
+                SetValues(rowset, key, diccionary, columnId, columnValue);
+            }
+        }
+
+        public void SetValues(JToken rowset, String key, Dictionary<String, tblSubCliente> diccionary, String columnId, String columnValue)
+        {
+            while (rowset.First != null)
+            {
+                String id = rowset.First[columnId].ToString();
+                String value = rowset.First[columnValue].ToString();
+                AddDataToDictionary(diccionary, id, value, key);
+                rowset.First.Remove();
+            }
+        }
+
         private void AddDataToDictionary(Dictionary<String, tblSubCliente> dictionary, String id, String data, String key)
         {
             tblSubCliente cliente = null;
@@ -62,39 +98,6 @@ namespace Calico.interfaces.clientes
             else if (Constants.TAX.Equals(key))
             {
                 cliente.subc_cuit = data;
-            }
-        }
-
-        public void MappingCliente(String myJsonString, String key, Dictionary<String, tblSubCliente> diccionary)
-        {
-            var json = JObject.Parse(myJsonString);
-            var root = json[GetHeaderJson(key)];
-            var data = root[Constants.JSON_TAG_DATA];
-            var gridData = data[Constants.JSON_TAG_GRIDDATA];
-            var rowset = gridData[Constants.JSON_TAG_ROWSET];
-
-            String AN8 = String.Empty;
-            String value = String.Empty;
-
-            if (Constants.MLNM.Equals(key))
-            {
-                while (rowset.First != null)
-                {
-                    AN8 = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_AN8].ToString();
-                    value = rowset.First[Constants.JSON_SUBFIX_MLNM + "_" + Constants.COLUMN_MLNM].ToString();
-                    AddDataToDictionary(diccionary, AN8, value, key);
-                    rowset.First.Remove();
-                }
-            }
-            else if (Constants.TAX.Equals(key))
-            {
-                while (rowset.First != null)
-                {
-                    AN8 = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_AN8].ToString();
-                    value = rowset.First[Constants.JSON_SUBFIX_TAX + "_" + Constants.COLUMN_TAX].ToString();
-                    AddDataToDictionary(diccionary, AN8, value, key);
-                    rowset.First.Remove();
-                }
             }
         }
 
