@@ -19,7 +19,8 @@ namespace Calico.persistencia
 
     public partial class CalicoEntities : DbContext
     {
-        public CalicoEntities() : base("name=CalicoEntities")
+        public CalicoEntities()
+            : base("name=CalicoEntities")
         {
             // Cuanto tiempo de time out?
             ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 180;
@@ -34,6 +35,7 @@ namespace Calico.persistencia
         public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
         public virtual DbSet<tblRecepcion> tblRecepcion { get; set; }
         public virtual DbSet<tblRecepcionDetalle> tblRecepcionDetalle { get; set; }
+        public virtual DbSet<tblHistoricoRecepcion> tblHistoricoRecepcion { get; set; }
 
         public virtual int INTERFAZ_CrearProceso(Nullable<int> tipoProceso, Nullable<int> tipoMensaje)
         {
@@ -56,6 +58,5 @@ namespace Calico.persistencia
                 }
             }
         }
-
     }
 }

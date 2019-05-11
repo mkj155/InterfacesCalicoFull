@@ -1,5 +1,7 @@
 ﻿using Calico.DAOs;
 using Calico.persistencia;
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 
 namespace Calico.service
@@ -35,6 +37,29 @@ namespace Calico.service
         public int CallProcedure(int? tipoProceso, int? tipoMensaje)
         {
             return dao.CallProcedure(tipoProceso, tipoMensaje);
+        }
+
+        public Boolean IgnoreRegister(String emplaz, String alm, String cod, String numero)
+        {
+            int count = dao.CountByFields(emplaz, alm, cod, numero);
+
+            if(count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void examplePersist(String empl,String alm,String cod,String num,String comp)
+        {
+            if (!IgnoreRegister(empl, alm, cod, num))
+            {
+                dao.examplePersist(empl, alm, cod, num, comp);
+            }
+            
         }
 
     }

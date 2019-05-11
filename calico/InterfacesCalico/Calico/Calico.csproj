@@ -79,6 +79,9 @@
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="persistencia\tblHistoricoRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
