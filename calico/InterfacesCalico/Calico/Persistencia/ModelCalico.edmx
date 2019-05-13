@@ -19,6 +19,24 @@
           <Property Name="interfaz" Type="varchar" MaxLength="50" />
           <Property Name="fecha_ultima" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblHistoricoRecepcion">
+          <Key>
+            <PropertyRef Name="hrec_hisp_id" />
+          </Key>
+          <Property Name="hrec_hisp_id" Type="int" Nullable="false" />
+          <Property Name="hrec_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="hrec_almacen" Type="char" MaxLength="3" />
+          <Property Name="hrec_trec_codigo" Type="char" MaxLength="3" />
+          <Property Name="hrec_numero" Type="char" MaxLength="10" />
+          <Property Name="hrec_fechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="hrec_fechaEntrega" Type="datetime" Nullable="false" />
+          <Property Name="hrec_proveedor" Type="char" MaxLength="10" />
+          <Property Name="hrec_contacto" Type="char" MaxLength="200" />
+          <Property Name="hrec_despacho" Type="char" MaxLength="20" />
+          <Property Name="hrec_ordenCompra" Type="char" MaxLength="20" />
+          <Property Name="hrec_motivoDevolucion" Type="char" MaxLength="6" />
+          <Property Name="hrec_observaciones" Type="char" MaxLength="500" />
+        </EntityType>
         <EntityType Name="tblRecepcion">
           <Key>
             <PropertyRef Name="recc_proc_id" />
@@ -91,6 +109,7 @@
         </Function>
         <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblHistoricoRecepcion" EntityType="Self.tblHistoricoRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
@@ -149,6 +168,7 @@
             <End Role="tblRecepcion" EntitySet="tblRecepcion" />
             <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
           </AssociationSet>
+          <EntitySet Name="tblHistoricoRecepcion" EntityType="CalicoModel.tblHistoricoRecepcion" />
         </EntityContainer>
         <EntityType Name="tblRecepcion">
           <Key>
@@ -199,6 +219,24 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="tblHistoricoRecepcion">
+          <Key>
+            <PropertyRef Name="hrec_hisp_id" />
+          </Key>
+          <Property Name="hrec_hisp_id" Type="Int32" Nullable="false" />
+          <Property Name="hrec_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_trec_codigo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_numero" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_fechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="hrec_fechaEntrega" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="hrec_proveedor" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_contacto" Type="String" MaxLength="200" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_despacho" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_ordenCompra" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="hrec_observaciones" Type="String" MaxLength="500" FixedLength="true" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -275,6 +313,25 @@
                 <ScalarProperty Name="recd_linea" ColumnName="recd_linea" />
                 <ScalarProperty Name="recd_proc_id" ColumnName="recd_proc_id" />
                 <ScalarProperty Name="recd_id" ColumnName="recd_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblHistoricoRecepcion">
+            <EntityTypeMapping TypeName="CalicoModel.tblHistoricoRecepcion">
+              <MappingFragment StoreEntitySet="tblHistoricoRecepcion">
+                <ScalarProperty Name="hrec_observaciones" ColumnName="hrec_observaciones" />
+                <ScalarProperty Name="hrec_motivoDevolucion" ColumnName="hrec_motivoDevolucion" />
+                <ScalarProperty Name="hrec_ordenCompra" ColumnName="hrec_ordenCompra" />
+                <ScalarProperty Name="hrec_despacho" ColumnName="hrec_despacho" />
+                <ScalarProperty Name="hrec_contacto" ColumnName="hrec_contacto" />
+                <ScalarProperty Name="hrec_proveedor" ColumnName="hrec_proveedor" />
+                <ScalarProperty Name="hrec_fechaEntrega" ColumnName="hrec_fechaEntrega" />
+                <ScalarProperty Name="hrec_fechaEmision" ColumnName="hrec_fechaEmision" />
+                <ScalarProperty Name="hrec_numero" ColumnName="hrec_numero" />
+                <ScalarProperty Name="hrec_trec_codigo" ColumnName="hrec_trec_codigo" />
+                <ScalarProperty Name="hrec_almacen" ColumnName="hrec_almacen" />
+                <ScalarProperty Name="hrec_emplazamiento" ColumnName="hrec_emplazamiento" />
+                <ScalarProperty Name="hrec_hisp_id" ColumnName="hrec_hisp_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

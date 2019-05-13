@@ -74,10 +74,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAOs\CommonDAO.cs" />
     <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="persistencia\tblHistoricoRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
