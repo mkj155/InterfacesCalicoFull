@@ -37,6 +37,54 @@
           <Property Name="hrec_motivoDevolucion" Type="char" MaxLength="6" />
           <Property Name="hrec_observaciones" Type="char" MaxLength="500" />
         </EntityType>
+        <EntityType Name="tblPedido">
+          <Key>
+            <PropertyRef Name="pedc_proc_id" />
+          </Key>
+          <Property Name="pedc_proc_id" Type="int" Nullable="false" />
+          <Property Name="pedc_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="pedc_almacen" Type="char" MaxLength="3" />
+          <Property Name="pedc_tped_codigo" Type="char" MaxLength="3" />
+          <Property Name="pedc_letra" Type="char" MaxLength="1" />
+          <Property Name="pedc_sucursal" Type="char" MaxLength="4" />
+          <Property Name="pedc_numero" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="pedc_fechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="pedc_fechaEntrega" Type="datetime" Nullable="false" />
+          <Property Name="pedc_cliente" Type="char" MaxLength="10" />
+          <Property Name="pedc_destinatario" Type="char" MaxLength="10" />
+          <Property Name="pedc_razonSocial" Type="char" MaxLength="60" />
+          <Property Name="pedc_pais" Type="char" MaxLength="3" />
+          <Property Name="pedc_provincia" Type="char" MaxLength="30" />
+          <Property Name="pedc_codigoPostal" Type="char" MaxLength="10" />
+          <Property Name="pedc_localidad" Type="char" MaxLength="40" />
+          <Property Name="pedc_domicilio" Type="char" MaxLength="250" />
+          <Property Name="pedc_centroCosto" Type="char" MaxLength="10" />
+          <Property Name="pedc_areaMuelle" Type="char" MaxLength="6" />
+          <Property Name="pedc_numeroRuteo" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="pedc_entregaParcial" Type="bit" Nullable="false" />
+          <Property Name="pedc_importeFactura" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="pedc_contraRembolso" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="pedc_prioridad" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="pedc_referenciaA" Type="char" MaxLength="30" />
+          <Property Name="pedc_referenciaB" Type="char" MaxLength="30" />
+          <Property Name="pedc_observaciones" Type="text" />
+        </EntityType>
+        <EntityType Name="tblPedidoDetalle">
+          <Key>
+            <PropertyRef Name="pedd_id" />
+          </Key>
+          <Property Name="pedd_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pedd_proc_id" Type="int" Nullable="false" />
+          <Property Name="pedd_linea" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="pedd_compania" Type="char" MaxLength="3" />
+          <Property Name="pedd_producto" Type="char" MaxLength="15" />
+          <Property Name="pedd_lote" Type="char" MaxLength="15" />
+          <Property Name="pedd_loteUnico" Type="bit" Nullable="false" />
+          <Property Name="pedd_serie" Type="char" MaxLength="15" />
+          <Property Name="pedd_cantidad" Type="numeric" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="pedd_epro_codigo" Type="char" MaxLength="3" />
+          <Property Name="pedd_despachoParcial" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="tblRecepcion">
           <Key>
             <PropertyRef Name="recc_proc_id" />
@@ -91,6 +139,18 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
+        <Association Name="FK_tblPedidoDetalle_tblPedido">
+          <End Role="tblPedido" Type="Self.tblPedido" Multiplicity="1" />
+          <End Role="tblPedidoDetalle" Type="Self.tblPedidoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPedido">
+              <PropertyRef Name="pedc_proc_id" />
+            </Principal>
+            <Dependent Role="tblPedidoDetalle">
+              <PropertyRef Name="pedd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblRecepcionDetalle_tblRecepcion">
           <End Role="tblRecepcion" Type="Self.tblRecepcion" Multiplicity="1" />
           <End Role="tblRecepcionDetalle" Type="Self.tblRecepcionDetalle" Multiplicity="*" />
@@ -110,9 +170,15 @@
         <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistoricoRecepcion" EntityType="Self.tblHistoricoRecepcion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblPedido" EntityType="Self.tblPedido" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblPedidoDetalle" EntityType="Self.tblPedidoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblPedidoDetalle_tblPedido" Association="Self.FK_tblPedidoDetalle_tblPedido">
+            <End Role="tblPedido" EntitySet="tblPedido" />
+            <End Role="tblPedidoDetalle" EntitySet="tblPedidoDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblRecepcionDetalle_tblRecepcion" Association="Self.FK_tblRecepcionDetalle_tblRecepcion">
             <End Role="tblRecepcion" EntitySet="tblRecepcion" />
             <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
@@ -169,6 +235,12 @@
             <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
           </AssociationSet>
           <EntitySet Name="tblHistoricoRecepcion" EntityType="CalicoModel.tblHistoricoRecepcion" />
+          <EntitySet Name="tblPedido" EntityType="CalicoModel.tblPedido" />
+          <EntitySet Name="tblPedidoDetalle" EntityType="CalicoModel.tblPedidoDetalle" />
+          <AssociationSet Name="FK_tblPedidoDetalle_tblPedido" Association="CalicoModel.FK_tblPedidoDetalle_tblPedido">
+            <End Role="tblPedido" EntitySet="tblPedido" />
+            <End Role="tblPedidoDetalle" EntitySet="tblPedidoDetalle" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblRecepcion">
           <Key>
@@ -237,6 +309,68 @@
           <Property Name="hrec_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
           <Property Name="hrec_observaciones" Type="String" MaxLength="500" FixedLength="true" Unicode="false" />
         </EntityType>
+        <EntityType Name="tblPedido">
+          <Key>
+            <PropertyRef Name="pedc_proc_id" />
+          </Key>
+          <Property Name="pedc_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="pedc_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_tped_codigo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_letra" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_sucursal" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_numero" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="pedc_fechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="pedc_fechaEntrega" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="pedc_cliente" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_destinatario" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_razonSocial" Type="String" MaxLength="60" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_pais" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_provincia" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_codigoPostal" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_localidad" Type="String" MaxLength="40" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_domicilio" Type="String" MaxLength="250" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_centroCosto" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_areaMuelle" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_numeroRuteo" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="pedc_entregaParcial" Type="Boolean" Nullable="false" />
+          <Property Name="pedc_importeFactura" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="pedc_contraRembolso" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="pedc_prioridad" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="pedc_referenciaA" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="pedc_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblPedidoDetalle" Relationship="CalicoModel.FK_tblPedidoDetalle_tblPedido" FromRole="tblPedido" ToRole="tblPedidoDetalle" />
+        </EntityType>
+        <EntityType Name="tblPedidoDetalle">
+          <Key>
+            <PropertyRef Name="pedd_id" />
+          </Key>
+          <Property Name="pedd_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pedd_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="pedd_linea" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="pedd_compania" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedd_producto" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="pedd_lote" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="pedd_loteUnico" Type="Boolean" Nullable="false" />
+          <Property Name="pedd_serie" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="pedd_cantidad" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="pedd_epro_codigo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="pedd_despachoParcial" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="tblPedido" Relationship="CalicoModel.FK_tblPedidoDetalle_tblPedido" FromRole="tblPedidoDetalle" ToRole="tblPedido" />
+        </EntityType>
+        <Association Name="FK_tblPedidoDetalle_tblPedido">
+          <End Type="CalicoModel.tblPedido" Role="tblPedido" Multiplicity="1" />
+          <End Type="CalicoModel.tblPedidoDetalle" Role="tblPedidoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblPedido">
+              <PropertyRef Name="pedc_proc_id" />
+            </Principal>
+            <Dependent Role="tblPedidoDetalle">
+              <PropertyRef Name="pedd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -332,6 +466,56 @@
                 <ScalarProperty Name="hrec_almacen" ColumnName="hrec_almacen" />
                 <ScalarProperty Name="hrec_emplazamiento" ColumnName="hrec_emplazamiento" />
                 <ScalarProperty Name="hrec_hisp_id" ColumnName="hrec_hisp_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblPedido">
+            <EntityTypeMapping TypeName="CalicoModel.tblPedido">
+              <MappingFragment StoreEntitySet="tblPedido">
+                <ScalarProperty Name="pedc_observaciones" ColumnName="pedc_observaciones" />
+                <ScalarProperty Name="pedc_referenciaB" ColumnName="pedc_referenciaB" />
+                <ScalarProperty Name="pedc_referenciaA" ColumnName="pedc_referenciaA" />
+                <ScalarProperty Name="pedc_prioridad" ColumnName="pedc_prioridad" />
+                <ScalarProperty Name="pedc_contraRembolso" ColumnName="pedc_contraRembolso" />
+                <ScalarProperty Name="pedc_importeFactura" ColumnName="pedc_importeFactura" />
+                <ScalarProperty Name="pedc_entregaParcial" ColumnName="pedc_entregaParcial" />
+                <ScalarProperty Name="pedc_numeroRuteo" ColumnName="pedc_numeroRuteo" />
+                <ScalarProperty Name="pedc_areaMuelle" ColumnName="pedc_areaMuelle" />
+                <ScalarProperty Name="pedc_centroCosto" ColumnName="pedc_centroCosto" />
+                <ScalarProperty Name="pedc_domicilio" ColumnName="pedc_domicilio" />
+                <ScalarProperty Name="pedc_localidad" ColumnName="pedc_localidad" />
+                <ScalarProperty Name="pedc_codigoPostal" ColumnName="pedc_codigoPostal" />
+                <ScalarProperty Name="pedc_provincia" ColumnName="pedc_provincia" />
+                <ScalarProperty Name="pedc_pais" ColumnName="pedc_pais" />
+                <ScalarProperty Name="pedc_razonSocial" ColumnName="pedc_razonSocial" />
+                <ScalarProperty Name="pedc_destinatario" ColumnName="pedc_destinatario" />
+                <ScalarProperty Name="pedc_cliente" ColumnName="pedc_cliente" />
+                <ScalarProperty Name="pedc_fechaEntrega" ColumnName="pedc_fechaEntrega" />
+                <ScalarProperty Name="pedc_fechaEmision" ColumnName="pedc_fechaEmision" />
+                <ScalarProperty Name="pedc_numero" ColumnName="pedc_numero" />
+                <ScalarProperty Name="pedc_sucursal" ColumnName="pedc_sucursal" />
+                <ScalarProperty Name="pedc_letra" ColumnName="pedc_letra" />
+                <ScalarProperty Name="pedc_tped_codigo" ColumnName="pedc_tped_codigo" />
+                <ScalarProperty Name="pedc_almacen" ColumnName="pedc_almacen" />
+                <ScalarProperty Name="pedc_emplazamiento" ColumnName="pedc_emplazamiento" />
+                <ScalarProperty Name="pedc_proc_id" ColumnName="pedc_proc_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblPedidoDetalle">
+            <EntityTypeMapping TypeName="CalicoModel.tblPedidoDetalle">
+              <MappingFragment StoreEntitySet="tblPedidoDetalle">
+                <ScalarProperty Name="pedd_despachoParcial" ColumnName="pedd_despachoParcial" />
+                <ScalarProperty Name="pedd_epro_codigo" ColumnName="pedd_epro_codigo" />
+                <ScalarProperty Name="pedd_cantidad" ColumnName="pedd_cantidad" />
+                <ScalarProperty Name="pedd_serie" ColumnName="pedd_serie" />
+                <ScalarProperty Name="pedd_loteUnico" ColumnName="pedd_loteUnico" />
+                <ScalarProperty Name="pedd_lote" ColumnName="pedd_lote" />
+                <ScalarProperty Name="pedd_producto" ColumnName="pedd_producto" />
+                <ScalarProperty Name="pedd_compania" ColumnName="pedd_compania" />
+                <ScalarProperty Name="pedd_linea" ColumnName="pedd_linea" />
+                <ScalarProperty Name="pedd_proc_id" ColumnName="pedd_proc_id" />
+                <ScalarProperty Name="pedd_id" ColumnName="pedd_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
