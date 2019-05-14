@@ -11,6 +11,9 @@
         <EntityTypeShape EntityType="CalicoModel.tblRecepcionDetalle" Width="1.5" PointX="7.625" PointY="1.125" />
         <AssociationConnector Association="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" />
         <EntityTypeShape EntityType="CalicoModel.tblHistoricoRecepcion" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="CalicoModel.tblPedido" Width="1.5" PointX="3.375" PointY="6.125" />
+        <EntityTypeShape EntityType="CalicoModel.tblPedidoDetalle" Width="1.5" PointX="5.625" PointY="7.625" />
+        <AssociationConnector Association="CalicoModel.FK_tblPedidoDetalle_tblPedido" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
