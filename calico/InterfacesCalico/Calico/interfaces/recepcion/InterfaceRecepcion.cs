@@ -70,28 +70,27 @@ namespace Calico.interfaces.recepcion
 
             /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos */
             Dictionary<String, tblRecepcion> diccionary = new Dictionary<string, tblRecepcion>();
-            foreach (String key in URLkeys)
+            
+            /* Obtenemos las URLs */
+            String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(URLkeys[0]);
+            /* Armamos la URL */
+            urlPath = recepcionUtils.BuildUrl(url, lastStringTime);
+            Console.WriteLine("Url: " + urlPath);
+            /* Obtenemos los datos */
+            String myJsonString = Utils.SendRequest(urlPath, user, pass);
+            /* Cabezera o detalle */
+            if (!String.Empty.Equals(myJsonString))
             {
-                // Obtenemos las URLs
-                String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
-                // Armamos la URL
-                urlPath = recepcionUtils.BuildUrl(url, key, lastStringTime);
-                Console.WriteLine("Url: " + urlPath);
-                // Obtenemos los datos
-                String myJsonString = Utils.SendRequest(urlPath, user, pass, key);
-                // CABEZERA O DETALLE
-                if (!String.Empty.Equals(myJsonString))
-                {
-                    recepcionUtils.MappingRecepcion(myJsonString, key, diccionary);
-                }
-                else
-                {
-                    Console.WriteLine("Fallo el llamado al Rest Service");
-                    Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
-                    service.UnlockRow();
-                    return false;
-                }
+                recepcionUtils.MappingRecepcion(myJsonString, diccionary);
             }
+            else
+            {
+               Console.WriteLine("Fallo el llamado al Rest Service");
+               Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
+               service.UnlockRow();
+               return false;
+            }
+            
 
             // LLamamos al SP
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);

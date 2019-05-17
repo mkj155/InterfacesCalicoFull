@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Calico.interfaces.recepcion
+{
+    class ReceptionDTO
+    {
+        public string F4201_DOCO { get; set; }
+        public string F4211_LOCN { get; set; }
+        public int F4211_LNID { get; set; }
+        public string F4211_LOTN { get; set; }
+        public string F4201_DCTO { get; set; }
+        public int F4211_UORG { get; set; }
+        public string F4201_KCOO { get; set; }
+        public System.DateTime F4201_OPDJ { get; set; }
+    }
+}

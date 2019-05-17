@@ -180,10 +180,10 @@ namespace Calico.common
             return url;
         }
 
-        public static String SendRequest(string url, String user, String pass, String key)
+        public static String SendRequest(string url, String user, String pass)
         {
             String myJsonString = String.Empty;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
             String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(user + ":" + pass));
             request.Headers.Add("Authorization", "Basic " + encoded);
             request.Method = Constants.METHOD_GET;

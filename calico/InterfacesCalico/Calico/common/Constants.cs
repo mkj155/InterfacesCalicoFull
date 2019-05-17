@@ -16,6 +16,7 @@ namespace Calico.common
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";
         public const String JSON_SUBFIX_TAX = "F0101";
+        public const String JSON_SUBFIX_RECEPTION = "V554211";
         public const String JSON_TAG_DATA = "data";
         public const String JSON_TAG_GRIDDATA = "gridData";
         public const String JSON_TAG_ROWSET = "rowset";
