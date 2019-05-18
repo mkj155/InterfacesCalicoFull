@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Calico.persistencia;
+using Calico.service;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -180,6 +184,21 @@ namespace Calico.common
             return url;
         }
 
+        public static void handleErrorRest(WebException e){
+            if (e.Status == WebExceptionStatus.ProtocolError)
+            {
+                HttpWebResponse response = (HttpWebResponse)e.Response;
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                String myJsonString = reader.ReadToEnd();
+                JObject json = JObject.Parse(myJsonString);
+
+                Console.WriteLine("Servicio Rest KO");
+                Console.WriteLine("Message: " + e.Message);
+                Console.WriteLine(json["message"]);
+                Console.WriteLine(json["exception"]);
+            }
+        }
+
         public static String SendRequest(string url, String user, String pass)
         {
             String myJsonString = String.Empty;
@@ -194,11 +213,26 @@ namespace Calico.common
                 myJsonString = reader.ReadToEnd();
                 Console.WriteLine("Servicio Rest OK");
             }
+            catch (WebException e)
+            {
+                handleErrorRest(e);
+            }
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
             }
             return myJsonString;
+        }
+
+        public static void finishProcessByError(BianchiService service, BIANCHI_PROCESS process, String error, String interfaz)
+        {
+            Console.WriteLine(error);
+            Console.WriteLine("Finalizamos la ejecucion de la interface: " + interfaz);
+            process.fin = DateTime.Now;
+            process.cant_lineas = 0;
+            process.estado = Constants.ESTADO_ERROR;
+            service.Update(process);
+            service.UnlockRow();
         }
 
     }

@@ -57,5 +57,9 @@ namespace Calico.common
         public const String COLUMN_MCU = "MCU";   // Business Unit
         public const String COLUMN_AC01 = "AC01"; // Cat Code 1
         public const String COLUMN_MLNM = "MLNM"; // RAZON SOCIAL 
+
+        //ERRORES
+        public const String NOT_DATA_FOUND = "No se recibieron datos del Rest Service";
+        public const String FAILED_CALL_REST = "Fallo el llamado al Rest Service";
     }
 }

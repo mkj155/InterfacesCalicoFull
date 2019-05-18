@@ -110,7 +110,7 @@ namespace Calico.DAOs
         {
             this.entity = new CalicoEntities();
             scope = entity.Database.BeginTransaction();
-            entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + id);
+            entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK) where id = " + id);
         }
 
         public void UnlockRow()

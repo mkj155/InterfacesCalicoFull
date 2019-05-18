@@ -21,12 +21,18 @@ namespace Calico.interfaces.recepcion
         {
             var jc = JsonConvert.DeserializeObject<JObject>(myJsonString);
 
-            var receptionDTO = jc.Value<JObject>(Constants.JSON_PREFIX + Constants.JSON_SUBFIX_RECEPTION)
+            JArray rowset = jc.Value<JObject>(Constants.JSON_PREFIX + Constants.JSON_SUBFIX_RECEPTION)
                                  .Value<JObject>(Constants.JSON_TAG_DATA)
                                  .Value<JObject>(Constants.JSON_TAG_GRIDDATA)
-                                 .Value<JArray>(Constants.JSON_TAG_ROWSET)
-                                 .ToObject<List<ReceptionDTO>>();
-            return receptionDTO as List<ReceptionDTO>;
+                                 .Value<JArray>(Constants.JSON_TAG_ROWSET);
+
+            if (rowset != null && rowset.Count > 0)
+            {
+                return rowset.ToObject<List<ReceptionDTO>>() as List<ReceptionDTO>;
+            }
+
+                             
+            return new List<ReceptionDTO>();
         }
 
         public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen, String tipo, String compania)

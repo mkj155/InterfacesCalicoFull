@@ -71,7 +71,7 @@ namespace Calico.interfaces.recepcion
 
             /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos */
             Dictionary<String, tblRecepcion> diccionary = new Dictionary<string, tblRecepcion>();
-            
+
             /* Obtenemos las URL */
             String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_RECEPCION_URL);
 
@@ -92,19 +92,23 @@ namespace Calico.interfaces.recepcion
             if (!String.Empty.Equals(myJsonString))
             {
                 receptionDTO = recepcionUtils.MappingJsonRecepcion(myJsonString);
-                recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen, tipo, compania);
+                if (receptionDTO.Any())
+                {
+                    recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen, tipo, compania);
+                }
+                else
+                {
+                    Utils.finishProcessByError(service, process, Constants.NOT_DATA_FOUND, INTERFACE);
+                    return false;
+                }
             }
             else
             {
-               Console.WriteLine("Fallo el llamado al Rest Service");
-               Console.WriteLine("Finalizamos la ejecucion de la interface: " + INTERFACE);
-               service.UnlockRow();
-               return false;
+                Utils.finishProcessByError(service, process, Constants.FAILED_CALL_REST, INTERFACE);
+                return false;
             }
 
-            // Validamos si
-            
-            // LLamamos al SP
+            /* LLamamos al SP */
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             // int? tipoMensaje = 0;
             // int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
