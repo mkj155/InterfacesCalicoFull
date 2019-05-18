@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,12 @@ namespace Calico.DAOs
             throw new NotImplementedException();
         }
 
-        public void Save(tblRecepcion obj)
+        public void Update(tblRecepcion obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Save(tblRecepcion obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -35,80 +41,61 @@ namespace Calico.DAOs
                     context.tblRecepcion.Add(obj);
                     context.SaveChanges();
                 }
-
                 catch (DbEntityValidationException e)
                 {
                     foreach (var eve in e.EntityValidationErrors)
                     {
                         foreach (var ve in eve.ValidationErrors)
                         {
-                            Console.Error.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                                ve.PropertyName, ve.ErrorMessage);
+                            Console.Error.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
                         }
                     }
-                    throw;
+                    return false;
+                }
+                catch (DbUpdateException dbe)
+                {
+                    String eeee = dbe.Message;
                 }
             }
+            return true;
         }
 
-        public void Update(tblRecepcion obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CountByFields(String emplaz, String alm, String cod, String numero)
+        /// <summary>
+        /// Verifica que no se haya procesado esta recepcion con anterioridad
+        /// </summary>
+        /// <param name="emplaz"></param>
+        /// <param name="alm"></param>
+        /// <param name="cod"></param>
+        /// <param name="numero"></param>
+        /// <returns>Retorna TRUE si ya fue procesada esta Recepcion</returns>
+        public bool IsAlreadyProcess(String emplaz, String alm, String cod, String numero)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
                 int count = context.tblRecepcion
-               .Where(x => x.recc_emplazamiento == emplaz &&
-                      x.recc_almacen == alm &&
-                      x.recc_trec_codigo == cod &&
-                      x.recc_numero == numero)
-               .Count<tblRecepcion>();
+                   .Where(x => x.recc_emplazamiento == emplaz &&
+                          x.recc_almacen == alm &&
+                          x.recc_trec_codigo == cod &&
+                          x.recc_numero == numero)
+                   .Count<tblRecepcion>();
 
-                count += context.tblHistoricoRecepcion
-               .Where(x => x.hrec_emplazamiento == emplaz &&
-                      x.hrec_almacen == alm &&
-                      x.hrec_trec_codigo == cod &&
-                      x.hrec_numero == numero)
-               .Count<tblHistoricoRecepcion>();
+                if (count == 0)
+                {
+                    count += context.tblHistoricoRecepcion
+                       .Where(x => x.hrec_emplazamiento == emplaz &&
+                              x.hrec_almacen == alm &&
+                              x.hrec_trec_codigo == cod &&
+                              x.hrec_numero == numero)
+                       .Count<tblHistoricoRecepcion>();
+                }
+                else
+                {
+                    return true;
+                }
 
-                return count;
+                return count > 0;
             }
         }
 
-        public void examplePersist(String empl, String alm, String cod, String num, String compania)
-        {
-            using (CalicoEntities context = new CalicoEntities())
-            {
-                
-                /* Cabecera */
-                tblRecepcion recept = new tblRecepcion();
-                recept.recc_proc_id = 1;
-                recept.recc_emplazamiento = empl;
-                recept.recc_almacen = alm;
-                recept.recc_trec_codigo = cod;
-                recept.recc_numero = num;
-                recept.recc_fechaEmision = DateTime.Now;
-                recept.recc_fechaEntrega = DateTime.Now;
-                recept.recc_proveedor = "Proveedor";
-
-                /* Detalle */
-                tblRecepcionDetalle detalle = new tblRecepcionDetalle();
-                detalle.recd_proc_id = 1;
-                detalle.recd_compania = compania;
-                detalle.recd_producto = "Producto_rest";
-                detalle.recd_lote = "lote";
-                detalle.recd_fechaVencimiento = DateTime.Now;
-                detalle.recd_cantidad = 12;
-                detalle.recd_numeroPedido = "1";
-                detalle.tblRecepcion = recept;
-
-                recept.tblRecepcionDetalle.Add(detalle);
-
-                Save(recept);
-            }
-        }
     }
 }

@@ -49,6 +49,7 @@ namespace Calico.interfaces.clientes
             if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
             {
                 service.UnlockRow();
+                return false;
             }
             lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 

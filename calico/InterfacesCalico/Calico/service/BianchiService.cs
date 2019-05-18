@@ -67,23 +67,6 @@ namespace Calico.service
             return dao.findByName(interfaz);
         }
 
-        public void ExamplePersist()
-        {
-            BIANCHI_PROCESS obj = GetProcessInit(DateTime.Now, "Cliente");
-
-            /* Example save Entity Framework */
-            Save(obj);
-            /* Example find by id Entity Framework */
-            BIANCHI_PROCESS process = FindById(obj.id);
-            /* Example update Entity Framework */
-            obj.cant_lineas = 50;
-            obj.fin = DateTime.Now;
-            obj.estado = "ok";
-            Update(obj);
-            /* Example delete Entity Framework */
-            Delete(obj.id);
-        }
-
         public void LockRow(int id)
         {
             dao.LockRow(id);

@@ -1,4 +1,5 @@
 ﻿using Calico.persistencia;
+using System;
 using System.Data.Entity;
 
 namespace Calico.DAOs
@@ -34,13 +35,22 @@ namespace Calico.DAOs
             }
         }
 
-        public void Save(tblSubCliente obj)
+        public bool Save(tblSubCliente obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            try
             {
-                context.tblSubCliente.Add(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    context.tblSubCliente.Add(obj);
+                    context.SaveChanges();
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         public void Update(tblSubCliente obj)

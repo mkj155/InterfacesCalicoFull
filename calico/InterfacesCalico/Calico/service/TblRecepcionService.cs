@@ -24,9 +24,9 @@ namespace Calico.service
             return dao.FindById(id);
         }
 
-        public void Save(tblRecepcion obj)
+        public bool Save(tblRecepcion obj) 
         {
-            dao.Save(obj);
+            return dao.Save(obj);
         }
 
         public void Update(tblRecepcion obj)
@@ -39,27 +39,9 @@ namespace Calico.service
             return dao.CallProcedure(tipoProceso, tipoMensaje);
         }
 
-        public Boolean IgnoreRegister(String emplaz, String alm, String cod, String numero)
+        public Boolean IsAlreadyProcess(String emplaz, String alm, String cod, String numero)
         {
-            int count = dao.CountByFields(emplaz, alm, cod, numero);
-
-            if(count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public void examplePersist(String empl,String alm,String cod,String num,String comp)
-        {
-            if (!IgnoreRegister(empl, alm, cod, num))
-            {
-                dao.examplePersist(empl, alm, cod, num, comp);
-            }
-            
+            return dao.IsAlreadyProcess(emplaz, alm, cod, numero);
         }
 
     }

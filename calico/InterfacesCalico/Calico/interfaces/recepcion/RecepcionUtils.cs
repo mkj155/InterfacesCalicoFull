@@ -68,7 +68,11 @@ namespace Calico.interfaces.recepcion
             recepcion.recc_numero = receptionDTO.F4201_DOCO;
             string result = DateTime.ParseExact(receptionDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
             recepcion.recc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
-            recepcion.recc_proveedor = receptionDTO.F4211_MCU;
+            recepcion.recc_proveedor = receptionDTO.F4211_MCU.Trim();
+
+            // VERY HARDCODE
+            recepcion.recc_fechaEmision = DateTime.Now;
+
             return recepcion;
         }
 
@@ -81,6 +85,11 @@ namespace Calico.interfaces.recepcion
             detalle.recd_lote = receptionDTO.F4211_LOTN;
             // detalle.recd_fechaVencimiento = TODO viene en receptionDTO
             detalle.recd_cantidad = receptionDTO.F4211_UORG;
+            
+            // VERY HARDCODE
+            detalle.recd_numeroPedido = "1";
+            detalle.recd_fechaVencimiento = DateTime.Now;
+
             return detalle;
         }
 

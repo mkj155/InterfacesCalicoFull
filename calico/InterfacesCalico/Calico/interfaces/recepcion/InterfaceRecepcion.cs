@@ -22,9 +22,8 @@ namespace Calico.interfaces.recepcion
         public bool Process(DateTime? dateTime)
         {
             Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
-            DateTime lastTime;
-            BIANCHI_PROCESS process = service.FindByName(INTERFACE);
 
+            BIANCHI_PROCESS process = service.FindByName(INTERFACE);
             if (process == null)
             {
                 Console.WriteLine("No hay configuracion en BIANCHI_PROCESS para la interface: " + INTERFACE);
@@ -50,8 +49,9 @@ namespace Calico.interfaces.recepcion
             if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
             {
                 service.UnlockRow();
+                return false;
             }
-            lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
+            DateTime lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 
             /* Convierto DateTime a String */
             String lastStringTime = lastStringTime = Utils.ConvertDateTimeInString(lastTime);
@@ -60,24 +60,18 @@ namespace Calico.interfaces.recepcion
             Console.WriteLine("Cargamos archivo de configuracion");
             IConfigSource source = new IniConfigSource("calico_config.ini");
 
-            /* Obtenemos las keys de las URLs del archivo externo */
-            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
-
-            /* Preparamos la URL con sus parametros y llamamos al servicio */
+            /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
             String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
             String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
-
-            /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos */
-            Dictionary<String, tblRecepcion> diccionary = new Dictionary<string, tblRecepcion>();
-
-            /* Obtenemos las URL */
+            
+            /* Obtenemos la URL del archivo */
             String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_RECEPCION_URL);
 
-            /* Armamos la URL */
+            /* Armamos la URL con parametros */
             urlPath = recepcionUtils.BuildUrl(url, lastStringTime);
-            Console.WriteLine("Url: " + urlPath);
+            Console.WriteLine("URL: " + urlPath);
 
             /* Obtenemos los datos */
             String myJsonString = Utils.SendRequest(urlPath, user, pass);
@@ -89,6 +83,7 @@ namespace Calico.interfaces.recepcion
             String almacen = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
             String tipo = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_CODIGO);
             String compania = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_COMPANIA);
+
             if (!String.Empty.Equals(myJsonString))
             {
                 receptionDTO = recepcionUtils.MappingJsonRecepcion(myJsonString);
@@ -108,21 +103,43 @@ namespace Calico.interfaces.recepcion
                 return false;
             }
 
-            /* LLamamos al SP */
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            // int? tipoMensaje = 0;
-            // int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
             int count = 0;
             int countError = 0;
+            int countAlreadyProcess = 0;
+            int? tipoMensaje = 0;
+            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
+            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
-            Console.WriteLine("Llamando al SP por cada Recepcion");
-            foreach (KeyValuePair<string, tblRecepcion> entry in diccionary)
+
+            // Validamos si hay que insertar o descartar la recepcion
+            foreach (KeyValuePair<string, tblRecepcion> entry in dictionary)
             {
-                // TODO
+                // ¿Ya está procesada?
+                if (serviceRecepcion.IsAlreadyProcess(emplazamiento, almacen, tipo, entry.Value.recc_numero))
+                {
+                    Console.WriteLine("La recepcion " + entry.Value.recc_numero + " ya fue tratada, no se procesara");
+                    countAlreadyProcess++;
+                }
+                // No está procesada! la voy a guardar
+                else
+                {
+                    // LLamo al SP y seteo su valor a la cabecera y sus detalles
+                    int recc_proc_id = serviceRecepcion.CallProcedure(tipoProceso, tipoMensaje);
+                    entry.Value.recc_proc_id = recc_proc_id;
+                    foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
+                    {
+                        detalle.recd_proc_id = recc_proc_id;
+                    }
+                    // ¿La pude guardar?
+                    Console.WriteLine("Procesando recepcion: " + entry.Value.recc_numero);
+                    if (serviceRecepcion.Save(entry.Value))
+                        count++;
+                    else
+                        countError++;
+                }
             }
 
             Console.WriteLine("Finalizó el proceso de actualización de Recepciones");
-            Console.WriteLine(countError + " Recepciones no pudieron ser procesadas");
 
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos la actualizamos de BIANCHI_PROCESS");
@@ -130,7 +147,9 @@ namespace Calico.interfaces.recepcion
             process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);
-            Console.WriteLine("Cantidad de Recepciones procesadas: " + process.cant_lineas);
+            Console.WriteLine("Cantidad de Recepciones procesadas OK: " + process.cant_lineas);
+            Console.WriteLine("Cantidad de Recepciones procesadas con ERROR: " + countError);
+            Console.WriteLine("Cantidad de Recepciones evitadas: " + countAlreadyProcess);
             Console.WriteLine("Estado: " + process.estado);
 
             /* Actualizamos la tabla BIANCHI_PROCESS */

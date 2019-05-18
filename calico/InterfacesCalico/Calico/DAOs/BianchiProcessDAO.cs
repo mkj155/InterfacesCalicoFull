@@ -39,13 +39,21 @@ namespace Calico.DAOs
             }
         }
 
-        public void Save(BIANCHI_PROCESS obj)
+        public bool Save(BIANCHI_PROCESS obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            try
             {
-                context.BIANCHI_PROCESS.Add(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    context.BIANCHI_PROCESS.Add(obj);
+                    context.SaveChanges();
+                }
             }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         public void Update(BIANCHI_PROCESS obj)
