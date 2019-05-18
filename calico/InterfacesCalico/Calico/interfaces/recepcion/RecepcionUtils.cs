@@ -4,9 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Calico.interfaces.recepcion
 {
@@ -19,56 +17,66 @@ namespace Calico.interfaces.recepcion
             return Utils.BuildUrl(urlParam, dictionary);
         }
 
-        private String GetHeaderJson()
+        public List<ReceptionDTO> MappingJsonRecepcion(String myJsonString)
         {
+            var jc = JsonConvert.DeserializeObject<JObject>(myJsonString);
 
-            return Constants.JSON_PREFIX + Constants.JSON_SUBFIX_RECEPTION;
+            var receptionDTO = jc.Value<JObject>(Constants.JSON_PREFIX + Constants.JSON_SUBFIX_RECEPTION)
+                                 .Value<JObject>(Constants.JSON_TAG_DATA)
+                                 .Value<JObject>(Constants.JSON_TAG_GRIDDATA)
+                                 .Value<JArray>(Constants.JSON_TAG_ROWSET)
+                                 .ToObject<List<ReceptionDTO>>();
+            return receptionDTO as List<ReceptionDTO>;
         }
 
-        public void MappingRecepcion(String myJsonString,Dictionary<String, tblRecepcion> diccionary)
+        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen, String tipo, String compania)
         {
-            //var json = JObject.Parse(myJsonString);
-            //var root = json[GetHeaderJson()];
-            //var data = root[Constants.JSON_TAG_DATA];
-            //var gridData = data[Constants.JSON_TAG_GRIDDATA];
-
-            //var o = JsonConvert.DeserializeObject<JObject>(gridData.ToString());
-            //var listObj = o.Value<JArray>("rowset").ToObject<List<ReceptionDTO>>();
-
-            var o = JsonConvert.DeserializeObject<JObject>(myJsonString);
-            var h = o.Value<JObject>("fs_DATABROWSE_V554211")
-                     .Value<JObject>("data")
-                     .Value<JArray>("rowset")
-                     .ToObject<List<ReceptionDTO>>();
-
-            //SetValues(rowset, diccionary, columnId, columnValue);
-        }
-
-        private void SetValues(JToken rowset, Dictionary<String, tblRecepcion> diccionary, String columnId, String columnValue)
-        {
-            while (rowset.First != null)
+            foreach(ReceptionDTO receptionDTO in receptionDTOList)
             {
-                String id = rowset.First[columnId].ToString();
-                String value = rowset.First[columnValue].ToString();
-                AddDataToDictionary(diccionary, id, value);
-                rowset.First.Remove();
+                tblRecepcion recepcion = null;
+                dictionary.TryGetValue(receptionDTO.F4201_DOCO, out recepcion);
+                if (recepcion == null)
+                {
+                    /* CABEZERA */
+                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen, tipo, compania);
+                    /* DETALLE */
+                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO, compania);
+                    recepcion.tblRecepcionDetalle.Add(detalle);
+                    dictionary.Add(receptionDTO.F4201_DOCO, recepcion);
+                }
+                else
+                {
+                    /* DETALLE */
+                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO, compania);
+                    recepcion.tblRecepcionDetalle.Add(detalle);
+                }
             }
         }
 
-        private void AddDataToDictionary(Dictionary<String, tblRecepcion> dictionary, String id, String data)
+        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen, String tipo, String compania)
         {
-            tblRecepcion recep = null;
-            dictionary.TryGetValue(id, out recep);
-            if (recep == null)
-            {
-                recep = new tblRecepcion();
-                // AGREGO LA INFO DEL ROWSET
-                /* .
-                 * .
-                 * .
-                 */
-                dictionary.Add(id, recep);
-            }
+            tblRecepcion recepcion = new tblRecepcion();
+            recepcion.recc_emplazamiento = emplazamiento;
+            recepcion.recc_almacen = almacen;
+            recepcion.recc_trec_codigo = tipo;
+            recepcion.recc_numero = receptionDTO.F4201_DOCO;
+            string result = DateTime.ParseExact(receptionDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+            recepcion.recc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
+            recepcion.recc_proveedor = receptionDTO.F4211_MCU;
+            return recepcion;
         }
+
+        private tblRecepcionDetalle fillDetalle(ReceptionDTO receptionDTO, String compania)
+        {
+            tblRecepcionDetalle detalle = new tblRecepcionDetalle();
+            detalle.recd_compania = compania;
+            // detalle.recd_producto = TODO viene en receptionDTO
+            detalle.recd_lineaPedido = receptionDTO.F4211_LNID;
+            detalle.recd_lote = receptionDTO.F4211_LOTN;
+            // detalle.recd_fechaVencimiento = TODO viene en receptionDTO
+            detalle.recd_cantidad = receptionDTO.F4211_UORG;
+            return detalle;
+        }
+
     }
 }

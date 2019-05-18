@@ -78,7 +78,7 @@ namespace Calico.DAOs
             }
         }
 
-        public void examplePersist(String empl, String alm, String cod, String num, String compañia)
+        public void examplePersist(String empl, String alm, String cod, String num, String compania)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -97,7 +97,7 @@ namespace Calico.DAOs
                 /* Detalle */
                 tblRecepcionDetalle detalle = new tblRecepcionDetalle();
                 detalle.recd_proc_id = 1;
-                detalle.recd_compania = compañia;
+                detalle.recd_compania = compania;
                 detalle.recd_producto = "Producto_rest";
                 detalle.recd_lote = "lote";
                 detalle.recd_fechaVencimiento = DateTime.Now;

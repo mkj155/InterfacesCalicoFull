@@ -47,7 +47,8 @@ namespace Calico.interfaces.recepcion
             service.LockRow(process.id);
 
             /* Obtenemos la fecha */
-            if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima)) {
+            if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
+            {
                 service.UnlockRow();
             }
             lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
@@ -71,17 +72,27 @@ namespace Calico.interfaces.recepcion
             /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos */
             Dictionary<String, tblRecepcion> diccionary = new Dictionary<string, tblRecepcion>();
             
-            /* Obtenemos las URLs */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(URLkeys[0]);
+            /* Obtenemos las URL */
+            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_RECEPCION_URL);
+
             /* Armamos la URL */
             urlPath = recepcionUtils.BuildUrl(url, lastStringTime);
             Console.WriteLine("Url: " + urlPath);
+
             /* Obtenemos los datos */
             String myJsonString = Utils.SendRequest(urlPath, user, pass);
-            /* Cabezera o detalle */
+
+            /* Mapping */
+            List<ReceptionDTO> receptionDTO = null;
+            Dictionary<String, tblRecepcion> dictionary = new Dictionary<string, tblRecepcion>();
+            String emplazamiento = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
+            String almacen = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
+            String tipo = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_CODIGO);
+            String compania = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_COMPANIA);
             if (!String.Empty.Equals(myJsonString))
             {
-                recepcionUtils.MappingRecepcion(myJsonString, diccionary);
+                receptionDTO = recepcionUtils.MappingJsonRecepcion(myJsonString);
+                recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen, tipo, compania);
             }
             else
             {
@@ -90,8 +101,9 @@ namespace Calico.interfaces.recepcion
                service.UnlockRow();
                return false;
             }
-            
 
+            // Validamos si
+            
             // LLamamos al SP
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             // int? tipoMensaje = 0;

@@ -15,6 +15,7 @@ namespace Calico.interfaces.recepcion
         public string F4201_DCTO { get; set; }
         public int F4211_UORG { get; set; }
         public string F4201_KCOO { get; set; }
-        public System.DateTime F4201_OPDJ { get; set; }
+        public string F4201_OPDJ { get; set; }
+        public string F4211_MCU { get; set; }
     }
 }

@@ -68,7 +68,7 @@ namespace Calico.common
         /// <param name="date"></param>
         /// <param name="format"></param>
         /// <returns>DateTime con la fecha pasada como String como parametro</returns>
-        private static DateTime ParseDate(String date, String format)
+        public static DateTime ParseDate(String date, String format)
         {
             return DateTime.ParseExact(date, format, null);
         }

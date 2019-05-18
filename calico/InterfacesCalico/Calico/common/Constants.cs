@@ -11,6 +11,11 @@ namespace Calico.common
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
         // RECEPCION
         public const String INTERFACE_RECEPCION = "Recepcion";
+        public const String INTERFACE_RECEPCION_URL = "ReceptionURL";
+        public const String INTERFACE_RECEPCION_EMPLAZAMIENTO = "Emplazamiento";
+        public const String INTERFACE_RECEPCION_ALMACEN = "Almacen";
+        public const String INTERFACE_RECEPCION_CODIGO = "Codigo";
+        public const String INTERFACE_RECEPCION_COMPANIA = "Compania";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";

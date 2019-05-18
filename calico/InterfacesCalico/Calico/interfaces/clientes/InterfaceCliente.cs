@@ -78,7 +78,7 @@ namespace Calico.interfaces.clientes
                 urlPath = clientesUtils.BuildUrl(url, key, lastStringTime);
                 Console.WriteLine("Url: " + urlPath);
                 // Obtenemos los datos
-                String myJsonString = Utils.SendRequest(urlPath, user, pass, key);
+                String myJsonString = Utils.SendRequest(urlPath, user, pass);
                 // Armamos los objetos Clientes
                 if (!String.Empty.Equals(myJsonString))
                 {
