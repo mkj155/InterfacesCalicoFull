@@ -64,12 +64,29 @@ namespace Calico.service
 
         public BIANCHI_PROCESS FindByName(String interfaz)
         {
-            return dao.findByName(interfaz);
+            try
+            {
+                return dao.findByName(interfaz);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
 
-        public void LockRow(int id)
+        public bool LockRow(int id)
         {
-            dao.LockRow(id);
+            try
+            {
+                dao.LockRow(id);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
 
         public void UnlockRow() {

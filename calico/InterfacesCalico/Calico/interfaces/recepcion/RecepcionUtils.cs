@@ -31,7 +31,6 @@ namespace Calico.interfaces.recepcion
                 return rowset.ToObject<List<ReceptionDTO>>() as List<ReceptionDTO>;
             }
 
-                             
             return new List<ReceptionDTO>();
         }
 
@@ -72,12 +71,16 @@ namespace Calico.interfaces.recepcion
                 string result = DateTime.ParseExact(receptionDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                 recepcion.recc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
             }
+            else
+            {
+                recepcion.recc_fechaEntrega = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+            }
 
             if(receptionDTO.F4211_MCU != null)
                 recepcion.recc_proveedor = receptionDTO.F4211_MCU.Trim();
 
             // VERY HARDCODE
-            recepcion.recc_fechaEmision = DateTime.Now;
+            recepcion.recc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
 
             return recepcion;
         }
@@ -86,14 +89,29 @@ namespace Calico.interfaces.recepcion
         {
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
             detalle.recd_compania = compania;
-            // detalle.recd_producto = TODO viene en receptionDTO
-            detalle.recd_lineaPedido = receptionDTO.F4211_LNID;
+            detalle.recd_lineaPedido = Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID));
             detalle.recd_lote = receptionDTO.F4211_LOTN;
-            // detalle.recd_fechaVencimiento = TODO viene en receptionDTO
-            detalle.recd_cantidad = receptionDTO.F4211_UORG;
-            detalle.recd_producto = receptionDTO.F4211_LITM;
-            if(!String.IsNullOrWhiteSpace(receptionDTO.F4108_MMEJ))
-                detalle.recd_fechaVencimiento = Utils.ParseDate(receptionDTO.F4108_MMEJ,"YYYYMMDD");
+            detalle.recd_cantidad = Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG));
+
+            // VERY HARDCODE
+            if (!String.IsNullOrWhiteSpace(receptionDTO.F4211_LITM) && receptionDTO.F4211_LITM.Length > 15)
+            {
+                detalle.recd_producto = "99999999999999";
+            }
+            else
+            {
+                detalle.recd_producto = receptionDTO.F4211_LITM;
+            }
+
+            if (!String.IsNullOrWhiteSpace(receptionDTO.F4108_MMEJ))
+            {
+                string result = DateTime.ParseExact(receptionDTO.F4108_MMEJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+                detalle.recd_fechaVencimiento = Utils.ParseDate(result, "yyyy/MM/dd");
+            }
+            else
+            {
+                detalle.recd_fechaVencimiento = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+            }
 
             // VERY HARDCODE
             detalle.recd_numeroPedido = "1";

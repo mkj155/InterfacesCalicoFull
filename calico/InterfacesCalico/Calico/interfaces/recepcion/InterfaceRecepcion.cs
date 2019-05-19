@@ -43,7 +43,11 @@ namespace Calico.interfaces.recepcion
             /* Bloquea la row, para que no pueda ser actualizada por otra ejecucion de la misma interface */
             Console.WriteLine("Si hay otro proceso ejecutandose para la interface " + INTERFACE + " esperamos a que termine");
             Console.WriteLine("Bloqueando la row de BIANCHI_PROCESS, para la interfaz " + INTERFACE);
-            service.LockRow(process.id);
+            if (!service.LockRow(process.id))
+            {
+                Console.WriteLine("No se pudo lockear la row para la interface " + INTERFACE + " se cancela la ejecucion");
+                return false;
+            }
 
             /* Obtenemos la fecha */
             if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
@@ -53,12 +57,23 @@ namespace Calico.interfaces.recepcion
             }
             DateTime lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
 
-            /* Convierto DateTime a String */
+            /* Convierto DateTime a String formato YYYYMMDD */
             String lastStringTime = lastStringTime = Utils.ConvertDateTimeInString(lastTime);
 
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
-            IConfigSource source = new IniConfigSource("calico_config.ini");
+            IConfigSource source = null;
+            try
+            {
+                source = new IniConfigSource("calico_config.ini");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("No se pudo cargar el archivo de configuracion, se cancela la ejecucion para la interface " + INTERFACE);
+                service.UnlockRow();
+                return false;
+            }
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
@@ -93,13 +108,17 @@ namespace Calico.interfaces.recepcion
                 }
                 else
                 {
-                    Utils.finishProcessByError(service, process, Constants.NOT_DATA_FOUND, INTERFACE);
+                    Utils.finishProcessByError(process, Constants.NOT_DATA_FOUND, INTERFACE);
+                    service.Update(process);
+                    service.UnlockRow();
                     return false;
                 }
             }
             else
             {
-                Utils.finishProcessByError(service, process, Constants.FAILED_CALL_REST, INTERFACE);
+                Utils.finishProcessByError(process, Constants.FAILED_CALL_REST, INTERFACE);
+                service.Update(process);
+                service.UnlockRow();
                 return false;
             }
 

@@ -6,6 +6,7 @@ namespace Calico.common
     {
         /* INTERFACES */
         public const String NUMERO_INTERFACE = "NumeroInterface";
+        public const String FECHA_DEFAULT = "1973/01/01";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";

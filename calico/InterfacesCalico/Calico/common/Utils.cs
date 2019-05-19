@@ -224,15 +224,13 @@ namespace Calico.common
             return myJsonString;
         }
 
-        public static void finishProcessByError(BianchiService service, BIANCHI_PROCESS process, String error, String interfaz)
+        public static void finishProcessByError(BIANCHI_PROCESS process, String error, String interfaz)
         {
             Console.WriteLine(error);
             Console.WriteLine("Finalizamos la ejecucion de la interface: " + interfaz);
             process.fin = DateTime.Now;
             process.cant_lineas = 0;
             process.estado = Constants.ESTADO_ERROR;
-            service.Update(process);
-            service.UnlockRow();
         }
 
     }

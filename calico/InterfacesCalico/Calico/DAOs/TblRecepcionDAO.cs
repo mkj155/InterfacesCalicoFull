@@ -54,7 +54,11 @@ namespace Calico.DAOs
                 }
                 catch (DbUpdateException dbe)
                 {
-                    String eeee = dbe.Message;
+                    Console.WriteLine("Error insertando la recepcion:" + dbe.Message);
+                }
+                catch (Exception ee)
+                {
+                    Console.WriteLine("Error desconocido insertando la recepcion:" + ee.Message);
                 }
             }
             return true;
