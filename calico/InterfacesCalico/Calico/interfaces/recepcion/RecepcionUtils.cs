@@ -66,9 +66,15 @@ namespace Calico.interfaces.recepcion
             recepcion.recc_almacen = almacen;
             recepcion.recc_trec_codigo = tipo;
             recepcion.recc_numero = receptionDTO.F4201_DOCO;
-            string result = DateTime.ParseExact(receptionDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
-            recepcion.recc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
-            recepcion.recc_proveedor = receptionDTO.F4211_MCU.Trim();
+
+            if (!String.IsNullOrWhiteSpace(receptionDTO.F4201_OPDJ))
+            {
+                string result = DateTime.ParseExact(receptionDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+                recepcion.recc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
+            }
+
+            if(receptionDTO.F4211_MCU != null)
+                recepcion.recc_proveedor = receptionDTO.F4211_MCU.Trim();
 
             // VERY HARDCODE
             recepcion.recc_fechaEmision = DateTime.Now;
@@ -85,10 +91,12 @@ namespace Calico.interfaces.recepcion
             detalle.recd_lote = receptionDTO.F4211_LOTN;
             // detalle.recd_fechaVencimiento = TODO viene en receptionDTO
             detalle.recd_cantidad = receptionDTO.F4211_UORG;
-            
+            detalle.recd_producto = receptionDTO.F4211_LITM;
+            if(!String.IsNullOrWhiteSpace(receptionDTO.F4108_MMEJ))
+                detalle.recd_fechaVencimiento = Utils.ParseDate(receptionDTO.F4108_MMEJ,"YYYYMMDD");
+
             // VERY HARDCODE
             detalle.recd_numeroPedido = "1";
-            detalle.recd_fechaVencimiento = DateTime.Now;
 
             return detalle;
         }
