@@ -63,5 +63,7 @@ namespace Calico.common
         //ERRORES
         public const String NOT_DATA_FOUND = "No se recibieron datos del Rest Service";
         public const String FAILED_CALL_REST = "Fallo el llamado al Rest Service";
+        public const String FAILED_LOAD_FILE = "No se pudo cargar el archivo de configuración";
+        public const String FAILED_LOAD_DATES = "La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso";
     }
 }
