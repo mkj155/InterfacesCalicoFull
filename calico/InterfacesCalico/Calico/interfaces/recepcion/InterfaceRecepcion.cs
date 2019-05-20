@@ -67,7 +67,7 @@ namespace Calico.interfaces.recepcion
             {
                 source = new IniConfigSource("calico_config.ini");
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
                 return false;
@@ -157,6 +157,7 @@ namespace Calico.interfaces.recepcion
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
             process.fin = DateTime.Now;
+            process.fecha_ultima = lastTime;
             process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);

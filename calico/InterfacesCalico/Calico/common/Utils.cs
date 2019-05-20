@@ -39,12 +39,12 @@ namespace Calico.common
             if (dateArg == null)
             {
                 dateTime = Convert.ToDateTime(dateProcess);
-                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateArg);
+                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + dateProcess);
             }
             else
             {
                 dateTime = Convert.ToDateTime(dateArg);
-                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + dateProcess);   
+                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateArg);
             }
             return dateTime;
         }
