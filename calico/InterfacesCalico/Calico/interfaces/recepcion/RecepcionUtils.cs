@@ -34,7 +34,7 @@ namespace Calico.interfaces.recepcion
             return new List<ReceptionDTO>();
         }
 
-        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen, String tipo, String compania)
+        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen, String compania)
         {
             foreach(ReceptionDTO receptionDTO in receptionDTOList)
             {
@@ -43,7 +43,7 @@ namespace Calico.interfaces.recepcion
                 if (recepcion == null)
                 {
                     /* CABEZERA */
-                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen, tipo, compania);
+                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen, compania);
                     /* DETALLE */
                     tblRecepcionDetalle detalle = fillDetalle(receptionDTO, compania);
                     recepcion.tblRecepcionDetalle.Add(detalle);
@@ -58,12 +58,12 @@ namespace Calico.interfaces.recepcion
             }
         }
 
-        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen, String tipo, String compania)
+        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen, String compania)
         {
             tblRecepcion recepcion = new tblRecepcion();
             recepcion.recc_emplazamiento = emplazamiento;
             recepcion.recc_almacen = almacen;
-            recepcion.recc_trec_codigo = tipo;
+            recepcion.recc_trec_codigo = receptionDTO.F4201_DCTO;
             recepcion.recc_numero = receptionDTO.F4201_DOCO;
 
             if (!String.IsNullOrWhiteSpace(receptionDTO.F4201_OPDJ))
@@ -88,7 +88,8 @@ namespace Calico.interfaces.recepcion
         {
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
             detalle.recd_compania = compania;
-            detalle.recd_lineaPedido = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_lineaPedido = 0;
             detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
             detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
 
@@ -113,7 +114,7 @@ namespace Calico.interfaces.recepcion
             }
 
             // VERY HARDCODE
-            detalle.recd_numeroPedido = "1";
+            detalle.recd_numeroPedido = "0";
 
             return detalle;
         }
