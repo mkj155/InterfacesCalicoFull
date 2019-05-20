@@ -59,8 +59,6 @@ namespace Calico.common
         {
             if (dateArg == null && dateProcess == null)
             {
-                Console.WriteLine("La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso");
-                Console.WriteLine("Se libera la row de BIANCHI_PROCESS");
                 return true;
             }
             return false;
@@ -222,15 +220,6 @@ namespace Calico.common
                 Console.Error.WriteLine(ex.Message);
             }
             return myJsonString;
-        }
-
-        public static void finishProcessByError(BIANCHI_PROCESS process, String error, String interfaz)
-        {
-            Console.WriteLine(error);
-            Console.WriteLine("Finalizamos la ejecucion de la interface: " + interfaz);
-            process.fin = DateTime.Now;
-            process.cant_lineas = 0;
-            process.estado = Constants.ESTADO_ERROR;
         }
 
     }

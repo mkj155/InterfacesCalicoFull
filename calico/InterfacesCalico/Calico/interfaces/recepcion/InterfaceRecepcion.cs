@@ -52,7 +52,7 @@ namespace Calico.interfaces.recepcion
             /* Obtenemos la fecha */
             if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
             {
-                service.UnlockRow();
+                service.finishProcessByError(process, Constants.FAILED_LOAD_DATES, INTERFACE);
                 return false;
             }
             DateTime lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
@@ -69,9 +69,7 @@ namespace Calico.interfaces.recepcion
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("No se pudo cargar el archivo de configuracion, se cancela la ejecucion para la interface " + INTERFACE);
-                service.UnlockRow();
+                service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
                 return false;
             }
 
@@ -108,17 +106,13 @@ namespace Calico.interfaces.recepcion
                 }
                 else
                 {
-                    Utils.finishProcessByError(process, Constants.NOT_DATA_FOUND, INTERFACE);
-                    service.Update(process);
-                    service.UnlockRow();
+                    service.finishProcessByError(process, Constants.NOT_DATA_FOUND, INTERFACE);
                     return false;
                 }
             }
             else
             {
-                Utils.finishProcessByError(process, Constants.FAILED_CALL_REST, INTERFACE);
-                service.Update(process);
-                service.UnlockRow();
+                service.finishProcessByError(process, Constants.FAILED_CALL_REST, INTERFACE);
                 return false;
             }
 

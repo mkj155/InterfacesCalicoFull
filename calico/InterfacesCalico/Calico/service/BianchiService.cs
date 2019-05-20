@@ -3,6 +3,7 @@ using Calico.persistencia;
 using System;
 using System.Data.Entity;
 using System.Diagnostics;
+using Calico.common;
 
 namespace Calico.service
 {
@@ -91,6 +92,19 @@ namespace Calico.service
 
         public void UnlockRow() {
             dao.UnlockRow();
+        }
+
+        public void finishProcessByError(BIANCHI_PROCESS process, String error, String interfaz)
+        {
+            Console.WriteLine("Se produjo el siguiente error: " + error);
+            process.fin = DateTime.Now;
+            process.cant_lineas = 0;
+            process.estado = Constants.ESTADO_ERROR;
+            Console.WriteLine("Actualizamos con estado: " + Constants.ESTADO_ERROR + ", la row de bianchi_process");
+            Update(process);
+            Console.WriteLine("Desbloqueamos la row de bianchi_process");
+            UnlockRow();
+            Console.WriteLine("Finalizamos la ejecucion de la interface: " + interfaz);
         }
 
     }
