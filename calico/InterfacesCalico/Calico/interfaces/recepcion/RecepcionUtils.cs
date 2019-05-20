@@ -76,8 +76,7 @@ namespace Calico.interfaces.recepcion
                 recepcion.recc_fechaEntrega = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
             }
 
-            if(receptionDTO.F4211_MCU != null)
-                recepcion.recc_proveedor = receptionDTO.F4211_MCU.Trim();
+            recepcion.recc_proveedor = !String.IsNullOrWhiteSpace(receptionDTO.F4211_MCU) ? receptionDTO.F4211_MCU.Trim() : String.Empty;
 
             // VERY HARDCODE
             recepcion.recc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
@@ -89,13 +88,13 @@ namespace Calico.interfaces.recepcion
         {
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
             detalle.recd_compania = compania;
-            detalle.recd_lineaPedido = Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID));
-            detalle.recd_lote = receptionDTO.F4211_LOTN;
-            detalle.recd_cantidad = Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG));
+            detalle.recd_lineaPedido = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
+            detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
 
-            // VERY HARDCODE
             if (!String.IsNullOrWhiteSpace(receptionDTO.F4211_LITM) && receptionDTO.F4211_LITM.Length > 15)
             {
+                // VERY HARDCODE
                 detalle.recd_producto = "99999999999999";
             }
             else
