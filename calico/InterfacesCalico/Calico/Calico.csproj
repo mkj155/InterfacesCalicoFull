@@ -74,10 +74,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAOs\CommonDAO.cs" />
     <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
+    <Compile Include="persistencia\tblHistoricoRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
@@ -118,6 +123,8 @@
     <Compile Include="DAOs\TblRecepcionDAO.cs" />
     <Compile Include="service\TblRecepcionService.cs" />
     <Compile Include="Run.cs" />
+    <Compile Include="persistencia\tblPedido.cs" />
+    <Compile Include="persistencia\tblPedidoDetalle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

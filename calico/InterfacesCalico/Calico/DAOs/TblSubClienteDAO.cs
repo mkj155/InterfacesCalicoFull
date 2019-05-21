@@ -1,9 +1,10 @@
 ﻿using Calico.persistencia;
+using System;
 using System.Data.Entity;
 
 namespace Calico.DAOs
 {
-    class TblSubClienteDAO : Dao<tblSubCliente>
+    class TblSubClienteDAO : CommonDAO, Dao<tblSubCliente>
     {
         public void Delete(int id)
         {
@@ -34,13 +35,22 @@ namespace Calico.DAOs
             }
         }
 
-        public void Save(tblSubCliente obj)
+        public bool Save(tblSubCliente obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            try
             {
-                context.tblSubCliente.Add(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    context.tblSubCliente.Add(obj);
+                    context.SaveChanges();
+                }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         public void Update(tblSubCliente obj)
@@ -51,14 +61,6 @@ namespace Calico.DAOs
                 if (result == null) return;
                 context.Entry(result).CurrentValues.SetValues(obj);
                 context.SaveChanges();
-            }
-        }
-
-        public int CallProcedure(int? tipoProceso, int? tipoMensaje)
-        {
-            using (CalicoEntities context = new CalicoEntities())
-            {
-                return context.INTERFAZ_CrearProceso(tipoProceso, tipoMensaje);
             }
         }
 
