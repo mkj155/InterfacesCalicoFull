@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Calico.persistencia;
+using Calico.service;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using Calico.Persistencia;
 
 namespace Calico.common
 {
@@ -25,12 +28,49 @@ namespace Calico.common
         }
 
         /// <summary>
+        /// Obtenemos la fecha correcta para el procesamiento
+        /// </summary>
+        /// <param name="dateArg"></param>
+        /// <param name="dateProcess"></param>
+        /// <returns>retorna la fechacorrecta para el procesamiento de la itnerface</returns>
+        public static DateTime GetDateToProcess(DateTime? dateArg, DateTime? dateProcess)
+        {
+            DateTime dateTime;
+            if (dateArg == null)
+            {
+                dateTime = Convert.ToDateTime(dateProcess);
+                Console.WriteLine("Se procesará la interfaz con la fecha de BIANCHI_PROCESS: " + dateProcess);
+            }
+            else
+            {
+                dateTime = Convert.ToDateTime(dateArg);
+                Console.WriteLine("Se procesará la interfaz con la fecha pasada como argumentos: " + dateArg);
+            }
+            return dateTime;
+        }
+
+        /// <summary>
+        /// Valida que haya una fecha valida para poder procesar la interface
+        /// </summary>
+        /// <param name="dateArg"></param>
+        /// <param name="dateProcess"></param>
+        /// <returns>TRUE si no hay una fecha valida para poder procesar la interface</returns>
+        public static bool IsInvalidateDates(DateTime? dateArg, DateTime? dateProcess)
+        {
+            if (dateArg == null && dateProcess == null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// DateTime con la fecha pasada como String como parametro
         /// </summary>
         /// <param name="date"></param>
         /// <param name="format"></param>
         /// <returns>DateTime con la fecha pasada como String como parametro</returns>
-        private static DateTime ParseDate(String date, String format)
+        public static DateTime ParseDate(String date, String format)
         {
             return DateTime.ParseExact(date, format, null);
         }
@@ -142,10 +182,25 @@ namespace Calico.common
             return url;
         }
 
-        public static String SendRequest(string url, String user, String pass, String key)
+        public static void handleErrorRest(WebException e){
+            if (e.Status == WebExceptionStatus.ProtocolError)
+            {
+                HttpWebResponse response = (HttpWebResponse)e.Response;
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                String myJsonString = reader.ReadToEnd();
+                JObject json = JObject.Parse(myJsonString);
+
+                Console.WriteLine("Servicio Rest KO");
+                Console.WriteLine("Message: " + e.Message);
+                Console.WriteLine(json["message"]);
+                Console.WriteLine(json["exception"]);
+            }
+        }
+
+        public static String SendRequest(string url, String user, String pass)
         {
             String myJsonString = String.Empty;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
             String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(user + ":" + pass));
             request.Headers.Add("Authorization", "Basic " + encoded);
             request.Method = Constants.METHOD_GET;
@@ -155,6 +210,10 @@ namespace Calico.common
                 StreamReader reader = new StreamReader(response.GetResponseStream());
                 myJsonString = reader.ReadToEnd();
                 Console.WriteLine("Servicio Rest OK");
+            }
+            catch (WebException e)
+            {
+                handleErrorRest(e);
             }
             catch (Exception ex)
             {

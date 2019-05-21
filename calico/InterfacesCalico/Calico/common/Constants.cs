@@ -4,15 +4,26 @@ namespace Calico.common
 {
     public class Constants
     {
-        // INTERFACES
+        /* INTERFACES */
+        public const String NUMERO_INTERFACE = "NumeroInterface";
+        public const String FECHA_DEFAULT = "1973/01/01";
+        // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
-        public const String NUMERO_INTERFACE_CLIENTE = "NumeroInterface";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
+        // RECEPCION
+        public const String INTERFACE_RECEPCION = "Recepcion";
+        public const String INTERFACE_RECEPCION_URL = "ReceptionURL";
+        public const String INTERFACE_RECEPCION_EMPLAZAMIENTO = "Emplazamiento";
+        public const String INTERFACE_RECEPCION_ALMACEN = "Almacen";
+        public const String INTERFACE_RECEPCION_CODIGO = "Codigo";
+        public const String INTERFACE_RECEPCION_COMPANIA = "Compania";
+        public const String NUMERO_CLIENTE_INTERFACE_RECEPCION = "NumeroCliente";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";
         public const String JSON_SUBFIX_TAX = "F0101";
+        public const String JSON_SUBFIX_RECEPTION = "V554211";
         public const String JSON_TAG_DATA = "data";
         public const String JSON_TAG_GRIDDATA = "gridData";
         public const String JSON_TAG_ROWSET = "rowset";
@@ -48,5 +59,11 @@ namespace Calico.common
         public const String COLUMN_MCU = "MCU";   // Business Unit
         public const String COLUMN_AC01 = "AC01"; // Cat Code 1
         public const String COLUMN_MLNM = "MLNM"; // RAZON SOCIAL 
+
+        //ERRORES
+        public const String NOT_DATA_FOUND = "No se recibieron datos del Rest Service";
+        public const String FAILED_CALL_REST = "Fallo el llamado al Rest Service";
+        public const String FAILED_LOAD_FILE = "No se pudo cargar el archivo de configuración";
+        public const String FAILED_LOAD_DATES = "La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso";
     }
 }

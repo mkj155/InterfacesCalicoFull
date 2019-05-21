@@ -1,10 +1,6 @@
-﻿using Calico;
-using Calico.common;
-using Calico.Persistencia;
-using Nini.Config;
+﻿using Calico.common;
+using InterfacesCalico.generic;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace InterfacesCalico
 {
@@ -28,7 +24,7 @@ namespace InterfacesCalico
             DateTime ? dateTime = Utils.GetDate(args);
             if (dateTime == null)
             {
-                Console.WriteLine("Fecha no indicada se tomará de la tabla BIANCHI_PROCESS");
+                Console.WriteLine("Fecha no indicada o posee un formato erroneo,se tomará de la tabla BIANCHI_PROCESS");
             }
 
             // Instanciamos la interface que llego como primer argumento

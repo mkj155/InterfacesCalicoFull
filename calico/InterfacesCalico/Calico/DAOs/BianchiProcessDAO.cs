@@ -1,12 +1,17 @@
-﻿using Calico.Persistencia;
+﻿using Calico.common;
+using Calico.persistencia;
 using System;
 using System.Data.Entity;
 using System.Linq;
 
-namespace Calico.common
+namespace Calico.DAOs
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {
+
+        private CalicoEntities entity;
+        private DbContextTransaction scope;
+
         public void Delete(int id)
         {
             using (CalicoEntities context = new CalicoEntities())
@@ -34,13 +39,21 @@ namespace Calico.common
             }
         }
 
-        public void Save(BIANCHI_PROCESS obj)
+        public bool Save(BIANCHI_PROCESS obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
+            try
             {
-                context.BIANCHI_PROCESS.Add(obj);
-                context.SaveChanges();
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    context.BIANCHI_PROCESS.Add(obj);
+                    context.SaveChanges();
+                }
             }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         public void Update(BIANCHI_PROCESS obj)
@@ -101,14 +114,17 @@ namespace Calico.common
             }
         }
 
-        public void blockRow(int id, String interfaz)
+        public void LockRow(int id)
         {
-            using (CalicoEntities entities = new CalicoEntities())
-            using (DbContextTransaction scope = entities.Database.BeginTransaction())
-            {
-                entities.Database.ExecuteSqlCommand("UPDATE BIANCHI_PROCESS SET INTERFAZ = '" + interfaz + "' WHERE ID = " + id);
-                scope.Commit();
-            }
+            this.entity = new CalicoEntities();
+            scope = entity.Database.BeginTransaction();
+            entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK) where id = " + id);
+        }
+
+        public void UnlockRow()
+        {
+            scope.Commit();
+            entity.Dispose();
         }
 
     }

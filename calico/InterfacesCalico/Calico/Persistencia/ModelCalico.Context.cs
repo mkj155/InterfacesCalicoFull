@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Calico.Persistencia
+namespace Calico.persistencia
 {
     using System;
     using System.Data.Entity;
@@ -22,7 +22,8 @@ namespace Calico.Persistencia
         public CalicoEntities()
             : base("name=CalicoEntities")
         {
-            this.Database.CommandTimeout = 0;        
+            // Cuanto tiempo de time out?
+            ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 180;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -32,7 +33,12 @@ namespace Calico.Persistencia
     
         public virtual DbSet<BIANCHI_PROCESS> BIANCHI_PROCESS { get; set; }
         public virtual DbSet<tblSubCliente> tblSubCliente { get; set; }
-    
+        public virtual DbSet<tblRecepcion> tblRecepcion { get; set; }
+        public virtual DbSet<tblRecepcionDetalle> tblRecepcionDetalle { get; set; }
+        public virtual DbSet<tblHistoricoRecepcion> tblHistoricoRecepcion { get; set; }
+        public virtual DbSet<tblPedido> tblPedido { get; set; }
+        public virtual DbSet<tblPedidoDetalle> tblPedidoDetalle { get; set; }
+
         public virtual int INTERFAZ_CrearProceso(Nullable<int> tipoProceso, Nullable<int> tipoMensaje)
         {
             using (SqlConnection con = (SqlConnection)this.Database.Connection)
