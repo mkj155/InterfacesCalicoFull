@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,5 +35,22 @@ namespace Calico.DAOs
         {
             throw new NotImplementedException();
         }
+
+        public int CallProcedureArchivarInformeRecepcion(Nullable<int> id, ObjectParameter error)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                return context.INTERFAZ_ArchivarInformeRecepcion(id, error);
+            }
+        }
+
+        public int CallProcedureInformarEjecucion(int? id, string mensaje, ObjectParameter error)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                return context.INTERFAZ_InformarEjecucion(id, mensaje, error);
+            }
+        }
+
     }
 }
