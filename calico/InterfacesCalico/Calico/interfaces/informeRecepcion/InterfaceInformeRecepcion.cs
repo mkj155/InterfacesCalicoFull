@@ -106,7 +106,7 @@ namespace Calico.interfaces.informeRecepcion
             /*************************************************************/
             // FIN SIMULACION RESPUESTA OK & KO
 
-            if (!result) {
+            if (result) {
                 int? id = 1;
                 ObjectParameter error = new ObjectParameter("error", typeof(String));
                 int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(id, error);
