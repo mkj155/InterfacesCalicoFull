@@ -5,6 +5,7 @@ using InterfacesCalico.generic;
 using Nini.Config;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,6 +69,7 @@ namespace Calico.interfaces.informeRecepcion
             }
 
             // INICIO BUSQUEDA DE DATOS
+
             /*************************************************************/
             /******************** BUSQUEDA DE DATOS **********************/
             /*************************************************************/
@@ -90,6 +92,7 @@ namespace Calico.interfaces.informeRecepcion
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             // INICIO MATI
+
             /*************************************************************/
             /****************** MATI ACA PONE TU MAGIA *******************/
             /*************************************************************/
@@ -100,6 +103,19 @@ namespace Calico.interfaces.informeRecepcion
             /****************** SIMULO RESPUESTA OK-KO *******************/
             /*************************************************************/
             // FIN SIMULACION RESPUESTA OK & KO
+            bool test = true;
+            if (!test) {
+                int? id = 1;
+                ObjectParameter error = new ObjectParameter("error", typeof(String));
+                int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(id, error);
+            }
+            else
+            {
+                int? id = 1;
+                ObjectParameter error = new ObjectParameter("error", typeof(String));
+                String mensaje = String.Empty;
+                int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(id, mensaje, error);
+            }
 
             Console.WriteLine("Finalizó el proceso de actualización de Recepciones");
 

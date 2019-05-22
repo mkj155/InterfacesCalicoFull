@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calico.interfaces.recepcion
+namespace Calico.interfaces.informeRecepcion
 {
     class InformeRecepcionDTO
     {
