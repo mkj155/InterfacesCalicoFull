@@ -19,6 +19,8 @@ namespace Calico.interfaces.recepcion
         private TblRecepcionService serviceRecepcion = new TblRecepcionService();
         private RecepcionUtils recepcionUtils = new RecepcionUtils();
 
+        public bool ValidateDate() => true;
+
         public bool Process(DateTime? dateTime)
         {
             Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
@@ -178,5 +180,6 @@ namespace Calico.interfaces.recepcion
 
             return true;
         }
+
     }
 }

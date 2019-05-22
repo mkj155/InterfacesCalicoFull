@@ -75,12 +75,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAOs\CommonDAO.cs" />
+    <Compile Include="DAOs\TblInformeRecepcionDAO.cs" />
     <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="interfaces\informeRecepcion\InformeRecepcionUtils.cs" />
+    <Compile Include="interfaces\informeRecepcion\InterfaceInformeRecepcion.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
     <Compile Include="persistencia\tblHistoricoRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformeRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformeRecepcionDetalle.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
     <Compile Include="persistencia\tblRecepcion.cs">
@@ -89,6 +98,7 @@
     <Compile Include="persistencia\tblRecepcionDetalle.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
+    <Compile Include="service\TblInformeRecepcionService.cs" />
     <Compile Include="service\TblSubClienteService.cs" />
     <Compile Include="DAOs\TblSubClienteDAO.cs" />
     <Compile Include="DAOs\BianchiProcessDAO.cs" />
@@ -123,8 +133,12 @@
     <Compile Include="DAOs\TblRecepcionDAO.cs" />
     <Compile Include="service\TblRecepcionService.cs" />
     <Compile Include="Run.cs" />
-    <Compile Include="persistencia\tblPedido.cs" />
-    <Compile Include="persistencia\tblPedidoDetalle.cs" />
+    <Compile Include="persistencia\tblPedido.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblPedidoDetalle.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -166,6 +180,7 @@
       <LastGenOutput>ModelCalico.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Debug" /Y

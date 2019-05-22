@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="326c45d3a10d43e29776ad25714a0339" Name="Diagram1" ZoomLevel="95">
+      <Diagram DiagramId="326c45d3a10d43e29776ad25714a0339" Name="Diagram1" ZoomLevel="82">
         <EntityTypeShape EntityType="CalicoModel.BIANCHI_PROCESS" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CalicoModel.tblSubCliente" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CalicoModel.tblRecepcion" Width="1.5" PointX="4.875" PointY="0.75" />
@@ -14,6 +14,9 @@
         <EntityTypeShape EntityType="CalicoModel.tblPedido" Width="1.5" PointX="3.375" PointY="6.125" />
         <EntityTypeShape EntityType="CalicoModel.tblPedidoDetalle" Width="1.5" PointX="5.625" PointY="7.625" />
         <AssociationConnector Association="CalicoModel.FK_tblPedidoDetalle_tblPedido" />
+        <EntityTypeShape EntityType="CalicoModel.tblInformeRecepcion" Width="1.5" PointX="8.375" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="CalicoModel.tblInformeRecepcionDetalle" Width="1.5" PointX="10.625" PointY="6" />
+        <AssociationConnector Association="CalicoModel.FK_tblInformeRecepcionDetalle_tblInformeRecepcion" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
