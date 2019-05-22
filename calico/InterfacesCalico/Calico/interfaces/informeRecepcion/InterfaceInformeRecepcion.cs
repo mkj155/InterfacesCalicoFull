@@ -1,4 +1,5 @@
 ﻿using Calico.common;
+using Calico.interfaces.recepcion;
 using Calico.persistencia;
 using Calico.service;
 using InterfacesCalico.generic;
@@ -14,7 +15,7 @@ namespace Calico.interfaces.informeRecepcion
     class InterfaceInformeRecepcion : InterfaceGeneric
     {
 
-        private const String INTERFACE = Constants.INTERFACE_RECEPCION;
+        private const String INTERFACE = Constants.INTERFACE_INFORME_RECEPCION;
 
         private BianchiService service = new BianchiService();
         private TblInformeRecepcionService serviceInformeRecepcion = new TblInformeRecepcionService();
@@ -68,6 +69,11 @@ namespace Calico.interfaces.informeRecepcion
             }
 
             // INICIO BUSQUEDA DE DATOS
+
+            InformeRecepcionJson jsonObj = InformeRecepcionUtils.getObjectTest();
+
+            var json = InformeRecepcionUtils.ObjectToJson(jsonObj);
+
             /*************************************************************/
             /******************** BUSQUEDA DE DATOS **********************/
             /*************************************************************/
@@ -89,11 +95,9 @@ namespace Calico.interfaces.informeRecepcion
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
-            // INICIO MATI
-            /*************************************************************/
-            /****************** MATI ACA PONE TU MAGIA *******************/
-            /*************************************************************/
-            // FIN MATI
+            // SEND REQUEST
+            Boolean result = InformeRecepcionUtils.SendRequestPost(url, user, pass, json);
+
 
             // INICIO SIMULACION RESPUESTA OK & KO
             /*************************************************************/

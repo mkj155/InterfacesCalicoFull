@@ -80,6 +80,8 @@
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="interfaces\informeRecepcion\InformeRecepcionDTO.cs" />
+    <Compile Include="interfaces\informeRecepcion\InformeRecepcionJson.cs" />
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionUtils.cs" />
     <Compile Include="interfaces\informeRecepcion\InterfaceInformeRecepcion.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
