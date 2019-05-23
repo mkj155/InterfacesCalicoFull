@@ -70,15 +70,14 @@ namespace Calico.interfaces.informeRecepcion
             }
 
             // INICIO BUSQUEDA DE DATOS
+            String emplazamiento = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
+            String almacen = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
+            String tipo = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_TIPO);
+            String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
 
-            InformeRecepcionJson jsonObj = InformeRecepcionUtils.getObjectTest();
-
-            var json = InformeRecepcionUtils.ObjectToJson(jsonObj);
-
-            /*************************************************************/
-            /******************** BUSQUEDA DE DATOS **********************/
-            /*************************************************************/
-            // FIN BUSQUEDA DE DATOS
+            List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
+            List<InformeRecepcionDTO> informeRecepcionDTOList = null;
+            InformeRecepcionJson informeRecepcionJson = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
@@ -96,27 +95,32 @@ namespace Calico.interfaces.informeRecepcion
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
-            // SEND REQUEST
-            Boolean result = InformeRecepcionUtils.SendRequestPost(url, user, pass, json);
-
-
-            // INICIO SIMULACION RESPUESTA OK & KO
-            /*************************************************************/
-            /****************** SIMULO RESPUESTA OK-KO *******************/
-            /*************************************************************/
-            // FIN SIMULACION RESPUESTA OK & KO
-
-            if (result) {
-                int? id = 1;
-                ObjectParameter error = new ObjectParameter("error", typeof(String));
-                int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(id, error);
-            }
-            else
+            foreach (tblInformeRecepcion informe in informes)
             {
-                int? id = 1;
-                ObjectParameter error = new ObjectParameter("error", typeof(String));
-                String mensaje = String.Empty;
-                int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(id, mensaje, error);
+                informeRecepcionDTOList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany);
+                informeRecepcionJson = new InformeRecepcionJson(informeRecepcionDTOList);
+                var json = InformeRecepcionUtils.ObjectToJson(informeRecepcionJson);
+                // SEND REQUEST
+                Boolean result = InformeRecepcionUtils.SendRequestPost(url, user, pass, json);
+
+                // Este es el ID que va, no lo ejecutamos con ese ID para que no elimine nada, por eso lo pisamos con 1
+                int? id = informe.irec_proc_id;
+                if (result)
+                {
+                    id = 1;                    
+                    ObjectParameter error = new ObjectParameter("error", typeof(String));
+                    int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(id, error);
+                    count++;
+                }
+                else
+                {
+                    id = 1;
+                    ObjectParameter error = new ObjectParameter("error", typeof(String));
+                    String mensaje = String.Empty;
+                    int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(id, mensaje, error);
+                    countError++;
+                }
+
             }
 
             Console.WriteLine("Finalizó el proceso de actualización de Recepciones");

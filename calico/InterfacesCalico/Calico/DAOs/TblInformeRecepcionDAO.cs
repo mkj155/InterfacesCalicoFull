@@ -52,5 +52,25 @@ namespace Calico.DAOs
             }
         }
 
+        public List<tblInformeRecepcion> FindInformes(String emplazamiento, String almacen, String tipo)
+        {
+            try
+            {
+                using (CalicoEntities context = new CalicoEntities())
+                {
+                    var query = (from R in context.tblInformeRecepcion
+                                where R.irec_emplazamiento == emplazamiento
+                                   && R.irec_almacen == almacen
+                                   && R.irec_tipo == tipo
+                                select R).Include(D => D.tblInformeRecepcionDetalle);
+                    return query.ToList<tblInformeRecepcion>();
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Calico.common;
 using Calico.interfaces.recepcion;
+using Calico.persistencia;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,24 +20,24 @@ namespace Calico.interfaces.informeRecepcion
             return json;
         }
 
-        public static InformeRecepcionJson getObjectTest()
-        {
-            InformeRecepcionJson jsonObj = new InformeRecepcionJson();
-            InformeRecepcionDTO receptDTO = new InformeRecepcionDTO();
+        //public static InformeRecepcionJson getObjectTest()
+        //{
+        //    InformeRecepcionJson jsonObj = new InformeRecepcionJson();
+        //    InformeRecepcionDTO receptDTO = new InformeRecepcionDTO();
 
-            receptDTO.OrderCompany = "00001";
-            receptDTO.OrderType = "OT";
-            receptDTO.OrderNumber = "849";
-            receptDTO.OrderLine = "1.000";
-            receptDTO.QuantityToRecieve = "400";
-            receptDTO.ReceiptDate = "2019/05/10";
-            receptDTO.Lot = "LoteTEST";
+        //    receptDTO.OrderCompany = "00001";
+        //    receptDTO.OrderType = "OT";
+        //    receptDTO.OrderNumber = "849";
+        //    receptDTO.OrderLine = "1.000";
+        //    receptDTO.QuantityToRecieve = "400";
+        //    receptDTO.ReceiptDate = "2019/05/10";
+        //    receptDTO.Lot = "LoteTEST";
 
-            jsonObj.ReceiptsVersion = "BIA0100";
-            jsonObj.ReceiptsArray.Add(receptDTO);
+        //    jsonObj.ReceiptsVersion = "BIA0100";
+        //    jsonObj.ReceiptsArray.Add(receptDTO);
 
-            return jsonObj;
-        }
+        //    return jsonObj;
+        //}
 
         public static Boolean SendRequestPost(string url, String user, String pass, String json)
         {
@@ -73,6 +74,30 @@ namespace Calico.interfaces.informeRecepcion
 
             return false;
 
+        }
+
+        internal static List<InformeRecepcionDTO> MappingInforme(tblInformeRecepcion informe, String OrderCompany)
+        {
+            List<InformeRecepcionDTO> informesDTO = new List<InformeRecepcionDTO>();
+
+            foreach (tblInformeRecepcionDetalle detalle in informe.tblInformeRecepcionDetalle)
+            {
+                InformeRecepcionDTO informeDTO = new InformeRecepcionDTO();
+
+                informeDTO.OrderCompany = OrderCompany;
+                informeDTO.OrderType = informe.irec_tipo;
+                int order;
+                informeDTO.OrderNumber = Int32.TryParse(informe.irec_numero, out order) ? order.ToString() : String.Empty;
+                informeDTO.OrderLine = detalle.ired_linea > 0 && detalle.ired_linea.ToString().Length > 3 ? detalle.ired_linea.ToString("N0") : String.Empty;
+                informeDTO.QuantityToRecieve = detalle.ired_cantidadRecibida.ToString();
+                DateTime receiptDate = informe.irec_fecha ?? Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+                informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");
+                informeDTO.Lot = detalle.ired_lote;
+
+                informesDTO.Add(informeDTO);
+            }
+
+            return informesDTO;
         }
     }
 }
