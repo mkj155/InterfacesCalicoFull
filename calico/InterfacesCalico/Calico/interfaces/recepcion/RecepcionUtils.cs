@@ -61,6 +61,11 @@ namespace Calico.interfaces.recepcion
         private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen, String compania)
         {
             tblRecepcion recepcion = new tblRecepcion();
+            recepcion.recc_contacto = String.Empty;
+            recepcion.recc_despacho = String.Empty;
+            recepcion.recc_ordenCompra = String.Empty;
+            recepcion.recc_motivoDevolucion = String.Empty;
+            recepcion.recc_observaciones = String.Empty;
             recepcion.recc_emplazamiento = emplazamiento;
             recepcion.recc_almacen = almacen;
             recepcion.recc_trec_codigo = receptionDTO.F4201_DCTO;
@@ -87,6 +92,7 @@ namespace Calico.interfaces.recepcion
         private tblRecepcionDetalle fillDetalle(ReceptionDTO receptionDTO, String compania)
         {
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
+            detalle.recd_serie = String.Empty;
             detalle.recd_compania = compania;
             detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
             detalle.recd_lineaPedido = 0;
