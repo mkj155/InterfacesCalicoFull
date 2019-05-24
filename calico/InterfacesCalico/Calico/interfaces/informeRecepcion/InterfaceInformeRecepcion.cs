@@ -54,8 +54,6 @@ namespace Calico.interfaces.informeRecepcion
                 return false;
             }
 
-            DateTime lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
-
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
             IConfigSource source = null;
@@ -90,7 +88,6 @@ namespace Calico.interfaces.informeRecepcion
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
-            // int? tipoMensaje = 0;
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
@@ -102,10 +99,7 @@ namespace Calico.interfaces.informeRecepcion
 
                 if (jsonList.Any())
                 {
-                    Console.WriteLine("Se llevara a cabo el envio al servicio REST " +
-                        "de los detalles de la cabecera: " + informe.irec_proc_id);
-                    
-
+                    Console.WriteLine("Se llevara a cabo el envio al servicio REST de los detalles de la cabecera: " + informe.irec_proc_id);
                     foreach (InformeRecepcionJson json in jsonList)
                     {
                         var jsonString = InformeRecepcionUtils.JsonToString(json);
@@ -116,7 +110,7 @@ namespace Calico.interfaces.informeRecepcion
                         {
                             Console.WriteLine();
                             Console.WriteLine("Se llamara al procedure para informar el error");
-                            int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
+                            serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
                             callArchivar = false;
                             countError++;
                         }
@@ -130,7 +124,7 @@ namespace Calico.interfaces.informeRecepcion
                     if (callArchivar)
                     {
                         Console.WriteLine("Se llamara al procedure para archivar el informe");
-                        int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(informe.irec_proc_id, new ObjectParameter("error", typeof(String)));
+                        serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(informe.irec_proc_id, new ObjectParameter("error", typeof(String)));
                     }
 
                 }
@@ -147,7 +141,7 @@ namespace Calico.interfaces.informeRecepcion
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
             process.fin = DateTime.Now;
-            process.fecha_ultima = lastTime;
+            process.fecha_ultima = process.inicio;
             process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);
