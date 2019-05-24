@@ -76,8 +76,7 @@ namespace Calico.interfaces.informeRecepcion
             String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
 
             List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
-            List<InformeRecepcionDTO> informeRecepcionDTOList = null;
-            InformeRecepcionJson informeRecepcionJson = null;
+            List<InformeRecepcionJson> jsonList = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
@@ -90,6 +89,7 @@ namespace Calico.interfaces.informeRecepcion
 
             int count = 0;
             int countError = 0;
+            Boolean callArchivar;
             // int? tipoMensaje = 0;
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
@@ -97,28 +97,44 @@ namespace Calico.interfaces.informeRecepcion
 
             foreach (tblInformeRecepcion informe in informes)
             {
-                informeRecepcionDTOList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany);
-                informeRecepcionJson = new InformeRecepcionJson(informeRecepcionDTOList);
-                var json = InformeRecepcionUtils.ObjectToJson(informeRecepcionJson);
-                // SEND REQUEST
-                Boolean result = InformeRecepcionUtils.SendRequestPost(url, user, pass, json);
+                callArchivar = true;
+                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany);
 
-                // Este es el ID que va, no lo ejecutamos con ese ID para que no elimine nada, por eso lo pisamos con 1
-                int? id = informe.irec_proc_id;
-                if (result)
+                if (jsonList.Any())
                 {
-                    id = 1;                    
-                    ObjectParameter error = new ObjectParameter("error", typeof(String));
-                    int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(id, error);
-                    count++;
+                    Console.WriteLine("Se llevara a cabo el envio al servicio REST " +
+                        "de los detalles de la cabecera: " + informe.irec_proc_id);
+
+                    foreach (InformeRecepcionJson json in jsonList)
+                    {
+                        var jsonString = InformeRecepcionUtils.JsonToString(json);
+                        Console.WriteLine("Se enviara el siguiente Json al servicio REST: " + jsonString);
+                        /* Send request */
+                        if (!(InformeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
+                        {
+                            Console.WriteLine("Se llamara al procedure para informar el error");
+                            int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(1 /* informe.irec_proc_id */, String.Empty, new ObjectParameter("error", typeof(String)));
+                            callArchivar = false;
+                            countError++;
+                        }
+                        else
+                        {
+                            Console.WriteLine("El servicio REST retorno OK: " + jsonString);
+                            count++;
+                        }
+                    }
+
+                    if (callArchivar)
+                    {
+                        Console.WriteLine("Se llamara al procedure para archivar el informe");
+                        int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(1 /* informe.irec_proc_id */, new ObjectParameter("error", typeof(String)));
+                    }
+
                 }
                 else
                 {
-                    id = 1;
-                    ObjectParameter error = new ObjectParameter("error", typeof(String));
-                    String mensaje = String.Empty;
-                    int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(id, mensaje, error);
-                    countError++;
+                    Console.WriteLine("No se encontraron detalles para la cabecera: "
+                    + informe.irec_proc_id);
                 }
 
             }

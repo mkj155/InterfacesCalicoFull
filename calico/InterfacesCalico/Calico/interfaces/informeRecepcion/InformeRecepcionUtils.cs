@@ -14,10 +14,17 @@ namespace Calico.interfaces.informeRecepcion
 {
     class InformeRecepcionUtils
     {
-        public static String ObjectToJson(InformeRecepcionJson obj)
+        public static String JsonToString(InformeRecepcionJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
             return json;
+        }
+
+        public static InformeRecepcionJson GetObjectJsonFromDTO(InformeRecepcionDTO detalle)
+        {
+            List<InformeRecepcionDTO> list = new List<InformeRecepcionDTO>();
+            list.Add(detalle);
+            return new InformeRecepcionJson(list);
         }
 
         //public static InformeRecepcionJson getObjectTest()
@@ -76,9 +83,9 @@ namespace Calico.interfaces.informeRecepcion
 
         }
 
-        internal static List<InformeRecepcionDTO> MappingInforme(tblInformeRecepcion informe, String OrderCompany)
+        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany)
         {
-            List<InformeRecepcionDTO> informesDTO = new List<InformeRecepcionDTO>();
+            List<InformeRecepcionJson> jsonList = new List<InformeRecepcionJson>();
 
             foreach (tblInformeRecepcionDetalle detalle in informe.tblInformeRecepcionDetalle)
             {
@@ -94,10 +101,10 @@ namespace Calico.interfaces.informeRecepcion
                 informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");
                 informeDTO.Lot = detalle.ired_lote;
 
-                informesDTO.Add(informeDTO);
+                jsonList.Add(GetObjectJsonFromDTO(informeDTO));
             }
 
-            return informesDTO;
+            return jsonList;
         }
     }
 }
