@@ -113,7 +113,7 @@ namespace Calico.interfaces.informeRecepcion
                         if (!(InformeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
                         {
                             Console.WriteLine("Se llamara al procedure para informar el error");
-                            int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(1 /* informe.irec_proc_id */, String.Empty, new ObjectParameter("error", typeof(String)));
+                            int salida = serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
                             callArchivar = false;
                             countError++;
                         }
@@ -127,7 +127,7 @@ namespace Calico.interfaces.informeRecepcion
                     if (callArchivar)
                     {
                         Console.WriteLine("Se llamara al procedure para archivar el informe");
-                        int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(1 /* informe.irec_proc_id */, new ObjectParameter("error", typeof(String)));
+                        int salida = serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(informe.irec_proc_id, new ObjectParameter("error", typeof(String)));
                     }
 
                 }

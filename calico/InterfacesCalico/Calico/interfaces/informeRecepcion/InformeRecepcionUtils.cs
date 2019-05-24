@@ -14,6 +14,7 @@ namespace Calico.interfaces.informeRecepcion
 {
     class InformeRecepcionUtils
     {
+        public static String LAST_ERROR = String.Empty;
         public static String JsonToString(InformeRecepcionJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
@@ -72,6 +73,7 @@ namespace Calico.interfaces.informeRecepcion
             }
             catch (WebException e)
             {
+                LAST_ERROR = e.Message;
                 Utils.handleErrorRest(e);
             }
             catch (Exception ex)
