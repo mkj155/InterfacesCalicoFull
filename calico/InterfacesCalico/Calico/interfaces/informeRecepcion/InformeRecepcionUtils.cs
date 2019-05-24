@@ -101,7 +101,7 @@ namespace Calico.interfaces.informeRecepcion
                 informeDTO.QuantityToRecieve = (detalle.ired_cantidadRecibida.ToString()).Replace(",", ".");
                 DateTime receiptDate = informe.irec_fecha ?? Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
                 informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");
-                informeDTO.Lot = detalle.ired_lote;
+                informeDTO.Lot = detalle.ired_lote != null ? detalle.ired_lote.Trim() : String.Empty;
 
                 jsonList.Add(GetObjectJsonFromDTO(informeDTO));
             }
