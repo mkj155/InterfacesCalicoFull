@@ -98,7 +98,7 @@ namespace Calico.interfaces.informeRecepcion
                 int order;
                 informeDTO.OrderNumber = Int32.TryParse(informe.irec_numero, out order) ? order.ToString() : String.Empty;
                 informeDTO.OrderLine = detalle.ired_linea > 0 && detalle.ired_linea.ToString().Length > 3 ? detalle.ired_linea.ToString("N0") : String.Empty;
-                informeDTO.QuantityToRecieve = detalle.ired_cantidadRecibida.ToString();
+                informeDTO.QuantityToRecieve = (detalle.ired_cantidadRecibida.ToString()).Replace(",", ".");
                 DateTime receiptDate = informe.irec_fecha ?? Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
                 informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");
                 informeDTO.Lot = detalle.ired_lote;
