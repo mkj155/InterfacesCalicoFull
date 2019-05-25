@@ -20,13 +20,6 @@ namespace InterfacesCalico
             Utils.InstanceConsole(args);
             Console.WriteLine("Logueo activado");
 
-            // Validacion de fecha
-            DateTime ? dateTime = Utils.GetDate(args);
-            if (dateTime == null)
-            {
-                Console.WriteLine("Fecha no indicada o posee un formato erroneo,se tomará de la tabla BIANCHI_PROCESS");
-            }
-
             // Instanciamos la interface que llego como primer argumento
             InterfaceGeneric interfaz = (args != null && args.Length > 0) ? InterfaceFactory.GetInterfaz(args[0]) : null;
             if (interfaz == null)
@@ -35,6 +28,16 @@ namespace InterfacesCalico
                 return;
             }
 
+            // Validacion de fecha
+            DateTime? dateTime = null;
+            if (interfaz.ValidateDate())
+            {
+                dateTime = Utils.GetDate(args);
+                if (dateTime == null)
+                {
+                    Console.WriteLine("Fecha no indicada o posee un formato erroneo,se tomará de la tabla BIANCHI_PROCESS");
+                }
+            }
             // Procesamos
             interfaz.Process(dateTime);
         }

@@ -191,7 +191,9 @@ namespace Calico.common
                 JObject json = JObject.Parse(myJsonString);
 
                 Console.WriteLine("Servicio Rest KO");
+                Console.WriteLine();
                 Console.WriteLine("Message: " + e.Message);
+                Console.WriteLine("Detalle: ");
                 Console.WriteLine(json["message"]);
                 Console.WriteLine(json["exception"]);
             }

@@ -37,6 +37,48 @@
           <Property Name="hrec_motivoDevolucion" Type="char" MaxLength="6" />
           <Property Name="hrec_observaciones" Type="char" MaxLength="500" />
         </EntityType>
+        <EntityType Name="tblInformeRecepcion">
+          <Key>
+            <PropertyRef Name="irec_proc_id" />
+          </Key>
+          <Property Name="irec_proc_id" Type="int" Nullable="false" />
+          <Property Name="irec_fecha" Type="datetime" />
+          <Property Name="irec_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="irec_almacen" Type="char" MaxLength="3" />
+          <Property Name="irec_tipo" Type="char" MaxLength="3" />
+          <Property Name="irec_numero" Type="char" MaxLength="10" />
+          <Property Name="irec_fechaEmision" Type="datetime" />
+          <Property Name="irec_fechaEntrega" Type="datetime" />
+          <Property Name="irec_proveedor" Type="char" MaxLength="10" />
+          <Property Name="irec_contacto" Type="char" MaxLength="200" />
+          <Property Name="irec_despacho" Type="char" MaxLength="20" />
+          <Property Name="irec_observaciones" Type="char" MaxLength="500" />
+          <Property Name="irec_devolucion" Type="bit" />
+          <Property Name="irec_motivoDevolucion" Type="char" MaxLength="6" />
+        </EntityType>
+        <EntityType Name="tblInformeRecepcionDetalle">
+          <Key>
+            <PropertyRef Name="ired_id" />
+          </Key>
+          <Property Name="ired_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ired_proc_id" Type="int" Nullable="false" />
+          <Property Name="ired_linea" Type="numeric" Precision="9" Scale="0" Nullable="false" />
+          <Property Name="ired_compania" Type="char" MaxLength="3" />
+          <Property Name="ired_producto" Type="char" MaxLength="15" />
+          <Property Name="ired_lote" Type="char" MaxLength="15" />
+          <Property Name="ired_vencimiento" Type="datetime" Nullable="false" />
+          <Property Name="ired_serie" Type="char" MaxLength="15" />
+          <Property Name="ired_cantidadOriginal" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ired_cantidadRecibida" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ired_estado" Type="char" MaxLength="3" />
+          <Property Name="ired_precioUnitario" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="ired_ordenCompra" Type="char" MaxLength="20" />
+          <Property Name="ired_tipoPedido" Type="char" MaxLength="3" />
+          <Property Name="ired_letraPedido" Type="char" MaxLength="1" />
+          <Property Name="ired_sucursalPedido" Type="char" MaxLength="4" />
+          <Property Name="ired_numeroPedido" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="ired_lineaPedido" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityType Name="tblPedido">
           <Key>
             <PropertyRef Name="pedc_proc_id" />
@@ -139,6 +181,18 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
+        <Association Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
+          <End Role="tblInformeRecepcion" Type="Self.tblInformeRecepcion" Multiplicity="1" />
+          <End Role="tblInformeRecepcionDetalle" Type="Self.tblInformeRecepcionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblInformeRecepcion">
+              <PropertyRef Name="irec_proc_id" />
+            </Principal>
+            <Dependent Role="tblInformeRecepcionDetalle">
+              <PropertyRef Name="ired_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblPedidoDetalle_tblPedido">
           <End Role="tblPedido" Type="Self.tblPedido" Multiplicity="1" />
           <End Role="tblPedidoDetalle" Type="Self.tblPedidoDetalle" Multiplicity="*" />
@@ -163,18 +217,33 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="INTERFAZ_ArchivarInformeRecepcion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="int" Mode="In" />
+          <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
+        </Function>
         <Function Name="INTERFAZ_CrearProceso" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tipoProceso" Type="int" Mode="In" />
           <Parameter Name="tipoMensaje" Type="int" Mode="In" />
         </Function>
+        <Function Name="INTERFAZ_InformarEjecucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="int" Mode="In" />
+          <Parameter Name="mensaje" Type="varchar(max)" Mode="In" />
+          <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
+        </Function>
         <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistoricoRecepcion" EntityType="Self.tblHistoricoRecepcion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblInformeRecepcion" EntityType="Self.tblInformeRecepcion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblInformeRecepcionDetalle" EntityType="Self.tblInformeRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPedido" EntityType="Self.tblPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPedidoDetalle" EntityType="Self.tblPedidoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion" Association="Self.FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
+            <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
+            <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblPedidoDetalle_tblPedido" Association="Self.FK_tblPedidoDetalle_tblPedido">
             <End Role="tblPedido" EntitySet="tblPedido" />
             <End Role="tblPedidoDetalle" EntitySet="tblPedidoDetalle" />
@@ -240,6 +309,21 @@
           <AssociationSet Name="FK_tblPedidoDetalle_tblPedido" Association="CalicoModel.FK_tblPedidoDetalle_tblPedido">
             <End Role="tblPedido" EntitySet="tblPedido" />
             <End Role="tblPedidoDetalle" EntitySet="tblPedidoDetalle" />
+          </AssociationSet>
+          <FunctionImport Name="INTERFAZ_ArchivarInformeRecepcion">
+            <Parameter Name="id" Mode="In" Type="Int32" />
+            <Parameter Name="error" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="INTERFAZ_InformarEjecucion">
+            <Parameter Name="id" Mode="In" Type="Int32" />
+            <Parameter Name="mensaje" Mode="In" Type="String" />
+            <Parameter Name="error" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="tblInformeRecepcion" EntityType="CalicoModel.tblInformeRecepcion" />
+          <EntitySet Name="tblInformeRecepcionDetalle" EntityType="CalicoModel.tblInformeRecepcionDetalle" />
+          <AssociationSet Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion" Association="CalicoModel.FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
+            <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
+            <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblRecepcion">
@@ -368,6 +452,62 @@
             </Principal>
             <Dependent Role="tblPedidoDetalle">
               <PropertyRef Name="pedd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblInformeRecepcion">
+          <Key>
+            <PropertyRef Name="irec_proc_id" />
+          </Key>
+          <Property Name="irec_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="irec_fecha" Type="DateTime" Precision="3" />
+          <Property Name="irec_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="irec_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="irec_tipo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="irec_numero" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="irec_fechaEmision" Type="DateTime" Precision="3" />
+          <Property Name="irec_fechaEntrega" Type="DateTime" Precision="3" />
+          <Property Name="irec_proveedor" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="irec_contacto" Type="String" MaxLength="200" FixedLength="true" Unicode="false" />
+          <Property Name="irec_despacho" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="irec_observaciones" Type="String" MaxLength="500" FixedLength="true" Unicode="false" />
+          <Property Name="irec_devolucion" Type="Boolean" />
+          <Property Name="irec_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="tblInformeRecepcionDetalle" Relationship="CalicoModel.FK_tblInformeRecepcionDetalle_tblInformeRecepcion" FromRole="tblInformeRecepcion" ToRole="tblInformeRecepcionDetalle" />
+        </EntityType>
+        <EntityType Name="tblInformeRecepcionDetalle">
+          <Key>
+            <PropertyRef Name="ired_id" />
+          </Key>
+          <Property Name="ired_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ired_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="ired_linea" Type="Decimal" Nullable="false" Precision="9" Scale="0" />
+          <Property Name="ired_compania" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ired_producto" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="ired_lote" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="ired_vencimiento" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ired_serie" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="ired_cantidadOriginal" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="ired_cantidadRecibida" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="ired_estado" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ired_precioUnitario" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="ired_ordenCompra" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <Property Name="ired_tipoPedido" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ired_letraPedido" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="ired_sucursalPedido" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="ired_numeroPedido" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="ired_lineaPedido" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <NavigationProperty Name="tblInformeRecepcion" Relationship="CalicoModel.FK_tblInformeRecepcionDetalle_tblInformeRecepcion" FromRole="tblInformeRecepcionDetalle" ToRole="tblInformeRecepcion" />
+        </EntityType>
+        <Association Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
+          <End Type="CalicoModel.tblInformeRecepcion" Role="tblInformeRecepcion" Multiplicity="1" />
+          <End Type="CalicoModel.tblInformeRecepcionDetalle" Role="tblInformeRecepcionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblInformeRecepcion">
+              <PropertyRef Name="irec_proc_id" />
+            </Principal>
+            <Dependent Role="tblInformeRecepcionDetalle">
+              <PropertyRef Name="ired_proc_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -516,6 +656,52 @@
                 <ScalarProperty Name="pedd_linea" ColumnName="pedd_linea" />
                 <ScalarProperty Name="pedd_proc_id" ColumnName="pedd_proc_id" />
                 <ScalarProperty Name="pedd_id" ColumnName="pedd_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="INTERFAZ_ArchivarInformeRecepcion" FunctionName="CalicoModel.Store.INTERFAZ_ArchivarInformeRecepcion" />
+          <FunctionImportMapping FunctionImportName="INTERFAZ_InformarEjecucion" FunctionName="CalicoModel.Store.INTERFAZ_InformarEjecucion" />
+          <EntitySetMapping Name="tblInformeRecepcion">
+            <EntityTypeMapping TypeName="CalicoModel.tblInformeRecepcion">
+              <MappingFragment StoreEntitySet="tblInformeRecepcion">
+                <ScalarProperty Name="irec_motivoDevolucion" ColumnName="irec_motivoDevolucion" />
+                <ScalarProperty Name="irec_devolucion" ColumnName="irec_devolucion" />
+                <ScalarProperty Name="irec_observaciones" ColumnName="irec_observaciones" />
+                <ScalarProperty Name="irec_despacho" ColumnName="irec_despacho" />
+                <ScalarProperty Name="irec_contacto" ColumnName="irec_contacto" />
+                <ScalarProperty Name="irec_proveedor" ColumnName="irec_proveedor" />
+                <ScalarProperty Name="irec_fechaEntrega" ColumnName="irec_fechaEntrega" />
+                <ScalarProperty Name="irec_fechaEmision" ColumnName="irec_fechaEmision" />
+                <ScalarProperty Name="irec_numero" ColumnName="irec_numero" />
+                <ScalarProperty Name="irec_tipo" ColumnName="irec_tipo" />
+                <ScalarProperty Name="irec_almacen" ColumnName="irec_almacen" />
+                <ScalarProperty Name="irec_emplazamiento" ColumnName="irec_emplazamiento" />
+                <ScalarProperty Name="irec_fecha" ColumnName="irec_fecha" />
+                <ScalarProperty Name="irec_proc_id" ColumnName="irec_proc_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblInformeRecepcionDetalle">
+            <EntityTypeMapping TypeName="CalicoModel.tblInformeRecepcionDetalle">
+              <MappingFragment StoreEntitySet="tblInformeRecepcionDetalle">
+                <ScalarProperty Name="ired_lineaPedido" ColumnName="ired_lineaPedido" />
+                <ScalarProperty Name="ired_numeroPedido" ColumnName="ired_numeroPedido" />
+                <ScalarProperty Name="ired_sucursalPedido" ColumnName="ired_sucursalPedido" />
+                <ScalarProperty Name="ired_letraPedido" ColumnName="ired_letraPedido" />
+                <ScalarProperty Name="ired_tipoPedido" ColumnName="ired_tipoPedido" />
+                <ScalarProperty Name="ired_ordenCompra" ColumnName="ired_ordenCompra" />
+                <ScalarProperty Name="ired_precioUnitario" ColumnName="ired_precioUnitario" />
+                <ScalarProperty Name="ired_estado" ColumnName="ired_estado" />
+                <ScalarProperty Name="ired_cantidadRecibida" ColumnName="ired_cantidadRecibida" />
+                <ScalarProperty Name="ired_cantidadOriginal" ColumnName="ired_cantidadOriginal" />
+                <ScalarProperty Name="ired_serie" ColumnName="ired_serie" />
+                <ScalarProperty Name="ired_vencimiento" ColumnName="ired_vencimiento" />
+                <ScalarProperty Name="ired_lote" ColumnName="ired_lote" />
+                <ScalarProperty Name="ired_producto" ColumnName="ired_producto" />
+                <ScalarProperty Name="ired_compania" ColumnName="ired_compania" />
+                <ScalarProperty Name="ired_linea" ColumnName="ired_linea" />
+                <ScalarProperty Name="ired_proc_id" ColumnName="ired_proc_id" />
+                <ScalarProperty Name="ired_id" ColumnName="ired_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
