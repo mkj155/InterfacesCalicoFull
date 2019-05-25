@@ -25,12 +25,22 @@ namespace Calico.common
         public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
+        // PEDIDOS
+        public const String INTERFACE_PEDIDOS = "Pedidos";
+        public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
+        public const String INTERFACE_PEDIDOS_EMPLAZAMIENTO = "Emplazamiento";
+        public const String INTERFACE_PEDIDOS_ALMACEN = "Almacen";
+        public const String INTERFACE_PEDIDOS_COMPANIA = "Compania";
+        public const String INTERFACE_PEDIDOS_LETRA = "Letra";
+        public const String INTERFACE_PEDIDOS_SUCURSAL = "Sucursal";
+        public const String NUMERO_CLIENTE_INTERFACE_PEDIDOS = "NumeroCliente";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";
         public const String JSON_SUBFIX_TAX = "F0101";
         public const String JSON_SUBFIX_RECEPTION = "V554211";
+        public const String JSON_SUBFIX_PEDIDO = "V554211";
         public const String JSON_TAG_DATA = "data";
         public const String JSON_TAG_GRIDDATA = "gridData";
         public const String JSON_TAG_ROWSET = "rowset";

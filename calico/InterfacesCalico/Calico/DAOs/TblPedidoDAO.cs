@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace Calico.DAOs
             throw new NotImplementedException();
         }
 
-        public void Save(tblPedido obj)
+        public bool Save(tblPedido obj)
         {
             using (CalicoEntities context = new CalicoEntities())
             {
@@ -45,8 +46,17 @@ namespace Calico.DAOs
                                 ve.PropertyName, ve.ErrorMessage);
                         }
                     }
-                    throw;
+                    return false;
                 }
+                catch (DbUpdateException dbe)
+                {
+                    Console.WriteLine("Error insertando la recepcion:" + dbe.Message);
+                }
+                catch (Exception ee)
+                {
+                    Console.WriteLine("Error desconocido insertando la recepcion:" + ee.Message);
+                }
+                return true;
             }
         }
 
@@ -65,5 +75,6 @@ namespace Calico.DAOs
         {
             //TODO:HACER EJEMPLO
         }
+
     }
 }

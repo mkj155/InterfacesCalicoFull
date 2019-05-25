@@ -1,0 +1,128 @@
+﻿using Calico.common;
+using Calico.interfaces.pedido;
+using Calico.interfaces.recepcion;
+using Calico.persistencia;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+
+namespace Calico.interfaces.pedidos
+{
+    class PedidoUtils
+    {
+        public String BuildUrl(String urlParam, String fecha)
+        {
+            Dictionary<String, String> dictionary = new Dictionary<string, string>();
+            dictionary.Add(Constants.PARAM_FECHA, fecha);
+            return Utils.BuildUrl(urlParam, dictionary);
+        }
+
+        public List<PedidoDTO> MappingJsonRecepcion(String myJsonString)
+        {
+            var jc = JsonConvert.DeserializeObject<JObject>(myJsonString);
+
+            JArray rowset = jc.Value<JObject>(Constants.JSON_PREFIX + Constants.JSON_SUBFIX_PEDIDO)
+                                 .Value<JObject>(Constants.JSON_TAG_DATA)
+                                 .Value<JObject>(Constants.JSON_TAG_GRIDDATA)
+                                 .Value<JArray>(Constants.JSON_TAG_ROWSET);
+
+            if (rowset != null && rowset.Count > 0)
+            {
+                return rowset.ToObject<List<PedidoDTO>>() as List<PedidoDTO>;
+            }
+
+            return new List<PedidoDTO>();
+        }
+
+        public void MappingReceptionDTORecepcion(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String letra,String sucursal,String cliente)
+        {
+            foreach(PedidoDTO pedidoDTO in pedidoDTOList)
+            {
+                tblPedido pedido = null;
+                dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
+                if (pedido == null)
+                {
+                    /* CABEZERA */
+                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, compania,letra,sucursal,cliente);
+                    /* DETALLE */
+                    tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
+                    pedido.tblPedidoDetalle.Add(detalle);
+                    dictionary.Add(pedidoDTO.F4201_DOCO, pedido);
+                }
+                else
+                {
+                    /* DETALLE */
+                    tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
+                    pedido.tblPedidoDetalle.Add(detalle);
+                }
+            }
+        }
+
+        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String compania, String letra,String sucursal,String cliente)
+        {
+            tblPedido pedido = new tblPedido();
+            pedido.pedc_emplazamiento = emplazamiento;
+            pedido.pedc_almacen = almacen;
+            /* FALTA pedido.pedc_tped_codigo */
+            pedido.pedc_letra = letra;
+            pedido.pedc_sucursal = sucursal;
+            pedido.pedc_numero = pedidoDTO.F4201_DOCO;
+
+            if (!String.IsNullOrWhiteSpace(pedidoDTO.F4201_OPDJ))
+            {
+                string result = DateTime.ParseExact(pedidoDTO.F4201_OPDJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+                pedido.pedc_fechaEntrega = Utils.ParseDate(result, "yyyy/MM/dd");
+            }
+            else
+            {
+                pedido.pedc_fechaEntrega = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+            }
+
+            pedido.pedc_cliente = cliente;
+            pedido.pedc_destinatario = pedidoDTO.F4211_MCU;
+            pedido.pedc_referenciaA = ""; /* Revisar por parte de Jorge */
+            pedido.pedc_referenciaB = ""; /* Revisar por parte de Jorge */
+
+            return pedido;
+        }
+
+        private tblPedidoDetalle fillDetalle(PedidoDTO receptionDTO, String compania)
+        {
+            tblPedidoDetalle detalle = new tblPedidoDetalle();
+            detalle.recd_serie = String.Empty;
+            detalle.recd_compania = compania;
+            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_lineaPedido = 0;
+            detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
+            detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
+
+            if (!String.IsNullOrWhiteSpace(receptionDTO.F4211_LITM) && receptionDTO.F4211_LITM.Length > 15)
+            {
+                // VERY HARDCODE
+                detalle.recd_producto = "99999999999999";
+            }
+            else
+            {
+                detalle.recd_producto = receptionDTO.F4211_LITM;
+            }
+
+            if (!String.IsNullOrWhiteSpace(receptionDTO.F4108_MMEJ))
+            {
+                string result = DateTime.ParseExact(receptionDTO.F4108_MMEJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+                detalle.recd_fechaVencimiento = Utils.ParseDate(result, "yyyy/MM/dd");
+            }
+            else
+            {
+                detalle.recd_fechaVencimiento = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+            }
+
+            // VERY HARDCODE
+            detalle.recd_numeroPedido = "0";
+
+            return detalle;
+        }
+
+    }
+}
