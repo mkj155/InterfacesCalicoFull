@@ -9,6 +9,7 @@ namespace Calico.service
     class TblRecepcionService
     {
         TblRecepcionDAO dao = new TblRecepcionDAO();
+
         public void Delete(int id)
         {
             dao.Delete(id);

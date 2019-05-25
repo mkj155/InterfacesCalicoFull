@@ -18,6 +18,8 @@ namespace Calico.interfaces.clientes
         private TblSubClienteService serviceCliente = new TblSubClienteService();
         private ClientesUtils clientesUtils = new ClientesUtils();
 
+        public bool ValidateDate() => true;
+
         public bool Process(DateTime? dateTime)
         {
             Console.WriteLine("Comienzo del proceso para la interfaz " + INTERFACE);
