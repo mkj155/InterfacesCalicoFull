@@ -85,6 +85,23 @@ namespace Calico.interfaces.pedidos
             pedido.pedc_referenciaA = ""; /* Revisar por parte de Jorge */
             pedido.pedc_referenciaB = ""; /* Revisar por parte de Jorge */
 
+            pedido.pedc_areaMuelle = String.Empty;
+            pedido.pedc_centroCosto = String.Empty;
+            pedido.pedc_codigoPostal = String.Empty;
+            pedido.pedc_contraRembolso = 0;
+            pedido.pedc_domicilio = String.Empty;
+            pedido.pedc_entregaParcial = false;
+            pedido.pedc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
+            pedido.pedc_importeFactura = 0;
+            pedido.pedc_localidad = String.Empty;
+            pedido.pedc_numeroRuteo = 0;
+            pedido.pedc_observaciones = String.Empty;
+            pedido.pedc_pais = String.Empty;
+            pedido.pedc_prioridad = 0;
+            pedido.pedc_provincia = String.Empty;
+            pedido.pedc_razonSocial = String.Empty;
+            pedido.pedc_tped_codigo = String.Empty;
+
             return pedido;
         }
 
@@ -96,7 +113,12 @@ namespace Calico.interfaces.pedidos
             detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : "";
             detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : "";
             detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
-            
+
+            detalle.pedd_despachoParcial = false;
+            detalle.pedd_epro_codigo = String.Empty;
+            detalle.pedd_loteUnico = false;
+            detalle.pedd_serie = String.Empty;
+          
             return detalle;
         }
 
