@@ -81,46 +81,22 @@ namespace Calico.interfaces.pedidos
             }
 
             pedido.pedc_cliente = cliente;
-            pedido.pedc_destinatario = pedidoDTO.F4211_MCU;
+            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_MCU)? pedidoDTO.F4211_MCU:"";
             pedido.pedc_referenciaA = ""; /* Revisar por parte de Jorge */
             pedido.pedc_referenciaB = ""; /* Revisar por parte de Jorge */
 
             return pedido;
         }
 
-        private tblPedidoDetalle fillDetalle(PedidoDTO receptionDTO, String compania)
+        private tblPedidoDetalle fillDetalle(PedidoDTO pedidoDTO, String compania)
         {
             tblPedidoDetalle detalle = new tblPedidoDetalle();
-            detalle.recd_serie = String.Empty;
-            detalle.recd_compania = compania;
-            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
-            detalle.recd_lineaPedido = 0;
-            detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
-            detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
-
-            if (!String.IsNullOrWhiteSpace(receptionDTO.F4211_LITM) && receptionDTO.F4211_LITM.Length > 15)
-            {
-                // VERY HARDCODE
-                detalle.recd_producto = "99999999999999";
-            }
-            else
-            {
-                detalle.recd_producto = receptionDTO.F4211_LITM;
-            }
-
-            if (!String.IsNullOrWhiteSpace(receptionDTO.F4108_MMEJ))
-            {
-                string result = DateTime.ParseExact(receptionDTO.F4108_MMEJ, "yyyyMMdd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
-                detalle.recd_fechaVencimiento = Utils.ParseDate(result, "yyyy/MM/dd");
-            }
-            else
-            {
-                detalle.recd_fechaVencimiento = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
-            }
-
-            // VERY HARDCODE
-            detalle.recd_numeroPedido = "0";
-
+            detalle.pedd_linea = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LNID) ? Convert.ToDecimal(pedidoDTO.F4211_LNID) : 0;
+            detalle.pedd_compania = compania;
+            detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : "";
+            detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : "";
+            detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
+            
             return detalle;
         }
 

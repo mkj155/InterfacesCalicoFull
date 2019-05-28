@@ -8,29 +8,29 @@ namespace Calico.service
 {
     class TblPedidoService
     {
-        TblRecepcionDAO dao = new TblRecepcionDAO();
+        TblPedidoDAO dao = new TblPedidoDAO();
 
         public void Delete(int id)
         {
             dao.Delete(id);
         }
 
-        public DbSet<tblRecepcion> FindAll()
+        public DbSet<tblPedido> FindAll()
         {
             return dao.FindAll();
         }
 
-        public tblRecepcion FindById(int id)
+        public tblPedido FindById(int id)
         {
             return dao.FindById(id);
         }
 
-        public bool Save(tblRecepcion obj) 
+        public bool Save(tblPedido obj) 
         {
             return dao.Save(obj);
         }
 
-        public void Update(tblRecepcion obj)
+        public void Update(tblPedido obj)
         {
             dao.Update(obj);
         }

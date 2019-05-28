@@ -95,18 +95,20 @@ namespace Calico.interfaces.recepcion
 
             /* Mapping */
             List<PedidoDTO> pedidoDTO = null;
-            Dictionary<String, tblRecepcion> dictionary = new Dictionary<string, tblRecepcion>();
+            Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
             String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_EMPLAZAMIENTO);
             String almacen = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_ALMACEN);
             String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_COMPANIA);
             String letra = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_LETRA);
+            String sucursal = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_SUCURSAL);
+            String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_CLIENTE);
 
             if (!String.Empty.Equals(myJsonString))
             {
                 pedidoDTO = pedidoUtils.MappingJsonRecepcion(myJsonString);
                 if (pedidoDTO.Any())
                 {
-                    pedidoUtils.MappingReceptionDTORecepcion(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra);
+                    pedidoUtils.MappingReceptionDTORecepcion(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra,sucursal,cliente);
                 }
                 else
                 {
@@ -129,12 +131,12 @@ namespace Calico.interfaces.recepcion
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             // Validamos si hay que insertar o descartar la recepcion
-            foreach (KeyValuePair<string, tblRecepcion> entry in dictionary)
+            foreach (KeyValuePair<int, tblPedido> entry in dictionary)
             {
                 // ¿Ya está procesada?
-                if (servicePedido.IsAlreadyProcess(emplazamiento, almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
+                if (servicePedido.IsAlreadyProcess(emplazamiento, almacen, entry.Value.pedc_tped_codigo, entry.Value.pedc_numero))
                 {
-                    Console.WriteLine("La recepcion " + entry.Value.recc_numero + " ya fue tratada, no se procesara");
+                    Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
                     countAlreadyProcess++;
                 }
                 // No está procesada! la voy a guardar
@@ -142,13 +144,13 @@ namespace Calico.interfaces.recepcion
                 {
                     // LLamo al SP y seteo su valor a la cabecera y sus detalles
                     int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
-                    entry.Value.recc_proc_id = recc_proc_id;
-                    foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
+                    entry.Value.pedc_proc_id = recc_proc_id;
+                    foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
                     {
-                        detalle.recd_proc_id = recc_proc_id;
+                        detalle.pedd_proc_id = recc_proc_id;
                     }
                     // ¿La pude guardar?
-                    Console.WriteLine("Procesando recepcion: " + entry.Value.recc_numero);
+                    Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
                     if (servicePedido.Save(entry.Value))
                         count++;
                     else
