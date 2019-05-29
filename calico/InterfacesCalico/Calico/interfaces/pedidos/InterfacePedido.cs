@@ -1,5 +1,4 @@
 ﻿using Calico.common;
-using Calico.interfaces.pedido;
 using Calico.interfaces.pedidos;
 using Calico.persistencia;
 using Calico.service;
@@ -8,10 +7,8 @@ using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Calico.interfaces.recepcion
+namespace Calico.interfaces.pedido
 {
     class InterfacePedido : InterfaceGeneric
     {
@@ -77,6 +74,14 @@ namespace Calico.interfaces.recepcion
                 return false;
             }
 
+            // INICIO BUSQUEDA DE DATOS
+            String numeroInterfaz = source.Configs[INTERFACE].GetString(Constants.NUMERO_INTERFACE);
+            String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_EMPLAZAMIENTO);
+            String almacen = source.Configs[INTERFACE].GetString(Constants.INTERFACE_ALMACEN);
+            String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_COMPANIA);
+            String sucursal = source.Configs[INTERFACE].GetString(Constants.INTERFACE_SUCURSAL);
+            String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_CLIENTE);
+
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
             String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
@@ -84,43 +89,10 @@ namespace Calico.interfaces.recepcion
             Console.WriteLine("Usuario del Servicio Rest: " + user);
             
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_RECEPCION_URL);
+            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL);
 
-            /* Armamos la URL con parametros */
-            urlPath = pedidoUtils.BuildUrl(url, lastStringTime);
-            Console.WriteLine("URL: " + urlPath);
-
-            /* Obtenemos los datos */
-            String myJsonString = Utils.SendRequest(urlPath, user, pass);
-
-            /* Mapping */
-            List<PedidoDTO> pedidoDTO = null;
-            Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
-            String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_EMPLAZAMIENTO);
-            String almacen = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_ALMACEN);
-            String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_COMPANIA);
-            String letra = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_LETRA);
-            String sucursal = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_SUCURSAL);
-            String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_CLIENTE);
-
-            if (!String.Empty.Equals(myJsonString))
-            {
-                pedidoDTO = pedidoUtils.MappingJsonRecepcion(myJsonString);
-                if (pedidoDTO.Any())
-                {
-                    pedidoUtils.MappingReceptionDTORecepcion(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra,sucursal,cliente);
-                }
-                else
-                {
-                    service.finishProcessByError(process, Constants.NOT_DATA_FOUND, INTERFACE);
-                    return false;
-                }
-            }
-            else
-            {
-                service.finishProcessByError(process, Constants.FAILED_CALL_REST, INTERFACE);
-                return false;
-            }
+            /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
+            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
 
             int count = 0;
             int countError = 0;
@@ -130,35 +102,62 @@ namespace Calico.interfaces.recepcion
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
-            // Validamos si hay que insertar o descartar la recepcion
-            foreach (KeyValuePair<int, tblPedido> entry in dictionary)
+            foreach (String key in URLkeys)
             {
-                // ¿Ya está procesada?
-                if (servicePedido.IsAlreadyProcess(emplazamiento, almacen, entry.Value.pedc_tped_codigo, entry.Value.pedc_numero))
+                /* Armamos la URL con parametros */
+                urlPath = pedidoUtils.BuildUrl(url, Constants.PARAM_TIPO_PEDIDO, key);
+                urlPath = pedidoUtils.BuildUrl(urlPath, Constants.PARAM_FECHA, lastStringTime);
+                Console.WriteLine("URL: " + urlPath);
+
+                /* Obtenemos los datos */
+                String myJsonString = Utils.SendRequest(urlPath, user, pass);
+
+                /* Mapping */
+                List<PedidoDTO> pedidoDTO = null;
+                Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
+
+                String tipoPedido = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(key);
+                String letra = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(key);
+
+                if (!String.Empty.Equals(myJsonString))
                 {
-                    Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
-                    countAlreadyProcess++;
+                    pedidoDTO = pedidoUtils.MappingJsonRecepcion(myJsonString);
+                    if (pedidoDTO.Any())
+                    {
+                        pedidoUtils.MappingReceptionDTORecepcion(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
+                        // Validamos si hay que insertar o descartar el pedido
+                        foreach (KeyValuePair<int, tblPedido> entry in dictionary)
+                        {
+                            // LLamo al SP y seteo su valor a la cabecera y sus detalles
+                            int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
+                            entry.Value.pedc_proc_id = recc_proc_id;
+                            foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
+                            {
+                                detalle.pedd_proc_id = recc_proc_id;
+                            }
+
+                            Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
+                            if (servicePedido.Save(entry.Value)) count++;
+                            else countError++;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(string.Format(Constants.FAILED_GETTING_DATA), key);
+                        // Continuamos con la ejecucion para otro tipo de pedido
+                        continue;
+                    }
                 }
-                // No está procesada! la voy a guardar
                 else
                 {
-                    // LLamo al SP y seteo su valor a la cabecera y sus detalles
-                    int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
-                    entry.Value.pedc_proc_id = recc_proc_id;
-                    foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
-                    {
-                        detalle.pedd_proc_id = recc_proc_id;
-                    }
-                    // ¿La pude guardar?
-                    Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
-                    if (servicePedido.Save(entry.Value))
-                        count++;
-                    else
-                        countError++;
+                    Console.WriteLine(string.Format(Constants.FAILED_CALL_REST_PEDIDO), key);
+                    // Continuamos con la ejecucion para otro tipo de pedido
+                    continue;
                 }
+
             }
 
-            Console.WriteLine("Finalizó el proceso de actualización de Recepciones");
+            Console.WriteLine("Finalizó el proceso de actualización de Pedidos");
 
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");

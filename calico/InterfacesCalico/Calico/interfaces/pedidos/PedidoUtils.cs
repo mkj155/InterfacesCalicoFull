@@ -1,6 +1,5 @@
 ﻿using Calico.common;
 using Calico.interfaces.pedido;
-using Calico.interfaces.recepcion;
 using Calico.persistencia;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,10 +11,10 @@ namespace Calico.interfaces.pedidos
 {
     class PedidoUtils
     {
-        public String BuildUrl(String urlParam, String fecha)
+        public String BuildUrl(String urlParam, String param, String value)
         {
             Dictionary<String, String> dictionary = new Dictionary<string, string>();
-            dictionary.Add(Constants.PARAM_FECHA, fecha);
+            dictionary.Add(param, value);
             return Utils.BuildUrl(urlParam, dictionary);
         }
 
@@ -36,7 +35,7 @@ namespace Calico.interfaces.pedidos
             return new List<PedidoDTO>();
         }
 
-        public void MappingReceptionDTORecepcion(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String letra,String sucursal,String cliente)
+        public void MappingReceptionDTORecepcion(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
@@ -45,7 +44,7 @@ namespace Calico.interfaces.pedidos
                 if (pedido == null)
                 {
                     /* CABEZERA */
-                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, compania,letra,sucursal,cliente);
+                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
@@ -60,12 +59,12 @@ namespace Calico.interfaces.pedidos
             }
         }
 
-        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String compania, String letra,String sucursal,String cliente)
+        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
         {
             tblPedido pedido = new tblPedido();
             pedido.pedc_emplazamiento = emplazamiento;
             pedido.pedc_almacen = almacen;
-            /* FALTA pedido.pedc_tped_codigo */
+            pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
             pedido.pedc_sucursal = sucursal;
             pedido.pedc_numero = pedidoDTO.F4201_DOCO;
@@ -81,9 +80,9 @@ namespace Calico.interfaces.pedidos
             }
 
             pedido.pedc_cliente = cliente;
-            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_MCU)? pedidoDTO.F4211_MCU:"";
-            pedido.pedc_referenciaA = ""; /* Revisar por parte de Jorge */
-            pedido.pedc_referenciaB = ""; /* Revisar por parte de Jorge */
+            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_MCU) ? pedidoDTO.F4211_MCU.Trim() : String.Empty;
+            pedido.pedc_referenciaA = String.Empty; /* Revisar por parte de Jorge */
+            pedido.pedc_referenciaB = String.Empty; /* Revisar por parte de Jorge */
 
             pedido.pedc_areaMuelle = String.Empty;
             pedido.pedc_centroCosto = String.Empty;
@@ -110,8 +109,8 @@ namespace Calico.interfaces.pedidos
             tblPedidoDetalle detalle = new tblPedidoDetalle();
             detalle.pedd_linea = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LNID) ? Convert.ToDecimal(pedidoDTO.F4211_LNID) : 0;
             detalle.pedd_compania = compania;
-            detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : "";
-            detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : "";
+            detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : String.Empty;
+            detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : String.Empty;
             detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
 
             detalle.pedd_despachoParcial = false;

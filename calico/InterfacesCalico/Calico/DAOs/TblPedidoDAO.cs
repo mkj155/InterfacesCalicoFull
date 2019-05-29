@@ -42,8 +42,7 @@ namespace Calico.DAOs
                     {
                         foreach (var ve in eve.ValidationErrors)
                         {
-                            Console.Error.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                                ve.PropertyName, ve.ErrorMessage);
+                            Console.Error.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
                         }
                     }
                     return false;
