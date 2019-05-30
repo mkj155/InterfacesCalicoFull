@@ -101,7 +101,7 @@ namespace Calico.interfaces.pedido
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
-            String urlWithDate = pedidoUtils.BuildUrl(urlPath, Constants.PARAM_FECHA, lastStringTime);
+            String urlWithDate = pedidoUtils.BuildUrl(url, Constants.PARAM_FECHA, lastStringTime);
 
             foreach (String key in URLkeys)
             {

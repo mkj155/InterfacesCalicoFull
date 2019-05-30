@@ -84,7 +84,7 @@ namespace Calico.DAOs
                           x.pedc_letra == letra &&
                           x.pedc_sucursal == sucursal &&
                           x.pedc_numero == numero))) return true;
-                // tblHistoricoPedido la tabla es esa!!!
+                // tblHistoricoPedido la tabla es esa!!! falta validar por el historico?
                 return false;
             }
         }
