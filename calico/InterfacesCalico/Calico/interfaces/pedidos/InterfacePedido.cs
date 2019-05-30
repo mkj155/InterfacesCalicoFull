@@ -128,17 +128,26 @@ namespace Calico.interfaces.pedido
                         // Validamos si hay que insertar o descartar el pedido
                         foreach (KeyValuePair<int, tblPedido> entry in dictionary)
                         {
-                            // LLamo al SP y seteo su valor a la cabecera y sus detalles
-                            int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
-                            entry.Value.pedc_proc_id = recc_proc_id;
-                            foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
+                            if (servicePedido.IsAlreadyProcess(almacen, tipoPedido, letra,sucursal,entry.Value.pedc_numero))
                             {
-                                detalle.pedd_proc_id = recc_proc_id;
+                                Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
+                                countAlreadyProcess++;
                             }
+                            // No está procesada! la voy a guardar
+                            else
+                            {
+                                // LLamo al SP y seteo su valor a la cabecera y sus detalles
+                                int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
+                                entry.Value.pedc_proc_id = recc_proc_id;
+                                foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
+                                {
+                                    detalle.pedd_proc_id = recc_proc_id;
+                                }
 
-                            Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
-                            if (servicePedido.Save(entry.Value)) count++;
-                            else countError++;
+                                Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
+                                if (servicePedido.Save(entry.Value)) count++;
+                                else countError++;
+                            }
                         }
                     }
                     else

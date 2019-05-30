@@ -40,10 +40,10 @@ namespace Calico.service
             return dao.CallProcedure(tipoProceso, tipoMensaje);
         }
 
-        //public Boolean IsAlreadyProcess(String emplaz, String alm, String cod, String numero)
-        //{
-        //    return dao.IsAlreadyProcess(emplaz, alm, cod, numero);
-        //}
+        public Boolean IsAlreadyProcess(String alm, String tipo, String letra,String sucursal,decimal numero)
+        {
+            return dao.IsAlreadyProcess(alm,tipo,letra,sucursal,numero);
+        }
 
     }
 }

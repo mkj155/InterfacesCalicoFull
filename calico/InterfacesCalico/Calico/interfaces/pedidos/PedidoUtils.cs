@@ -44,7 +44,7 @@ namespace Calico.interfaces.pedidos
                 if (pedido == null)
                 {
                     /* CABEZERA */
-                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
+                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, letra, sucursal, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
@@ -59,7 +59,7 @@ namespace Calico.interfaces.pedidos
             }
         }
 
-        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
+        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String letra, String sucursal, String cliente, String tipoPedido)
         {
             tblPedido pedido = new tblPedido();
             pedido.pedc_emplazamiento = emplazamiento;
@@ -99,7 +99,6 @@ namespace Calico.interfaces.pedidos
             pedido.pedc_prioridad = 0;
             pedido.pedc_provincia = String.Empty;
             pedido.pedc_razonSocial = String.Empty;
-            pedido.pedc_tped_codigo = String.Empty;
 
             return pedido;
         }

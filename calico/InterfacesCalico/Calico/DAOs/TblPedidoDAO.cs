@@ -75,5 +75,21 @@ namespace Calico.DAOs
             //TODO:HACER EJEMPLO
         }
 
+        public bool IsAlreadyProcess(String alm, String tipo, String letra, String sucursal, decimal numero)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                int count = context.tblPedido
+                   .Where(x => x.pedc_almacen == alm &&
+                          x.pedc_tped_codigo == tipo &&
+                          x.pedc_letra == letra &&
+                          x.pedc_sucursal == sucursal &&
+                          x.pedc_numero == numero)
+                   .Count<tblPedido>();
+
+                return count > 0;
+            }
+        }
+
     }
 }
