@@ -79,15 +79,13 @@ namespace Calico.DAOs
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                int count = context.tblPedido
-                   .Where(x => x.pedc_almacen == alm &&
+                if (context.tblPedido.Any((x => x.pedc_almacen == alm &&
                           x.pedc_tped_codigo == tipo &&
                           x.pedc_letra == letra &&
                           x.pedc_sucursal == sucursal &&
-                          x.pedc_numero == numero)
-                   .Count<tblPedido>();
-
-                return count > 0;
+                          x.pedc_numero == numero))) return true;
+                // tblHistoricoPedido la tabla es esa!!!
+                return false;
             }
         }
 

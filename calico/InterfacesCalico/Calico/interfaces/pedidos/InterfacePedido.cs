@@ -101,12 +101,12 @@ namespace Calico.interfaces.pedido
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
+            String urlWithDate = pedidoUtils.BuildUrl(urlPath, Constants.PARAM_FECHA, lastStringTime);
 
             foreach (String key in URLkeys)
             {
                 /* Armamos la URL con parametros */
-                urlPath = pedidoUtils.BuildUrl(url, Constants.PARAM_TIPO_PEDIDO, key);
-                urlPath = pedidoUtils.BuildUrl(urlPath, Constants.PARAM_FECHA, lastStringTime);
+                urlPath = pedidoUtils.BuildUrl(urlWithDate, Constants.PARAM_TIPO_PEDIDO, key);
                 Console.WriteLine("URL: " + urlPath);
 
                 /* Obtenemos los datos */
