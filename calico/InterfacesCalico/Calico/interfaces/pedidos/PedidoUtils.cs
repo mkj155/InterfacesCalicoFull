@@ -108,7 +108,8 @@ namespace Calico.interfaces.pedidos
             tblPedidoDetalle detalle = new tblPedidoDetalle();
             detalle.pedd_linea = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LNID) ? Convert.ToDecimal(pedidoDTO.F4211_LNID) : 0;
             detalle.pedd_compania = compania;
-            detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : String.Empty;
+            String producto = String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? String.Empty : pedidoDTO.F4211_LITM;
+            detalle.pedd_producto = producto.Length > 15 ? "99999999999999" : pedidoDTO.F4211_LITM;
             detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : String.Empty;
             detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
 
