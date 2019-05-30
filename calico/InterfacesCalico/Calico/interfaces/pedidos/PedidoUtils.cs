@@ -18,7 +18,7 @@ namespace Calico.interfaces.pedidos
             return Utils.BuildUrl(urlParam, dictionary);
         }
 
-        public List<PedidoDTO> MappingJsonRecepcion(String myJsonString)
+        public List<PedidoDTO> MappingJsonPedido(String myJsonString)
         {
             var jc = JsonConvert.DeserializeObject<JObject>(myJsonString);
 
@@ -35,7 +35,7 @@ namespace Calico.interfaces.pedidos
             return new List<PedidoDTO>();
         }
 
-        public void MappingReceptionDTORecepcion(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {

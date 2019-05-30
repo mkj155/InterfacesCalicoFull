@@ -121,10 +121,10 @@ namespace Calico.interfaces.pedido
 
                 if (!String.Empty.Equals(myJsonString))
                 {
-                    pedidoDTO = pedidoUtils.MappingJsonRecepcion(myJsonString);
+                    pedidoDTO = pedidoUtils.MappingJsonPedido(myJsonString);
                     if (pedidoDTO.Any())
                     {
-                        pedidoUtils.MappingReceptionDTORecepcion(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
+                        pedidoUtils.MappingPedidoDTOPedido(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
                         // Validamos si hay que insertar o descartar el pedido
                         foreach (KeyValuePair<int, tblPedido> entry in dictionary)
                         {
@@ -175,9 +175,9 @@ namespace Calico.interfaces.pedido
             process.cant_lineas = count;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);
-            Console.WriteLine("Cantidad de Recepciones procesadas OK: " + process.cant_lineas);
-            Console.WriteLine("Cantidad de Recepciones procesadas con ERROR: " + countError);
-            Console.WriteLine("Cantidad de Recepciones evitadas: " + countAlreadyProcess);
+            Console.WriteLine("Cantidad de Pedidos procesadas OK: " + process.cant_lineas);
+            Console.WriteLine("Cantidad de Pedidos procesadas con ERROR: " + countError);
+            Console.WriteLine("Cantidad de Pedidos evitadas: " + countAlreadyProcess);
             Console.WriteLine("Estado: " + process.estado);
 
             /* Actualizamos la tabla BIANCHI_PROCESS */
