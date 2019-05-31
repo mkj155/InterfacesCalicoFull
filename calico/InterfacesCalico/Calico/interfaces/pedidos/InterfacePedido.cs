@@ -155,14 +155,14 @@ namespace Calico.interfaces.pedido
                     }
                     else
                     {
-                        Console.WriteLine(string.Format(Constants.FAILED_GETTING_DATA), key);
+                        Console.WriteLine(string.Format(Constants.FAILED_GETTING_DATA, key));
                         // Continuamos con la ejecucion para otro tipo de pedido
                         continue;
                     }
                 }
                 else
                 {
-                    Console.WriteLine(string.Format(Constants.FAILED_CALL_REST_PEDIDO), key);
+                    Console.WriteLine(string.Format(Constants.FAILED_CALL_REST_PEDIDO, key));
                     // Continuamos con la ejecucion para otro tipo de pedido
                     continue;
                 }
