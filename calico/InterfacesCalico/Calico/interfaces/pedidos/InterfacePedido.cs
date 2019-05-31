@@ -94,9 +94,12 @@ namespace Calico.interfaces.pedido
             /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
             String[] URLkeys = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
 
-            int count = 0;
-            int countError = 0;
-            int countAlreadyProcess = 0;
+            int countOKTotal = 0;
+            int countErrorTotal = 0;
+            int countOKPedido = 0;
+            int countErrorPedido = 0;
+            int countAlreadyProcessTotal = 0;
+            int countAlreadyProcessPedido = 0;
             int? tipoMensaje = 0;
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
@@ -131,7 +134,7 @@ namespace Calico.interfaces.pedido
                             if (servicePedido.IsAlreadyProcess(almacen, tipoPedido, letra,sucursal,entry.Value.pedc_numero))
                             {
                                 Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
-                                countAlreadyProcess++;
+                                countAlreadyProcessPedido++;
                             }
                             // No está procesada! la voy a guardar
                             else
@@ -145,8 +148,8 @@ namespace Calico.interfaces.pedido
                                 }
 
                                 Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
-                                if (servicePedido.Save(entry.Value)) count++;
-                                else countError++;
+                                if (servicePedido.Save(entry.Value)) countOKPedido++;
+                                else countErrorPedido++;
                             }
                         }
                     }
@@ -164,6 +167,15 @@ namespace Calico.interfaces.pedido
                     continue;
                 }
 
+                Console.WriteLine(String.Format("Cantidad de pedidos {0} procesados OK: {1}", key, countOKPedido));
+                Console.WriteLine(String.Format("Cantidad de pedidos {0} procesados con error: {1}", key, countErrorPedido));
+                Console.WriteLine(String.Format("Cantidad de pedidos {0} evitados: {1}", key, countAlreadyProcessPedido));
+                countOKTotal += countOKPedido;
+                countErrorTotal += countErrorPedido;
+                countAlreadyProcessTotal += countAlreadyProcessPedido;
+                countOKPedido = 0;
+                countErrorPedido = 0;
+                countAlreadyProcessPedido = 0;
             }
 
             Console.WriteLine("Finalizó el proceso de actualización de Pedidos");
@@ -172,12 +184,12 @@ namespace Calico.interfaces.pedido
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
             process.fin = DateTime.Now;
             process.fecha_ultima = lastTime;
-            process.cant_lineas = count;
+            process.cant_lineas = countOKTotal;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);
-            Console.WriteLine("Cantidad de Pedidos procesadas OK: " + process.cant_lineas);
-            Console.WriteLine("Cantidad de Pedidos procesadas con ERROR: " + countError);
-            Console.WriteLine("Cantidad de Pedidos evitadas: " + countAlreadyProcess);
+            Console.WriteLine("Cantidad de pedidos procesados OK: " + process.cant_lineas);
+            Console.WriteLine("Cantidad de pedidos procesados con ERROR: " + countErrorTotal);
+            Console.WriteLine("Cantidad de pedidos evitados: " + countAlreadyProcessTotal);
             Console.WriteLine("Estado: " + process.estado);
 
             /* Actualizamos la tabla BIANCHI_PROCESS */
