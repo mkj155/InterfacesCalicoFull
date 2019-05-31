@@ -89,6 +89,9 @@
     <Compile Include="interfaces\pedidos\PedidoUtils.cs" />
     <Compile Include="interfaces\pedidos\PedidoDTO.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
+    <Compile Include="persistencia\tblHistoricoPedido.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblHistoricoRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>

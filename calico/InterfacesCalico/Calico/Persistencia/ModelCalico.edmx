@@ -19,6 +19,38 @@
           <Property Name="interfaz" Type="varchar" MaxLength="50" />
           <Property Name="fecha_ultima" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblHistoricoPedido">
+          <Key>
+            <PropertyRef Name="hpec_hisp_id" />
+          </Key>
+          <Property Name="hpec_hisp_id" Type="int" Nullable="false" />
+          <Property Name="hpec_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="hpec_almacen" Type="char" MaxLength="3" />
+          <Property Name="hpec_tped_codigo" Type="char" MaxLength="3" />
+          <Property Name="hpec_letra" Type="char" MaxLength="1" />
+          <Property Name="hpec_sucursal" Type="char" MaxLength="4" />
+          <Property Name="hpec_numero" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="hpec_fechaEmision" Type="datetime" Nullable="false" />
+          <Property Name="hpec_fechaEntrega" Type="datetime" Nullable="false" />
+          <Property Name="hpec_cliente" Type="char" MaxLength="10" />
+          <Property Name="hpec_destinatario" Type="char" MaxLength="10" />
+          <Property Name="hpec_razonSocial" Type="char" MaxLength="60" />
+          <Property Name="hpec_pais" Type="char" MaxLength="3" />
+          <Property Name="hpec_provincia" Type="char" MaxLength="30" />
+          <Property Name="hpec_codigoPostal" Type="char" MaxLength="10" />
+          <Property Name="hpec_localidad" Type="char" MaxLength="40" />
+          <Property Name="hpec_domicilio" Type="char" MaxLength="250" />
+          <Property Name="hpec_centroCosto" Type="char" MaxLength="10" />
+          <Property Name="hpec_areaMuelle" Type="char" MaxLength="6" />
+          <Property Name="hpec_numeroRuteo" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="hpec_entregaParcial" Type="bit" Nullable="false" />
+          <Property Name="hpec_importeFactura" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="hpec_contraRembolso" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="hpec_prioridad" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="hpec_referenciaA" Type="char" MaxLength="30" />
+          <Property Name="hpec_referenciaB" Type="char" MaxLength="30" />
+          <Property Name="hpec_observaciones" Type="text" />
+        </EntityType>
         <EntityType Name="tblHistoricoRecepcion">
           <Key>
             <PropertyRef Name="hrec_hisp_id" />
@@ -232,6 +264,7 @@
         </Function>
         <EntityContainer Name="CalicoModelStoreContainer">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblHistoricoPedido" EntityType="Self.tblHistoricoPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistoricoRecepcion" EntityType="Self.tblHistoricoRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblInformeRecepcion" EntityType="Self.tblInformeRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblInformeRecepcionDetalle" EntityType="Self.tblInformeRecepcionDetalle" Schema="dbo" store:Type="Tables" />
@@ -325,6 +358,7 @@
             <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
             <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
           </AssociationSet>
+          <EntitySet Name="tblHistoricoPedido" EntityType="CalicoModel.tblHistoricoPedido" />
         </EntityContainer>
         <EntityType Name="tblRecepcion">
           <Key>
@@ -511,6 +545,38 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="tblHistoricoPedido">
+          <Key>
+            <PropertyRef Name="hpec_hisp_id" />
+          </Key>
+          <Property Name="hpec_hisp_id" Type="Int32" Nullable="false" />
+          <Property Name="hpec_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_tped_codigo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_letra" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_sucursal" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_numero" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="hpec_fechaEmision" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="hpec_fechaEntrega" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="hpec_cliente" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_destinatario" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_razonSocial" Type="String" MaxLength="60" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_pais" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_provincia" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_codigoPostal" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_localidad" Type="String" MaxLength="40" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_domicilio" Type="String" MaxLength="250" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_centroCosto" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_areaMuelle" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_numeroRuteo" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="hpec_entregaParcial" Type="Boolean" Nullable="false" />
+          <Property Name="hpec_importeFactura" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="hpec_contraRembolso" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="hpec_prioridad" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="hpec_referenciaA" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="hpec_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -702,6 +768,39 @@
                 <ScalarProperty Name="ired_linea" ColumnName="ired_linea" />
                 <ScalarProperty Name="ired_proc_id" ColumnName="ired_proc_id" />
                 <ScalarProperty Name="ired_id" ColumnName="ired_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblHistoricoPedido">
+            <EntityTypeMapping TypeName="CalicoModel.tblHistoricoPedido">
+              <MappingFragment StoreEntitySet="tblHistoricoPedido">
+                <ScalarProperty Name="hpec_observaciones" ColumnName="hpec_observaciones" />
+                <ScalarProperty Name="hpec_referenciaB" ColumnName="hpec_referenciaB" />
+                <ScalarProperty Name="hpec_referenciaA" ColumnName="hpec_referenciaA" />
+                <ScalarProperty Name="hpec_prioridad" ColumnName="hpec_prioridad" />
+                <ScalarProperty Name="hpec_contraRembolso" ColumnName="hpec_contraRembolso" />
+                <ScalarProperty Name="hpec_importeFactura" ColumnName="hpec_importeFactura" />
+                <ScalarProperty Name="hpec_entregaParcial" ColumnName="hpec_entregaParcial" />
+                <ScalarProperty Name="hpec_numeroRuteo" ColumnName="hpec_numeroRuteo" />
+                <ScalarProperty Name="hpec_areaMuelle" ColumnName="hpec_areaMuelle" />
+                <ScalarProperty Name="hpec_centroCosto" ColumnName="hpec_centroCosto" />
+                <ScalarProperty Name="hpec_domicilio" ColumnName="hpec_domicilio" />
+                <ScalarProperty Name="hpec_localidad" ColumnName="hpec_localidad" />
+                <ScalarProperty Name="hpec_codigoPostal" ColumnName="hpec_codigoPostal" />
+                <ScalarProperty Name="hpec_provincia" ColumnName="hpec_provincia" />
+                <ScalarProperty Name="hpec_pais" ColumnName="hpec_pais" />
+                <ScalarProperty Name="hpec_razonSocial" ColumnName="hpec_razonSocial" />
+                <ScalarProperty Name="hpec_destinatario" ColumnName="hpec_destinatario" />
+                <ScalarProperty Name="hpec_cliente" ColumnName="hpec_cliente" />
+                <ScalarProperty Name="hpec_fechaEntrega" ColumnName="hpec_fechaEntrega" />
+                <ScalarProperty Name="hpec_fechaEmision" ColumnName="hpec_fechaEmision" />
+                <ScalarProperty Name="hpec_numero" ColumnName="hpec_numero" />
+                <ScalarProperty Name="hpec_sucursal" ColumnName="hpec_sucursal" />
+                <ScalarProperty Name="hpec_letra" ColumnName="hpec_letra" />
+                <ScalarProperty Name="hpec_tped_codigo" ColumnName="hpec_tped_codigo" />
+                <ScalarProperty Name="hpec_almacen" ColumnName="hpec_almacen" />
+                <ScalarProperty Name="hpec_emplazamiento" ColumnName="hpec_emplazamiento" />
+                <ScalarProperty Name="hpec_hisp_id" ColumnName="hpec_hisp_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

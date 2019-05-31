@@ -79,13 +79,19 @@ namespace Calico.DAOs
         {
             using (CalicoEntities context = new CalicoEntities())
             {
-                if (context.tblPedido.Any((x => x.pedc_almacen == alm &&
+                bool existTblPedido = context.tblPedido.Any((x => x.pedc_almacen == alm &&
                           x.pedc_tped_codigo == tipo &&
                           x.pedc_letra == letra &&
                           x.pedc_sucursal == sucursal &&
-                          x.pedc_numero == numero))) return true;
-                // tblHistoricoPedido la tabla es esa!!! falta validar por el historico?
-                return false;
+                          x.pedc_numero == numero));
+
+                bool existTblHistPedido = context.tblHistoricoPedido.Any((x => x.hpec_almacen == alm &&
+                          x.hpec_tped_codigo == tipo &&
+                          x.hpec_letra == letra &&
+                          x.hpec_sucursal == sucursal &&
+                          x.hpec_numero == numero));
+
+                return existTblPedido || existTblHistPedido;
             }
         }
 
