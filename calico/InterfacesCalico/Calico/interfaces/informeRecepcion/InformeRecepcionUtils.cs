@@ -28,25 +28,6 @@ namespace Calico.interfaces.informeRecepcion
             return new InformeRecepcionJson(list);
         }
 
-        //public static InformeRecepcionJson getObjectTest()
-        //{
-        //    InformeRecepcionJson jsonObj = new InformeRecepcionJson();
-        //    InformeRecepcionDTO receptDTO = new InformeRecepcionDTO();
-
-        //    receptDTO.OrderCompany = "00001";
-        //    receptDTO.OrderType = "OT";
-        //    receptDTO.OrderNumber = "849";
-        //    receptDTO.OrderLine = "1.000";
-        //    receptDTO.QuantityToRecieve = "400";
-        //    receptDTO.ReceiptDate = "2019/05/10";
-        //    receptDTO.Lot = "LoteTEST";
-
-        //    jsonObj.ReceiptsVersion = "BIA0100";
-        //    jsonObj.ReceiptsArray.Add(receptDTO);
-
-        //    return jsonObj;
-        //}
-
         public static Boolean SendRequestPost(string url, String user, String pass, String json)
         {
             String myJsonString = String.Empty;
