@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="DAOs\CommonDAO.cs" />
     <Compile Include="DAOs\TblInformeRecepcionDAO.cs" />
+    <Compile Include="DAOs\TblPedidoDAO.cs" />
     <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
@@ -84,7 +85,13 @@
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionJson.cs" />
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionUtils.cs" />
     <Compile Include="interfaces\informeRecepcion\InterfaceInformeRecepcion.cs" />
+    <Compile Include="interfaces\pedidos\InterfacePedido.cs" />
+    <Compile Include="interfaces\pedidos\PedidoUtils.cs" />
+    <Compile Include="interfaces\pedidos\PedidoDTO.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
+    <Compile Include="persistencia\tblHistoricoPedido.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblHistoricoRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
@@ -101,6 +108,7 @@
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
     <Compile Include="service\TblInformeRecepcionService.cs" />
+    <Compile Include="service\TblPedidoService.cs" />
     <Compile Include="service\TblSubClienteService.cs" />
     <Compile Include="DAOs\TblSubClienteDAO.cs" />
     <Compile Include="DAOs\BianchiProcessDAO.cs" />

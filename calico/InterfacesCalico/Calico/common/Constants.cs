@@ -7,6 +7,12 @@ namespace Calico.common
         /* INTERFACES */
         public const String NUMERO_INTERFACE = "NumeroInterface";
         public const String FECHA_DEFAULT = "1973/01/01";
+        public const String NUMERO_CLIENTE = "NumeroCliente";
+        public const String INTERFACE_EMPLAZAMIENTO = "Emplazamiento";
+        public const String INTERFACE_ALMACEN = "Almacen";
+        public const String INTERFACE_COMPANIA = "Compania";
+        public const String INTERFACE_SUCURSAL = "Sucursal";
+        public const String INTERFACE_CLIENTE = "Cliente";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
@@ -25,12 +31,18 @@ namespace Calico.common
         public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
+        // PEDIDOS
+        public const String INTERFACE_PEDIDOS = "Pedidos";
+        public const String INTERFACE_PEDIDOS_TIPO_PEDIDO = "tipoPedido";
+        public const String INTERFACE_PEDIDOS_LETRA = "Letra";
+        public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";
         public const String JSON_SUBFIX_TAX = "F0101";
         public const String JSON_SUBFIX_RECEPTION = "V554211";
+        public const String JSON_SUBFIX_PEDIDO = "V554211";
         public const String JSON_TAG_DATA = "data";
         public const String JSON_TAG_GRIDDATA = "gridData";
         public const String JSON_TAG_ROWSET = "rowset";
@@ -55,6 +67,7 @@ namespace Calico.common
         public const String PASS = "pass";
         public const String BASIC_AUTH = "BasicAuth";
         public const String PARAM_FECHA = "{fecha}";
+        public const String PARAM_TIPO_PEDIDO = "{tipoPedido}";
 
         // COLUMNAS
         public const String COLUMN_AT1 = "AT1";   // Sch Typ
@@ -72,5 +85,8 @@ namespace Calico.common
         public const String FAILED_CALL_REST = "Fallo el llamado al Rest Service";
         public const String FAILED_LOAD_FILE = "No se pudo cargar el archivo de configuración";
         public const String FAILED_LOAD_DATES = "La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso";
+        public const String FAILED_GETTING_DATA = "No se encontraron Pedidos del tipo {0} para procesar";
+        public const String FAILED_CALL_REST_PEDIDO = "Fallo el llamado Rest Service de Pedidos tipo {0}";
+
     }
 }
