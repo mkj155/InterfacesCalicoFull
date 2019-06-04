@@ -31,6 +31,8 @@ namespace Calico.common
         public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
+        public const String Repeating_Requests = "Repeating Requests";
+        public const String Receipt_Document = "ReceiptDocument";
         // PEDIDOS
         public const String INTERFACE_PEDIDOS = "Pedidos";
         public const String INTERFACE_PEDIDOS_TIPO_PEDIDO = "tipoPedido";
