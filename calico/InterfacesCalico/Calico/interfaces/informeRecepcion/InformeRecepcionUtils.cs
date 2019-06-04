@@ -2,6 +2,7 @@
 using Calico.interfaces.recepcion;
 using Calico.persistencia;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,19 @@ namespace Calico.interfaces.informeRecepcion
             return new InformeRecepcionJson(list);
         }
 
+        public static bool ExistChildrenInJson(String jsonString,String father,String children)
+        {
+            JObject jsonObj = JObject.Parse(jsonString);
+            if (jsonObj[father] != null)
+            {
+                return jsonObj[father].Children().Where(child => child[children] != null).Any();
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static Boolean SendRequestPost(string url, String user, String pass, String json)
         {
             String myJsonString = String.Empty;
@@ -49,13 +63,30 @@ namespace Calico.interfaces.informeRecepcion
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return true;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        myJsonString = reader.ReadToEnd();
+
+                        if (ExistChildrenInJson(myJsonString, Constants.Repeating_Requests, Constants.Receipt_Document))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            handleErrorRest(myJsonString, out LAST_ERROR);
+                            return false;
+                        }
+                    }
                 }
             }
             catch (WebException e)
             {
-                LAST_ERROR = e.Message;
-                Utils.handleErrorRest(e);
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse response = (HttpWebResponse)e.Response;
+                    StreamReader reader = new StreamReader(response.GetResponseStream());
+                    handleErrorRest(reader.ReadToEnd(), out LAST_ERROR);
+                }
             }
             catch (Exception ex)
             {
@@ -64,6 +95,17 @@ namespace Calico.interfaces.informeRecepcion
 
             return false;
 
+        }
+
+        public static void handleErrorRest(String myJsonString, out string error)
+        {
+                JObject json = JObject.Parse(myJsonString);
+
+                Console.WriteLine("Servicio Rest KO");
+                Console.WriteLine();
+                Console.WriteLine("Detalle: ");
+                Console.WriteLine(json["message"]);
+                error = json["message"].ToString();
         }
 
         internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany)

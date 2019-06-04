@@ -94,7 +94,7 @@ namespace Calico.interfaces.recepcion
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
             detalle.recd_serie = String.Empty;
             detalle.recd_compania = compania;
-            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) * 1000 : 0;
             detalle.recd_lineaPedido = 0;
             detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
             detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
