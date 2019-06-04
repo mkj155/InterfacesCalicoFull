@@ -31,13 +31,15 @@ namespace Calico.common
         public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
-        public const String Repeating_Requests = "Repeating Requests";
-        public const String Receipt_Document = "ReceiptDocument";
+        public const String INTERFACE_REPEATING_REQUEST = "Repeating Requests";
+        public const String INTERFACE_RECEIPT_DOCUMENT = "ReceiptDocument";
+        public const String INTERFACE_ORDER_TYPE = "orderType_ST";
         // PEDIDOS
         public const String INTERFACE_PEDIDOS = "Pedidos";
         public const String INTERFACE_PEDIDOS_TIPO_PEDIDO = "tipoPedido";
         public const String INTERFACE_PEDIDOS_LETRA = "Letra";
         public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
+        public const String INTERFACE_PEDIDOS_URL_POST = "PedidosURL_POST";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";

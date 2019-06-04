@@ -16,6 +16,7 @@ namespace Calico.interfaces.informeRecepcion
     class InformeRecepcionUtils
     {
         public static String LAST_ERROR = String.Empty;
+
         public static String JsonToString(InformeRecepcionJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
@@ -29,7 +30,7 @@ namespace Calico.interfaces.informeRecepcion
             return new InformeRecepcionJson(list);
         }
 
-        public static bool ExistChildrenInJson(String jsonString,String father,String children)
+        public static bool ExistChildrenInJson(String jsonString, String father, String children)
         {
             JObject jsonObj = JObject.Parse(jsonString);
             if (jsonObj[father] != null)
@@ -67,7 +68,7 @@ namespace Calico.interfaces.informeRecepcion
                     {
                         myJsonString = reader.ReadToEnd();
 
-                        if (ExistChildrenInJson(myJsonString, Constants.Repeating_Requests, Constants.Receipt_Document))
+                        if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
                         {
                             return true;
                         }
@@ -108,7 +109,7 @@ namespace Calico.interfaces.informeRecepcion
                 error = json["message"].ToString();
         }
 
-        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany)
+        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany, String OrderType)
         {
             List<InformeRecepcionJson> jsonList = new List<InformeRecepcionJson>();
 
@@ -117,10 +118,10 @@ namespace Calico.interfaces.informeRecepcion
                 InformeRecepcionDTO informeDTO = new InformeRecepcionDTO();
 
                 informeDTO.OrderCompany = OrderCompany;
-                informeDTO.OrderType = informe.irec_tipo;
+                informeDTO.OrderType = OrderType;
                 int order;
                 informeDTO.OrderNumber = Int32.TryParse(informe.irec_numero, out order) ? order.ToString() : String.Empty;
-                informeDTO.OrderLine = detalle.ired_linea > 0 && detalle.ired_linea.ToString().Length > 3 ? detalle.ired_linea.ToString("N0") : String.Empty;
+                informeDTO.OrderLine = detalle.ired_linea > 0 ? (detalle.ired_linea / 1000).ToString() : String.Empty;
                 informeDTO.QuantityToRecieve = (detalle.ired_cantidadRecibida.ToString()).Replace(",", ".");
                 DateTime receiptDate = informe.irec_fecha ?? Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
                 informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");

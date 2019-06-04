@@ -94,6 +94,11 @@ namespace Calico.interfaces.pedido
             /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
             String[] URLkeys = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
 
+            /* TEST */
+            String urlPost = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL_POST);
+
+            /* TEST */
+
             int countOKTotal = 0;
             int countErrorTotal = 0;
             int countOKPedido = 0;
