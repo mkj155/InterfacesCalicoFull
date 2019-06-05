@@ -7,19 +7,20 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Calico.interfaces.informeRecepcion
+namespace Calico.interfaces.informePedido
 {
-    class InterfaceInformeRecepcion : InterfaceGeneric
+    class InterfaceInformePedido : InterfaceGeneric
     {
 
-        private const String INTERFACE = Constants.INTERFACE_INFORME_RECEPCION;
+        private const String INTERFACE = Constants.INTERFACE_INFORME_PEDIDOS;
 
         private BianchiService service = new BianchiService();
-        private TblInformeRecepcionService serviceInformeRecepcion = new TblInformeRecepcionService();
-        private InformeRecepcionUtils informeRecepcionUtils = new InformeRecepcionUtils();
+        private TblInformePedidoService serviceInformePedido = new TblInformePedidoService();
 
-        public bool ValidateDate() => false;
+        public bool ValidateDate() => true;
 
         public bool Process(DateTime? dateTime)
         {
@@ -65,14 +66,10 @@ namespace Calico.interfaces.informeRecepcion
             }
 
             // INICIO BUSQUEDA DE DATOS
-            String emplazamiento = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
-            String almacen = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
-            String tipo = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_TIPO);
-            String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
-            String OrderType = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_ORDER_TYPE);
+            // TODO MATI
 
-            List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
-            List<InformeRecepcionJson> jsonList = null;
+            List<tblInformePedido> informes = serviceInformePedido.FindInformes("","","");
+            List<InformePedidoJson> jsonList = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
@@ -81,33 +78,35 @@ namespace Calico.interfaces.informeRecepcion
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_INFORME_RECEPCION_URL);
+            // TODO MATI
+            String url = "";
 
+            // TODO MATI
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
-            Console.WriteLine("Codigo de interface: " + tipoProceso);
+            //int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
+            //int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
+            //Console.WriteLine("Codigo de interface: " + tipoProceso);
 
-            foreach (tblInformeRecepcion informe in informes)
+            foreach (tblInformePedido informe in informes)
             {
                 callArchivar = true;
-                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType);
+                jsonList = InformePedidoUtils.MappingInforme(informe, "","");
 
                 if (jsonList.Any())
                 {
-                    Console.WriteLine("Se llevara a cabo el envio al servicio REST de los detalles de la cabecera: " + informe.irec_proc_id);
-                    foreach (InformeRecepcionJson json in jsonList)
+                    Console.WriteLine("Se llevara a cabo el envio al servicio REST de los detalles de la cabecera: " + informe.ipec_proc_id);
+                    foreach (InformePedidoJson json in jsonList)
                     {
-                        var jsonString = InformeRecepcionUtils.JsonToString(json);
+                        var jsonString = InformePedidoUtils.JsonToString(json);
                         Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
                         Console.WriteLine(jsonString);
                         /* Send request */
-                        if (!(InformeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
+                        if (!(InformePedidoUtils.SendRequestPost(url, user, pass, jsonString)))
                         {
                             Console.WriteLine("Se llamara al procedure para informar el error");
-                            serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
+                            serviceInformePedido.CallProcedureInformarEjecucion(informe.ipec_proc_id, InformePedidoUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
                             callArchivar = false;
                             countError++;
                         }
@@ -116,18 +115,19 @@ namespace Calico.interfaces.informeRecepcion
                             Console.WriteLine("El servicio REST retorno OK: " + jsonString);
                             count++;
                         }
+
                     }
 
                     if (callArchivar)
                     {
                         Console.WriteLine("Se llamara al procedure para archivar el informe");
-                        serviceInformeRecepcion.CallProcedureArchivarInformeRecepcion(informe.irec_proc_id, new ObjectParameter("error", typeof(String)));
+                        serviceInformePedido.CallProcedureArchivarInformeRecepcion(informe.ipec_proc_id, new ObjectParameter("error", typeof(String)));
                     }
 
                 }
                 else
                 {
-                    Console.WriteLine("No se encontraron detalles para la cabecera: " + informe.irec_proc_id);
+                    Console.WriteLine("No se encontraron detalles para la cabecera: " + informe.ipec_proc_id);
                 }
 
             }
@@ -158,6 +158,8 @@ namespace Calico.interfaces.informeRecepcion
 
             return true;
 
+
         }
+
     }
 }

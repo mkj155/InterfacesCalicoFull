@@ -1,4 +1,5 @@
 ﻿using Calico.interfaces.clientes;
+using Calico.interfaces.informePedido;
 using Calico.interfaces.informeRecepcion;
 using Calico.interfaces.pedido;
 using Calico.interfaces.recepcion;
@@ -28,6 +29,10 @@ namespace Calico.common
             else if (Constants.INTERFACE_PEDIDOS.Equals(interfaceName))
             {
                 interfaz = new InterfacePedido();
+            }
+            else if (Constants.INTERFACE_INFORME_PEDIDOS.Equals(interfaceName))
+            {
+                interfaz = new InterfaceInformePedido();
             }
             return interfaz;
         }

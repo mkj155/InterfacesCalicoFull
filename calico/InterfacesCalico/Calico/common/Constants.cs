@@ -40,6 +40,8 @@ namespace Calico.common
         public const String INTERFACE_PEDIDOS_LETRA = "Letra";
         public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
         public const String INTERFACE_PEDIDOS_URL_POST = "PedidosURL_POST";
+        // INFORME PEDIDOS
+        public const String INTERFACE_INFORME_PEDIDOS = "InformePedido";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
