@@ -1,11 +1,15 @@
 ﻿using Calico.common;
+using Calico.interfaces.informeRecepcion;
 using Calico.interfaces.pedido;
 using Calico.persistencia;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Net;
 
 namespace Calico.interfaces.pedidos
 {
@@ -18,14 +22,95 @@ namespace Calico.interfaces.pedidos
             return Utils.BuildUrl(urlParam, dictionary);
         }
 
+        public PedidoJson getJson(String fromStatus,String toStatus)
+        {
+            PedidoJson json = new PedidoJson();
+            json.DateUpdated = "2019/05/01";
+            json.fromStatus = fromStatus;
+            json.toStatus = toStatus;
+            json.OrTy1 = "SO";
+            json.OrTy2 = "SA";
+            json.OrTy3 = "SD";
+            json.OrTy4 = "SW";
+            json.OrTy5 = "SX";
+            json.OrTy6 = "SM";
+            json.OrTy7 = "SR";
+            json.OrTy8 = "CR";
+            json.OrTy9 = "SN";
+            json.OrTy10 = "SP";
+            json.OrTy11 = "";
+            json.OrTy12 = "";
+            json.OrTy13 = "";
+            json.OrTy14 = "";
+
+            return json;
+
+        }
+
+        public String JsonToString(PedidoJson obj)
+        {
+            var json = JsonConvert.SerializeObject(obj);
+            return json;
+        }
+
+        public List<PedidoDTO> SendRequestPost(string url, String user, String pass, String json)
+        {
+            String myJsonString = String.Empty;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(user + ":" + pass));
+            request.Headers.Add("Authorization", "Basic " + encoded);
+            request.ContentType = "application/json";
+            request.Method = Constants.METHOD_POST;
+            try
+            {
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Console.WriteLine("El servicio rest retorno HTTP 200 OK:");
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        myJsonString = reader.ReadToEnd();
+                        Console.WriteLine(myJsonString);
+                        if(!String.Empty.Equals(myJsonString))
+                            return MappingJsonPedido(myJsonString);
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse response = (HttpWebResponse)e.Response;
+                    StreamReader reader = new StreamReader(response.GetResponseStream());
+                    handleErrorRest(reader.ReadToEnd());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+
+            return new List<PedidoDTO>();
+
+        }
+
         public List<PedidoDTO> MappingJsonPedido(String myJsonString)
         {
             var jc = JsonConvert.DeserializeObject<JObject>(myJsonString);
 
-            JArray rowset = jc.Value<JObject>(Constants.JSON_PREFIX + Constants.JSON_SUBFIX_PEDIDO)
-                                 .Value<JObject>(Constants.JSON_TAG_DATA)
-                                 .Value<JObject>(Constants.JSON_TAG_GRIDDATA)
-                                 .Value<JArray>(Constants.JSON_TAG_ROWSET);
+            JArray rowset = jc.Value<JObject>("ServiceRequest1")
+                                 .Value<JObject>("fs_DATABROWSE_V554211")
+                                 .Value<JObject>("data")
+                                 .Value<JObject>("gridData")
+                                 .Value<JArray>("rowset");
 
             if (rowset != null && rowset.Count > 0)
             {
@@ -35,20 +120,34 @@ namespace Calico.interfaces.pedidos
             return new List<PedidoDTO>();
         }
 
-        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania, String letra, String sucursal, String cliente, String tipoPedido)
+        public static void handleErrorRest(String myJsonString)
+        {
+            JObject json = JObject.Parse(myJsonString);
+
+            Console.WriteLine("Servicio Rest KO");
+            Console.WriteLine();
+            Console.WriteLine("Detalle: ");
+            Console.WriteLine(json["message"]);
+        }
+
+
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String sucursal, String cliente, IConfigSource source)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
                 tblPedido pedido = null;
-                dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
+                dictionary.TryGetValue(pedidoDTO.F4211_DOCO, out pedido);
                 if (pedido == null)
                 {
+                    String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4211_DCTO);
+                    String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4211_DCTO);
+
                     /* CABEZERA */
                     pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, letra, sucursal, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
-                    dictionary.Add(pedidoDTO.F4201_DOCO, pedido);
+                    dictionary.Add(pedidoDTO.F4211_DOCO, pedido);
                 }
                 else
                 {
@@ -67,7 +166,7 @@ namespace Calico.interfaces.pedidos
             pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
             pedido.pedc_sucursal = sucursal;
-            pedido.pedc_numero = pedidoDTO.F4201_DOCO;
+            pedido.pedc_numero = pedidoDTO.F4211_DOCO;
 
             if (!String.IsNullOrWhiteSpace(pedidoDTO.F4201_OPDJ))
             {
@@ -108,8 +207,7 @@ namespace Calico.interfaces.pedidos
             tblPedidoDetalle detalle = new tblPedidoDetalle();
             detalle.pedd_linea = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LNID) ? Convert.ToDecimal(pedidoDTO.F4211_LNID) : 0;
             detalle.pedd_compania = compania;
-            String producto = String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? String.Empty : pedidoDTO.F4211_LITM;
-            detalle.pedd_producto = producto.Length > 15 ? "99999999999999" : pedidoDTO.F4211_LITM;
+            detalle.pedd_producto = String.Empty;
             detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : String.Empty;
             detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
 
