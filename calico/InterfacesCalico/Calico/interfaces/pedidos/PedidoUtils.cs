@@ -136,7 +136,7 @@ namespace Calico.interfaces.pedidos
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
                 tblPedido pedido = null;
-                dictionary.TryGetValue(pedidoDTO.F4211_DOCO, out pedido);
+                dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
                 if (pedido == null)
                 {
                     String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4211_DCTO);
@@ -147,7 +147,7 @@ namespace Calico.interfaces.pedidos
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
-                    dictionary.Add(pedidoDTO.F4211_DOCO, pedido);
+                    dictionary.Add(pedidoDTO.F4201_DOCO, pedido);
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Calico.interfaces.pedidos
             pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
             pedido.pedc_sucursal = sucursal;
-            pedido.pedc_numero = pedidoDTO.F4211_DOCO;
+            pedido.pedc_numero = pedidoDTO.F4201_DOCO;
 
             if (!String.IsNullOrWhiteSpace(pedidoDTO.F4201_OPDJ))
             {
@@ -179,24 +179,24 @@ namespace Calico.interfaces.pedidos
             }
 
             pedido.pedc_cliente = cliente;
-            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_MCU) ? pedidoDTO.F4211_MCU.Trim() : String.Empty;
-            pedido.pedc_referenciaA = String.Empty; /* Revisar por parte de Jorge */
-            pedido.pedc_referenciaB = String.Empty; /* Revisar por parte de Jorge */
+            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_MCU) ? pedidoDTO.F4201_MCU.Trim() : String.Empty;
+            pedido.pedc_referenciaA = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR01) ? pedidoDTO.F4201_VR01.Trim() : String.Empty;
+            pedido.pedc_referenciaB = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR02) ? pedidoDTO.F4201_VR02.Trim() : String.Empty;
+            pedido.pedc_pais =  !String.IsNullOrWhiteSpace(pedidoDTO.F4006_COUN) ? pedidoDTO.F4006_COUN.Trim() : String.Empty;
+            pedido.pedc_provincia = !String.IsNullOrWhiteSpace(pedidoDTO.F4006_ADDS) ? pedidoDTO.F4006_ADDS.Trim() : String.Empty;
+            pedido.pedc_codigoPostal = !String.IsNullOrWhiteSpace(pedidoDTO.F4006_ADDZ) ? pedidoDTO.F4006_ADDZ.Trim() : String.Empty;
+            pedido.pedc_localidad =  !String.IsNullOrWhiteSpace(pedidoDTO.F4006_CTY1) ? pedidoDTO.F4006_CTY1.Trim() : String.Empty;
+            pedido.pedc_domicilio = pedidoDTO.F4006_ADD1 + " " + pedidoDTO.F4006_ADD2 + " " + pedidoDTO.F4006_ADD3 + " " + pedidoDTO.F4006_ADD4;
 
             pedido.pedc_areaMuelle = String.Empty;
             pedido.pedc_centroCosto = String.Empty;
-            pedido.pedc_codigoPostal = String.Empty;
             pedido.pedc_contraRembolso = 0;
-            pedido.pedc_domicilio = String.Empty;
             pedido.pedc_entregaParcial = false;
             pedido.pedc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
             pedido.pedc_importeFactura = 0;
-            pedido.pedc_localidad = String.Empty;
             pedido.pedc_numeroRuteo = 0;
             pedido.pedc_observaciones = String.Empty;
-            pedido.pedc_pais = String.Empty;
             pedido.pedc_prioridad = 0;
-            pedido.pedc_provincia = String.Empty;
             pedido.pedc_razonSocial = String.Empty;
 
             return pedido;
