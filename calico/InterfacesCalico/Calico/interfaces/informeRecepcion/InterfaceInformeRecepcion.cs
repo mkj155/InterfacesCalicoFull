@@ -70,6 +70,7 @@ namespace Calico.interfaces.informeRecepcion
             String tipo = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_TIPO);
             String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
             String OrderType = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_ORDER_TYPE);
+            String receiptsVersion = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION);
 
             List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
             List<InformeRecepcionJson> jsonList = null;
@@ -93,7 +94,7 @@ namespace Calico.interfaces.informeRecepcion
             foreach (tblInformeRecepcion informe in informes)
             {
                 callArchivar = true;
-                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType);
+                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType, receiptsVersion);
 
                 if (jsonList.Any())
                 {
