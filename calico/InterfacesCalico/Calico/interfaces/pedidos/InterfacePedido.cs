@@ -81,106 +81,72 @@ namespace Calico.interfaces.pedido
             String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_COMPANIA);
             String sucursal = source.Configs[INTERFACE].GetString(Constants.INTERFACE_SUCURSAL);
             String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_CLIENTE);
+            String fromStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_FROM_STATUS);
+            String toStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_TO_STATUS);
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
             String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
             String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
-            
+
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL);
-
-            /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
-            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
-
-            /* TEST */
             String urlPost = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL_POST);
 
-            /* TEST */
+            /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
+            String[] tiposPedido = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
 
-            int countOKTotal = 0;
-            int countErrorTotal = 0;
             int countOKPedido = 0;
             int countErrorPedido = 0;
-            int countAlreadyProcessTotal = 0;
             int countAlreadyProcessPedido = 0;
             int? tipoMensaje = 0;
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
-            String urlWithDate = pedidoUtils.BuildUrl(url, Constants.PARAM_FECHA, lastStringTime);
+            // String urlWithDate = pedidoUtils.BuildUrl(urlPost, Constants.PARAM_FECHA, lastStringTime);
 
-            foreach (String key in URLkeys)
+            /* Mapping */
+            List<PedidoDTO> pedidosDTO = null;
+            Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
+
+            /* Armamos la URL con parametros */
+            PedidoJson json = pedidoUtils.getJson(fromStatus, toStatus);
+            var jsonString = pedidoUtils.JsonToString(json);
+            Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
+            Console.WriteLine(jsonString);
+            Console.WriteLine("Se realiza el envio al servicio REST : " + urlPost);
+            pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
+            if (pedidosDTO.Any())
             {
-                /* Armamos la URL con parametros */
-                urlPath = pedidoUtils.BuildUrl(urlWithDate, Constants.PARAM_TIPO_PEDIDO, key);
-                Console.WriteLine("URL: " + urlPath);
-
-                /* Obtenemos los datos */
-                String myJsonString = Utils.SendRequest(urlPath, user, pass);
-
-                /* Mapping */
-                List<PedidoDTO> pedidoDTO = null;
-                Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
-
-                String tipoPedido = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(key);
-                String letra = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(key);
-
-                if (!String.Empty.Equals(myJsonString))
+                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, almacen, compania, sucursal, cliente, source);
+                // Validamos si hay que insertar o descartar el pedido
+                foreach (KeyValuePair<int, tblPedido> entry in dictionary)
                 {
-                    pedidoDTO = pedidoUtils.MappingJsonPedido(myJsonString);
-                    if (pedidoDTO.Any())
+                    if (servicePedido.IsAlreadyProcess(almacen,entry.Value.pedc_tped_codigo, entry.Value.pedc_letra, sucursal, entry.Value.pedc_numero))
                     {
-                        pedidoUtils.MappingPedidoDTOPedido(pedidoDTO, dictionary, emplazamiento, almacen, compania, letra, sucursal, cliente, tipoPedido);
-                        // Validamos si hay que insertar o descartar el pedido
-                        foreach (KeyValuePair<int, tblPedido> entry in dictionary)
-                        {
-                            if (servicePedido.IsAlreadyProcess(almacen, tipoPedido, letra,sucursal,entry.Value.pedc_numero))
-                            {
-                                Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
-                                countAlreadyProcessPedido++;
-                            }
-                            // No está procesada! la voy a guardar
-                            else
-                            {
-                                // LLamo al SP y seteo su valor a la cabecera y sus detalles
-                                int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
-                                entry.Value.pedc_proc_id = recc_proc_id;
-                                foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
-                                {
-                                    detalle.pedd_proc_id = recc_proc_id;
-                                }
-
-                                Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
-                                if (servicePedido.Save(entry.Value)) countOKPedido++;
-                                else countErrorPedido++;
-                            }
-                        }
+                        Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
+                        countAlreadyProcessPedido++;
                     }
+                    // No está procesada! la voy a guardar
                     else
                     {
-                        Console.WriteLine(string.Format(Constants.FAILED_GETTING_DATA, key));
-                        // Continuamos con la ejecucion para otro tipo de pedido
-                        continue;
+                        // LLamo al SP y seteo su valor a la cabecera y sus detalles
+                        int recc_proc_id = servicePedido.CallProcedure(tipoProceso, tipoMensaje);
+                        entry.Value.pedc_proc_id = recc_proc_id;
+                        foreach (tblPedidoDetalle detalle in entry.Value.tblPedidoDetalle)
+                        {
+                            detalle.pedd_proc_id = recc_proc_id;
+                        }
+
+                        Console.WriteLine("Procesando pedido: " + entry.Value.pedc_numero);
+                        if (servicePedido.Save(entry.Value)) countOKPedido++;
+                        else countErrorPedido++;
                     }
                 }
-                else
-                {
-                    Console.WriteLine(string.Format(Constants.FAILED_CALL_REST_PEDIDO, key));
-                    // Continuamos con la ejecucion para otro tipo de pedido
-                    continue;
-                }
-
-                Console.WriteLine(String.Format("Cantidad de pedidos {0} procesados OK: {1}", key, countOKPedido));
-                Console.WriteLine(String.Format("Cantidad de pedidos {0} procesados con error: {1}", key, countErrorPedido));
-                Console.WriteLine(String.Format("Cantidad de pedidos {0} evitados: {1}", key, countAlreadyProcessPedido));
-                countOKTotal += countOKPedido;
-                countErrorTotal += countErrorPedido;
-                countAlreadyProcessTotal += countAlreadyProcessPedido;
-                countOKPedido = 0;
-                countErrorPedido = 0;
-                countAlreadyProcessPedido = 0;
+            }
+            else
+            {
+                Console.WriteLine(Constants.FAILED_GETTING_DATA);
             }
 
             Console.WriteLine("Finalizó el proceso de actualización de Pedidos");
@@ -189,12 +155,12 @@ namespace Calico.interfaces.pedido
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
             process.fin = DateTime.Now;
             process.fecha_ultima = lastTime;
-            process.cant_lineas = countOKTotal;
+            process.cant_lineas = countOKPedido;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);
             Console.WriteLine("Cantidad de pedidos procesados OK: " + process.cant_lineas);
-            Console.WriteLine("Cantidad de pedidos procesados con ERROR: " + countErrorTotal);
-            Console.WriteLine("Cantidad de pedidos evitados: " + countAlreadyProcessTotal);
+            Console.WriteLine("Cantidad de pedidos procesados con ERROR: " + countErrorPedido);
+            Console.WriteLine("Cantidad de pedidos evitados: " + countAlreadyProcessPedido);
             Console.WriteLine("Estado: " + process.estado);
 
             /* Actualizamos la tabla BIANCHI_PROCESS */

@@ -91,6 +91,7 @@
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionUtils.cs" />
     <Compile Include="interfaces\informeRecepcion\InterfaceInformeRecepcion.cs" />
     <Compile Include="interfaces\pedidos\InterfacePedido.cs" />
+    <Compile Include="interfaces\pedidos\PedidoJson.cs" />
     <Compile Include="interfaces\pedidos\PedidoUtils.cs" />
     <Compile Include="interfaces\pedidos\PedidoDTO.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
