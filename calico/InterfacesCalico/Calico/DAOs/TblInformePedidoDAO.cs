@@ -44,6 +44,15 @@ namespace Calico.DAOs
             }
         }
 
+        public int CallProcedureArchivarInformePedido(int? id, ObjectParameter error)
+        {
+            using (CalicoEntities context = new CalicoEntities())
+            {
+                return context.INTERFAZ_ArchivarInformePedido(id, error);
+            }
+        }
+
+
         public List<tblInformePedido> FindInformes(String emplazamiento, String almacen, String tipo)
         {
             try

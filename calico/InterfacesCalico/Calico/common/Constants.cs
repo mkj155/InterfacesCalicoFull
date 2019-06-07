@@ -13,6 +13,7 @@ namespace Calico.common
         public const String INTERFACE_COMPANIA = "Compania";
         public const String INTERFACE_SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
+        public const String INTERFACE_TIPO = "Tipo";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
@@ -42,6 +43,11 @@ namespace Calico.common
         public const String INTERFACE_PEDIDOS_URL_POST = "PedidosURL_POST";
         // INFORME PEDIDOS
         public const String INTERFACE_INFORME_PEDIDOS = "InformePedido";
+        public const String INTERFACE_INFORME_PEDIDO_URL = "InformePedidoURL";
+        public const String INTERFACE_INFORME_PEDIDO_LAST_STATUS = "laststatus";
+        public const String INTERFACE_INFORME_PEDIDO_NEXT_STATUS = "nextstatus";
+        public const String INTERFACE_INFORME_PEDIDO_ORDER_COMPANY = "OrderCompany";
+        public const String INTERFACE_INFORME_PEDIDO_P554211I_VERSION = "P554211I_Version";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
@@ -93,6 +99,6 @@ namespace Calico.common
         public const String FAILED_LOAD_DATES = "La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso";
         public const String FAILED_GETTING_DATA = "No se encontraron Pedidos del tipo {0} para procesar";
         public const String FAILED_CALL_REST_PEDIDO = "Fallo el llamado Rest Service de Pedidos tipo {0}";
-
+        
     }
 }

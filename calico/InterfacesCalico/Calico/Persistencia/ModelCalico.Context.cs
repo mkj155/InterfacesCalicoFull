@@ -74,5 +74,14 @@ namespace Calico.persistencia
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_InformarEjecucion", idParameter, mensajeParameter, error);
         }
+    
+        public virtual int INTERFAZ_ArchivarInformePedido(Nullable<int> id, ObjectParameter error)
+        {
+            var idParameter = id.HasValue ?
+                new ObjectParameter("id", id) :
+                new ObjectParameter("id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_ArchivarInformePedido", idParameter, error);
+        }
     }
 }

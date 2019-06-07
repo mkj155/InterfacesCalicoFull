@@ -8,11 +8,11 @@ namespace Calico.interfaces.informePedido
 {
     class InformePedidoJson
     {
-
+        public String P554211I_Version { get; set; }
+        public List<InformePedidoDTO> ConfirmArray { get; set; }
         public InformePedidoJson(List<InformePedidoDTO> informePedidoDTOList)
         {
-            //ReceiptsArray = informeRecepcionDTOList;
+            ConfirmArray = informePedidoDTOList;
         }
-
     }
 }

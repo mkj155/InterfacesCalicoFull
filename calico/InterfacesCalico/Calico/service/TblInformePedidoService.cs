@@ -24,6 +24,11 @@ namespace Calico.service
             return dao.CallProcedureInformarEjecucion(id, mensaje, error);
         }
 
+        public int CallProcedureArchivarInformePedido(int? id,ObjectParameter error)
+        {
+            return dao.CallProcedureArchivarInformePedido(id, error);
+        }
+
         public List<tblInformePedido> FindInformes(String emplazamiento, String almacen, String tipo)
         {
             return dao.FindInformes(emplazamiento, almacen, tipo);

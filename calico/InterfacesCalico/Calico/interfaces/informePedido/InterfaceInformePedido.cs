@@ -20,7 +20,7 @@ namespace Calico.interfaces.informePedido
         private BianchiService service = new BianchiService();
         private TblInformePedidoService serviceInformePedido = new TblInformePedidoService();
 
-        public bool ValidateDate() => true;
+        public bool ValidateDate() => false;
 
         public bool Process(DateTime? dateTime)
         {
@@ -66,9 +66,15 @@ namespace Calico.interfaces.informePedido
             }
 
             // INICIO BUSQUEDA DE DATOS
-            // TODO MATI
+            String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_EMPLAZAMIENTO);
+            String almacen = source.Configs[INTERFACE].GetString(Constants.INTERFACE_ALMACEN);
+            String tipo = source.Configs[INTERFACE].GetString(Constants.INTERFACE_TIPO);
+            String orderCompany = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_ORDER_COMPANY);
+            String lastStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_LAST_STATUS);
+            String nextStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_NEXT_STATUS);
+            String version = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_P554211I_VERSION);
 
-            List<tblInformePedido> informes = serviceInformePedido.FindInformes("","","");
+            List<tblInformePedido> informes = serviceInformePedido.FindInformes(emplazamiento, almacen,tipo);
             List<InformePedidoJson> jsonList = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
@@ -78,8 +84,7 @@ namespace Calico.interfaces.informePedido
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            // TODO MATI
-            String url = "";
+            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_INFORME_PEDIDO_URL);
 
             // TODO MATI
             int count = 0;
@@ -92,7 +97,8 @@ namespace Calico.interfaces.informePedido
             foreach (tblInformePedido informe in informes)
             {
                 callArchivar = true;
-                jsonList = InformePedidoUtils.MappingInforme(informe, "","");
+                String orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra);
+                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany,orderType, lastStatus,nextStatus,version);
 
                 if (jsonList.Any())
                 {
@@ -115,13 +121,12 @@ namespace Calico.interfaces.informePedido
                             Console.WriteLine("El servicio REST retorno OK: " + jsonString);
                             count++;
                         }
-
                     }
 
                     if (callArchivar)
                     {
                         Console.WriteLine("Se llamara al procedure para archivar el informe");
-                        serviceInformePedido.CallProcedureArchivarInformeRecepcion(informe.ipec_proc_id, new ObjectParameter("error", typeof(String)));
+                        serviceInformePedido.CallProcedureArchivarInformePedido(informe.ipec_proc_id, new ObjectParameter("error", typeof(String)));
                     }
 
                 }
