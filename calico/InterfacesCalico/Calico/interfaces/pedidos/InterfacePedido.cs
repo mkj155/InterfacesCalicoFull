@@ -89,15 +89,12 @@ namespace Calico.interfaces.pedido
             String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
             String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
-            
+
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL);
+            String urlPost = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL_POST);
 
             /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
-            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
-
-            /* TEST */
-            String urlPost = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL_POST);
+            String[] tiposPedido = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
 
             int countOKPedido = 0;
             int countErrorPedido = 0;
@@ -106,10 +103,10 @@ namespace Calico.interfaces.pedido
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
-            String urlWithDate = pedidoUtils.BuildUrl(url, Constants.PARAM_FECHA, lastStringTime);
+            // String urlWithDate = pedidoUtils.BuildUrl(urlPost, Constants.PARAM_FECHA, lastStringTime);
 
             /* Mapping */
-            List<PedidoDTO> pedidoDTO = null;
+            List<PedidoDTO> pedidosDTO = null;
             Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
 
             /* Armamos la URL con parametros */
@@ -118,10 +115,10 @@ namespace Calico.interfaces.pedido
             Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
             Console.WriteLine(jsonString);
             Console.WriteLine("Se realiza el envio al servicio REST : " + urlPost);
-            List<PedidoDTO> pedidos = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
-            if (pedidos.Any())
-            {   
-                pedidoUtils.MappingPedidoDTOPedido(pedidoDTO, dictionary, emplazamiento, almacen, compania, sucursal, cliente,source);
+            pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
+            if (pedidosDTO.Any())
+            {
+                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, almacen, compania, sucursal, cliente, source);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<int, tblPedido> entry in dictionary)
                 {

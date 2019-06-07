@@ -1,5 +1,4 @@
 ﻿using Calico.common;
-using Calico.interfaces.informeRecepcion;
 using Calico.interfaces.pedido;
 using Calico.persistencia;
 using Newtonsoft.Json;
@@ -78,7 +77,8 @@ namespace Calico.interfaces.pedidos
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         myJsonString = reader.ReadToEnd();
-                        Console.WriteLine(myJsonString);
+                        // Muy largo y rompe al mostrar
+                        // Console.WriteLine(myJsonString);
                         if(!String.Empty.Equals(myJsonString))
                             return MappingJsonPedido(myJsonString);
                     }
@@ -139,8 +139,8 @@ namespace Calico.interfaces.pedidos
                 dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
                 if (pedido == null)
                 {
-                    String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4211_DCTO);
-                    String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4211_DCTO);
+                    String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4201_DCTO);
+                    String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4201_DCTO);
 
                     /* CABEZERA */
                     pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, letra, sucursal, cliente, tipoPedido);
