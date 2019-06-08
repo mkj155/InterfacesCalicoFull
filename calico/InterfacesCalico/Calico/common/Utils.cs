@@ -24,6 +24,8 @@ namespace Calico.common
             } catch (Exception) {
                 return false;
             }
+
+          
             return true;
         }
 

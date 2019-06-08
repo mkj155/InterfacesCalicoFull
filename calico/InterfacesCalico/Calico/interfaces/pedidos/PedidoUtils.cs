@@ -21,26 +21,37 @@ namespace Calico.interfaces.pedidos
             return Utils.BuildUrl(urlParam, dictionary);
         }
 
-        public PedidoJson getJson(String fromStatus,String toStatus)
+        public String GetValueOrEmpty(String[] tipos,int size)
+        {
+            if(tipos.Length >= size)
+            {
+                return tipos[size - 1];
+            }
+
+            return String.Empty;
+        }
+
+        public PedidoJson getJson(String dateTime,String fromStatus,String toStatus,String[] tipos)
         {
             PedidoJson json = new PedidoJson();
-            json.DateUpdated = "2019/05/01";
+            json.DateUpdated = dateTime;
             json.fromStatus = fromStatus;
             json.toStatus = toStatus;
-            json.OrTy1 = "SO";
-            json.OrTy2 = "SA";
-            json.OrTy3 = "SD";
-            json.OrTy4 = "SW";
-            json.OrTy5 = "SX";
-            json.OrTy6 = "SM";
-            json.OrTy7 = "SR";
-            json.OrTy8 = "CR";
-            json.OrTy9 = "SN";
-            json.OrTy10 = "SP";
-            json.OrTy11 = "";
-            json.OrTy12 = "";
-            json.OrTy13 = "";
-            json.OrTy14 = "";
+      
+            json.OrTy1 = GetValueOrEmpty(tipos,1);
+            json.OrTy2 = GetValueOrEmpty(tipos, 2);
+            json.OrTy3 = GetValueOrEmpty(tipos, 3);
+            json.OrTy4 = GetValueOrEmpty(tipos, 4);
+            json.OrTy5 = GetValueOrEmpty(tipos, 5);
+            json.OrTy6 = GetValueOrEmpty(tipos, 6);
+            json.OrTy7 = GetValueOrEmpty(tipos, 7);
+            json.OrTy8 = GetValueOrEmpty(tipos, 8);
+            json.OrTy9 = GetValueOrEmpty(tipos, 9);
+            json.OrTy10 = GetValueOrEmpty(tipos, 10);
+            json.OrTy11 = GetValueOrEmpty(tipos, 11);
+            json.OrTy12 = GetValueOrEmpty(tipos, 12);
+            json.OrTy13 = GetValueOrEmpty(tipos, 13);
+            json.OrTy14 = GetValueOrEmpty(tipos, 14);
 
             return json;
 
@@ -73,12 +84,10 @@ namespace Calico.interfaces.pedidos
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    Console.WriteLine("El servicio rest retorno HTTP 200 OK:");
+                    Console.WriteLine("El servicio rest retorno HTTP 200 OK");
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         myJsonString = reader.ReadToEnd();
-                        // Muy largo y rompe al mostrar
-                        // Console.WriteLine(myJsonString);
                         if(!String.Empty.Equals(myJsonString))
                             return MappingJsonPedido(myJsonString);
                     }
@@ -131,23 +140,23 @@ namespace Calico.interfaces.pedidos
         }
 
 
-        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<int, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String sucursal, String cliente, IConfigSource source)
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String sucursal, String cliente, IConfigSource source)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
                 tblPedido pedido = null;
-                dictionary.TryGetValue(pedidoDTO.F4211_DOCO, out pedido);
+                dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
                 if (pedido == null)
                 {
-                    String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4211_DCTO);
-                    String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4211_DCTO);
+                    String tipoPedido = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4201_DCTO);
+                    String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4201_DCTO);
 
                     /* CABEZERA */
                     pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, letra, sucursal, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
-                    dictionary.Add(pedidoDTO.F4211_DOCO, pedido);
+                    dictionary.Add(pedidoDTO.F4201_DOCO, pedido);
                 }
                 else
                 {
@@ -166,7 +175,7 @@ namespace Calico.interfaces.pedidos
             pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
             pedido.pedc_sucursal = sucursal;
-            pedido.pedc_numero = pedidoDTO.F4211_DOCO;
+            pedido.pedc_numero = Convert.ToDecimal(pedidoDTO.F4201_DOCO);
 
             if (!String.IsNullOrWhiteSpace(pedidoDTO.F4201_OPDJ))
             {
@@ -179,7 +188,7 @@ namespace Calico.interfaces.pedidos
             }
 
             pedido.pedc_cliente = cliente;
-            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_MCU) ? pedidoDTO.F4211_MCU.Trim() : String.Empty;
+            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_MCU) ? pedidoDTO.F4201_MCU.Trim() : String.Empty;
             pedido.pedc_referenciaA = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR01) ? pedidoDTO.F4201_VR01.Trim() : String.Empty;
             pedido.pedc_referenciaB = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR02) ? pedidoDTO.F4201_VR02.Trim() : String.Empty;
             pedido.pedc_pais =  !String.IsNullOrWhiteSpace(pedidoDTO.F4006_COUN) ? pedidoDTO.F4006_COUN.Trim() : String.Empty;

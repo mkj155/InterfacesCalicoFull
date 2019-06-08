@@ -107,10 +107,10 @@ namespace Calico.interfaces.pedido
 
             /* Mapping */
             List<PedidoDTO> pedidosDTO = null;
-            Dictionary<int, tblPedido> dictionary = new Dictionary<int, tblPedido>();
+            Dictionary<string, tblPedido> dictionary = new Dictionary<string, tblPedido>();
 
             /* Armamos la URL con parametros */
-            PedidoJson json = pedidoUtils.getJson(fromStatus, toStatus);
+            PedidoJson json = pedidoUtils.getJson(lastTime.ToString("yyyy/MM/dd"),fromStatus, toStatus, tiposPedido);
             var jsonString = pedidoUtils.JsonToString(json);
             Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
             Console.WriteLine(jsonString);
@@ -120,7 +120,7 @@ namespace Calico.interfaces.pedido
             {
                 pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, almacen, compania, sucursal, cliente, source);
                 // Validamos si hay que insertar o descartar el pedido
-                foreach (KeyValuePair<int, tblPedido> entry in dictionary)
+                foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {
                     if (servicePedido.IsAlreadyProcess(almacen,entry.Value.pedc_tped_codigo, entry.Value.pedc_letra, sucursal, entry.Value.pedc_numero))
                     {
