@@ -70,6 +70,7 @@ namespace Calico.interfaces.informeRecepcion
             String tipo = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_TIPO);
             String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
             String OrderType = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_ORDER_TYPE);
+            String receiptsVersion = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION);
 
             List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
             List<InformeRecepcionJson> jsonList = null;
@@ -93,7 +94,7 @@ namespace Calico.interfaces.informeRecepcion
             foreach (tblInformeRecepcion informe in informes)
             {
                 callArchivar = true;
-                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType);
+                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType, receiptsVersion);
 
                 if (jsonList.Any())
                 {
@@ -106,7 +107,6 @@ namespace Calico.interfaces.informeRecepcion
                         /* Send request */
                         if (!(InformeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
                         {
-                            Console.WriteLine();
                             Console.WriteLine("Se llamara al procedure para informar el error");
                             serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
                             callArchivar = false;
@@ -128,8 +128,7 @@ namespace Calico.interfaces.informeRecepcion
                 }
                 else
                 {
-                    Console.WriteLine("No se encontraron detalles para la cabecera: "
-                    + informe.irec_proc_id);
+                    Console.WriteLine("No se encontraron detalles para la cabecera: " + informe.irec_proc_id);
                 }
 
             }

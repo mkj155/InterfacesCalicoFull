@@ -9,7 +9,7 @@ namespace Calico.interfaces.pedido
     class PedidoDTO
     {
         public string F4201_KCOO { get; set; }
-        public int F4201_DOCO { get; set; }
+        public string F4201_DOCO { get; set; }
         public string F4201_DCTO { get; set; }
         public string F4211_ITM { get; set; }
         public string F4211_LOTN { get; set; }
