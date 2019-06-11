@@ -10,7 +10,7 @@
         <EntityTypeShape EntityType="CalicoModel.tblRecepcion" Width="1.5" PointX="4.875" PointY="0.75" />
         <EntityTypeShape EntityType="CalicoModel.tblRecepcionDetalle" Width="1.5" PointX="7" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" />
-        <EntityTypeShape EntityType="CalicoModel.tblHistoricoRecepcion" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="CalicoModel.tblHistoricoRecepcion" Width="1.5" PointX="0.75" PointY="3.625" />
         <EntityTypeShape EntityType="CalicoModel.tblPedido" Width="1.5" PointX="3.375" PointY="6.125" />
         <EntityTypeShape EntityType="CalicoModel.tblPedidoDetalle" Width="1.5" PointX="5.625" PointY="7.625" />
         <AssociationConnector Association="CalicoModel.FK_tblPedidoDetalle_tblPedido" />
@@ -21,6 +21,12 @@
         <EntityTypeShape EntityType="CalicoModel.tblInformePedido" Width="1.5" PointX="5.375" PointY="12.125" />
         <EntityTypeShape EntityType="CalicoModel.tblInformePedidoDetalle" Width="1.5" PointX="7.625" PointY="13.75" />
         <AssociationConnector Association="CalicoModel.FK_tblInformePedidoDetalle_tblInformePedido" />
+        <EntityTypeShape EntityType="CalicoModel.tblProceso" Width="1.5" PointX="0.75" PointY="7.25" />
+        <AssociationConnector Association="CalicoModel.FK_tblInformePedido_tblProceso" />
+        <AssociationConnector Association="CalicoModel.FK_tblInformeRecepcion_tblProceso" />
+        <AssociationConnector Association="CalicoModel.FK_tblPedido_tblProceso" />
+        <AssociationConnector Association="CalicoModel.FK_tblRecepcion_tblProceso" />
+        <AssociationConnector Association="CalicoModel.FK_tblSubCliente_tblProceso" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

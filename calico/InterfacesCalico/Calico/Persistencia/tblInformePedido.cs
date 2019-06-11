@@ -51,5 +51,6 @@ namespace Calico.persistencia
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblInformePedidoDetalle> tblInformePedidoDetalle { get; set; }
+        public virtual tblProceso tblProceso { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace Calico.interfaces.pedidos
 {
     class PedidoJson
     {
-        public String DateUpdated { get; set; }
         public String fromStatus { get; set; }
         public String toStatus { get; set; }
         public String OrTy1 { get; set; }

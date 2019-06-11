@@ -9,11 +9,12 @@ namespace Calico.common
         public const String FECHA_DEFAULT = "1973/01/01";
         public const String NUMERO_CLIENTE = "NumeroCliente";
         public const String INTERFACE_EMPLAZAMIENTO = "Emplazamiento";
-        public const String INTERFACE_ALMACEN = "Almacen";
+        public const String ALMACEN = "Almacen";
         public const String INTERFACE_COMPANIA = "Compania";
         public const String INTERFACE_SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
         public const String INTERFACE_TIPO = "Tipo";
+        public const String INTERFACE_TIPO_PROCESO = "Tipo";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
@@ -21,7 +22,6 @@ namespace Calico.common
         public const String INTERFACE_RECEPCION = "Recepcion";
         public const String INTERFACE_RECEPCION_URL = "ReceptionURL";
         public const String INTERFACE_RECEPCION_EMPLAZAMIENTO = "Emplazamiento";
-        public const String INTERFACE_RECEPCION_ALMACEN = "Almacen";
         public const String INTERFACE_RECEPCION_CODIGO = "Codigo";
         public const String INTERFACE_RECEPCION_COMPANIA = "Compania";
         public const String NUMERO_CLIENTE_INTERFACE_RECEPCION = "NumeroCliente";

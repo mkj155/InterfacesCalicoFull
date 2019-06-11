@@ -137,6 +137,9 @@
     <Compile Include="persistencia\tblPedidoDetalle.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
+    <Compile Include="persistencia\tblProceso.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblRecepcion.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>

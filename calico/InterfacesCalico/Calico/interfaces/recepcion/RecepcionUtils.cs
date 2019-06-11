@@ -34,7 +34,7 @@ namespace Calico.interfaces.recepcion
             return new List<ReceptionDTO>();
         }
 
-        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen)
+        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento)
         {
             foreach(ReceptionDTO receptionDTO in receptionDTOList)
             {
@@ -43,7 +43,7 @@ namespace Calico.interfaces.recepcion
                 if (recepcion == null)
                 {
                     /* CABEZERA */
-                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen);
+                    recepcion = fillCabezera(receptionDTO, emplazamiento);
                     /* DETALLE */
                     tblRecepcionDetalle detalle = fillDetalle(receptionDTO);
                     recepcion.tblRecepcionDetalle.Add(detalle);
@@ -58,7 +58,7 @@ namespace Calico.interfaces.recepcion
             }
         }
 
-        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen)
+        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento)
         {
             tblRecepcion recepcion = new tblRecepcion();
             recepcion.recc_contacto = String.Empty;
@@ -67,7 +67,6 @@ namespace Calico.interfaces.recepcion
             recepcion.recc_motivoDevolucion = String.Empty;
             recepcion.recc_observaciones = String.Empty;
             recepcion.recc_emplazamiento = emplazamiento;
-            recepcion.recc_almacen = almacen;
             recepcion.recc_trec_codigo = receptionDTO.F4201_DCTO;
             recepcion.recc_numero = receptionDTO.F4201_DOCO;
 
