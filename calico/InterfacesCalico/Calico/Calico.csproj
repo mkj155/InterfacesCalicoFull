@@ -57,8 +57,8 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Nini, Version=1.1.0.0, Culture=neutral, PublicKeyToken=691faec150a7fa7b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Trove.Nini.1.1.0.0\lib\net20\Nini.dll</HintPath>
+    <Reference Include="Nini, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeveloperInTheFlow.Nini.1.1.0.1\lib\net40\Nini.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -75,47 +75,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAOs\CommonDAO.cs" />
+    <Compile Include="DAOs\TblInformePedidoDAO.cs" />
     <Compile Include="DAOs\TblInformeRecepcionDAO.cs" />
     <Compile Include="DAOs\TblPedidoDAO.cs" />
     <Compile Include="interfaces\clientes\ClientesUtils.cs" />
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="interfaces\informePedido\InformePedidoDTO.cs" />
+    <Compile Include="interfaces\informePedido\InformePedidoJson.cs" />
+    <Compile Include="interfaces\informePedido\InformePedidoUtils.cs" />
+    <Compile Include="interfaces\informePedido\InterfaceInformePedido.cs" />
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionDTO.cs" />
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionJson.cs" />
     <Compile Include="interfaces\informeRecepcion\InformeRecepcionUtils.cs" />
     <Compile Include="interfaces\informeRecepcion\InterfaceInformeRecepcion.cs" />
     <Compile Include="interfaces\pedidos\InterfacePedido.cs" />
+    <Compile Include="interfaces\pedidos\PedidoJson.cs" />
     <Compile Include="interfaces\pedidos\PedidoUtils.cs" />
     <Compile Include="interfaces\pedidos\PedidoDTO.cs" />
     <Compile Include="interfaces\recepcion\ReceptionDTO.cs" />
-    <Compile Include="persistencia\tblHistoricoPedido.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="persistencia\tblHistoricoRecepcion.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="persistencia\tblInformeRecepcion.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="persistencia\tblInformeRecepcionDetalle.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="persistencia\tblRecepcion.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="persistencia\tblRecepcionDetalle.cs">
-      <DependentUpon>ModelCalico.tt</DependentUpon>
-    </Compile>
-    <Compile Include="service\TblInformeRecepcionService.cs" />
-    <Compile Include="service\TblPedidoService.cs" />
-    <Compile Include="service\TblSubClienteService.cs" />
-    <Compile Include="DAOs\TblSubClienteDAO.cs" />
-    <Compile Include="DAOs\BianchiProcessDAO.cs" />
-    <Compile Include="service\BianchiService.cs" />
-    <Compile Include="DAOs\Dao.cs" />
-    <Compile Include="interfaces\clientes\InterfaceCliente.cs" />
-    <Compile Include="generic\InterfaceGeneric.cs" />
     <Compile Include="persistencia\BIANCHI_PROCESS.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
@@ -134,24 +113,58 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelCalico.edmx</DependentUpon>
     </Compile>
-    <Compile Include="persistencia\tblSubCliente.cs">
+    <Compile Include="persistencia\tblHistoricoPedido.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="interfaces\recepcion\InterfaceRecepcion.cs" />
-    <Compile Include="interfaces\recepcion\RecepcionUtils.cs" />
-    <Compile Include="DAOs\TblRecepcionDAO.cs" />
-    <Compile Include="service\TblRecepcionService.cs" />
-    <Compile Include="Run.cs" />
+    <Compile Include="persistencia\tblHistoricoRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformePedido.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformePedidoDetalle.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformeRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblInformeRecepcionDetalle.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
     <Compile Include="persistencia\tblPedido.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
     <Compile Include="persistencia\tblPedidoDetalle.cs">
       <DependentUpon>ModelCalico.tt</DependentUpon>
     </Compile>
+    <Compile Include="persistencia\tblRecepcion.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblRecepcionDetalle.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="persistencia\tblSubCliente.cs">
+      <DependentUpon>ModelCalico.tt</DependentUpon>
+    </Compile>
+    <Compile Include="service\TblInformePedidoService.cs" />
+    <Compile Include="service\TblInformeRecepcionService.cs" />
+    <Compile Include="service\TblPedidoService.cs" />
+    <Compile Include="service\TblSubClienteService.cs" />
+    <Compile Include="DAOs\TblSubClienteDAO.cs" />
+    <Compile Include="DAOs\BianchiProcessDAO.cs" />
+    <Compile Include="service\BianchiService.cs" />
+    <Compile Include="DAOs\Dao.cs" />
+    <Compile Include="interfaces\clientes\InterfaceCliente.cs" />
+    <Compile Include="generic\InterfaceGeneric.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="interfaces\recepcion\InterfaceRecepcion.cs" />
+    <Compile Include="interfaces\recepcion\RecepcionUtils.cs" />
+    <Compile Include="DAOs\TblRecepcionDAO.cs" />
+    <Compile Include="service\TblRecepcionService.cs" />
+    <Compile Include="Run.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.Config" />
     <None Include="calico_config.ini" />
     <None Include="connections.config" />
     <None Include="packages.config" />
@@ -178,6 +191,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="persistencia\ModelCalico.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -190,7 +204,6 @@
       <LastGenOutput>ModelCalico.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)calico_config.ini" "$(ProjectDir)bin\Debug" /Y

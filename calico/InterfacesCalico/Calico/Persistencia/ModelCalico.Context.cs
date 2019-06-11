@@ -39,6 +39,8 @@ namespace Calico.persistencia
         public virtual DbSet<tblInformeRecepcion> tblInformeRecepcion { get; set; }
         public virtual DbSet<tblInformeRecepcionDetalle> tblInformeRecepcionDetalle { get; set; }
         public virtual DbSet<tblHistoricoPedido> tblHistoricoPedido { get; set; }
+        public virtual DbSet<tblInformePedido> tblInformePedido { get; set; }
+        public virtual DbSet<tblInformePedidoDetalle> tblInformePedidoDetalle { get; set; }
 
         public virtual int INTERFAZ_CrearProceso(Nullable<int> tipoProceso, Nullable<int> tipoMensaje)
         {
@@ -62,6 +64,7 @@ namespace Calico.persistencia
             }
         }
 
+
         public virtual int INTERFAZ_ArchivarInformeRecepcion(Nullable<int> id, ObjectParameter error)
         {
             var idParameter = id.HasValue ?
@@ -82,6 +85,15 @@ namespace Calico.persistencia
                 new ObjectParameter("mensaje", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_InformarEjecucion", idParameter, mensajeParameter, error);
+        }
+    
+        public virtual int INTERFAZ_ArchivarInformePedido(Nullable<int> id, ObjectParameter error)
+        {
+            var idParameter = id.HasValue ?
+                new ObjectParameter("id", id) :
+                new ObjectParameter("id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_ArchivarInformePedido", idParameter, error);
         }
     }
 }

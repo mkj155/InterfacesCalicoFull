@@ -2,6 +2,7 @@
 using Calico.interfaces.recepcion;
 using Calico.persistencia;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,17 +16,31 @@ namespace Calico.interfaces.informeRecepcion
     class InformeRecepcionUtils
     {
         public static String LAST_ERROR = String.Empty;
+
         public static String JsonToString(InformeRecepcionJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
             return json;
         }
 
-        public static InformeRecepcionJson GetObjectJsonFromDTO(InformeRecepcionDTO detalle)
+        public static InformeRecepcionJson GetObjectJsonFromDTO(InformeRecepcionDTO detalle, String receiptsVersion)
         {
             List<InformeRecepcionDTO> list = new List<InformeRecepcionDTO>();
             list.Add(detalle);
-            return new InformeRecepcionJson(list);
+            return new InformeRecepcionJson(list, receiptsVersion);
+        }
+
+        public static bool ExistChildrenInJson(String jsonString, String father, String children)
+        {
+            JObject jsonObj = JObject.Parse(jsonString);
+            if (jsonObj[father] != null)
+            {
+                return jsonObj[father].Children().Where(child => child[children] != null).Any();
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static Boolean SendRequestPost(string url, String user, String pass, String json)
@@ -49,13 +64,30 @@ namespace Calico.interfaces.informeRecepcion
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return true;
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        myJsonString = reader.ReadToEnd();
+
+                        if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            handleErrorRest(myJsonString, out LAST_ERROR);
+                            return false;
+                        }
+                    }
                 }
             }
             catch (WebException e)
             {
-                LAST_ERROR = e.Message;
-                Utils.handleErrorRest(e);
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse response = (HttpWebResponse)e.Response;
+                    StreamReader reader = new StreamReader(response.GetResponseStream());
+                    handleErrorRest(reader.ReadToEnd(), out LAST_ERROR);
+                }
             }
             catch (Exception ex)
             {
@@ -66,7 +98,18 @@ namespace Calico.interfaces.informeRecepcion
 
         }
 
-        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany)
+        public static void handleErrorRest(String myJsonString, out string error)
+        {
+                JObject json = JObject.Parse(myJsonString);
+
+                Console.WriteLine("Servicio Rest KO");
+                Console.WriteLine();
+                Console.WriteLine("Detalle: ");
+                Console.WriteLine(json["message"]);
+                error = json["message"].ToString();
+        }
+
+        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany, String OrderType, String receiptsVersion)
         {
             List<InformeRecepcionJson> jsonList = new List<InformeRecepcionJson>();
 
@@ -75,16 +118,16 @@ namespace Calico.interfaces.informeRecepcion
                 InformeRecepcionDTO informeDTO = new InformeRecepcionDTO();
 
                 informeDTO.OrderCompany = OrderCompany;
-                informeDTO.OrderType = informe.irec_tipo;
+                informeDTO.OrderType = OrderType;
                 int order;
                 informeDTO.OrderNumber = Int32.TryParse(informe.irec_numero, out order) ? order.ToString() : String.Empty;
-                informeDTO.OrderLine = detalle.ired_linea > 0 && detalle.ired_linea.ToString().Length > 3 ? detalle.ired_linea.ToString("N0") : String.Empty;
+                informeDTO.OrderLine = detalle.ired_linea > 0 ? (detalle.ired_linea / 1000).ToString() : String.Empty;
                 informeDTO.QuantityToRecieve = (detalle.ired_cantidadRecibida.ToString()).Replace(",", ".");
                 DateTime receiptDate = informe.irec_fecha ?? Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
                 informeDTO.ReceiptDate = receiptDate.ToString("yyyy/MM/dd");
                 informeDTO.Lot = detalle.ired_lote != null ? detalle.ired_lote.Trim() : String.Empty;
 
-                jsonList.Add(GetObjectJsonFromDTO(informeDTO));
+                jsonList.Add(GetObjectJsonFromDTO(informeDTO, receiptsVersion));
             }
 
             return jsonList;

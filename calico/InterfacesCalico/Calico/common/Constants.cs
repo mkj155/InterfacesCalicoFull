@@ -13,6 +13,7 @@ namespace Calico.common
         public const String INTERFACE_COMPANIA = "Compania";
         public const String INTERFACE_SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
+        public const String INTERFACE_TIPO = "Tipo";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
@@ -31,11 +32,25 @@ namespace Calico.common
         public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
+        public const String INTERFACE_REPEATING_REQUEST = "Repeating Requests";
+        public const String INTERFACE_RECEIPT_DOCUMENT = "ReceiptDocument";
+        public const String INTERFACE_ORDER_TYPE = "orderType_ST";
         // PEDIDOS
         public const String INTERFACE_PEDIDOS = "Pedidos";
         public const String INTERFACE_PEDIDOS_TIPO_PEDIDO = "tipoPedido";
         public const String INTERFACE_PEDIDOS_LETRA = "Letra";
         public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
+        public const String INTERFACE_PEDIDOS_URL_POST = "PedidosURL_POST";
+        
+		// INFORME PEDIDOS
+        public const String INTERFACE_INFORME_PEDIDOS = "InformePedido";
+        public const String INTERFACE_INFORME_PEDIDO_URL = "InformePedidoURL";
+        public const String INTERFACE_INFORME_PEDIDO_LAST_STATUS = "laststatus";
+        public const String INTERFACE_INFORME_PEDIDO_NEXT_STATUS = "nextstatus";
+        public const String INTERFACE_INFORME_PEDIDO_ORDER_COMPANY = "OrderCompany";
+        public const String INTERFACE_INFORME_PEDIDO_P554211I_VERSION = "P554211I_Version";
+        public const String INTERFACE_PEDIDOS_FROM_STATUS = "fromStatus";
+        public const String INTERFACE_PEDIDOS_TO_STATUS = "toStatus";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
@@ -85,8 +100,8 @@ namespace Calico.common
         public const String FAILED_CALL_REST = "Fallo el llamado al Rest Service";
         public const String FAILED_LOAD_FILE = "No se pudo cargar el archivo de configuración";
         public const String FAILED_LOAD_DATES = "La fecha de BIANCHI_PROCESS es NULL y no se indico fecha como parametro, no se ejecutara el proceso";
-        public const String FAILED_GETTING_DATA = "No se encontraron Pedidos del tipo {0} para procesar";
+        public const String FAILED_GETTING_DATA = "No se encontraron Pedidos para procesar";
         public const String FAILED_CALL_REST_PEDIDO = "Fallo el llamado Rest Service de Pedidos tipo {0}";
-
+        
     }
 }

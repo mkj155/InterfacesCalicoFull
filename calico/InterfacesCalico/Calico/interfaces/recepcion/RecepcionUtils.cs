@@ -34,7 +34,7 @@ namespace Calico.interfaces.recepcion
             return new List<ReceptionDTO>();
         }
 
-        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen, String compania)
+        public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento, String almacen)
         {
             foreach(ReceptionDTO receptionDTO in receptionDTOList)
             {
@@ -43,22 +43,22 @@ namespace Calico.interfaces.recepcion
                 if (recepcion == null)
                 {
                     /* CABEZERA */
-                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen, compania);
+                    recepcion = fillCabezera(receptionDTO, emplazamiento, almacen);
                     /* DETALLE */
-                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO, compania);
+                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO);
                     recepcion.tblRecepcionDetalle.Add(detalle);
                     dictionary.Add(receptionDTO.F4201_DOCO, recepcion);
                 }
                 else
                 {
                     /* DETALLE */
-                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO, compania);
+                    tblRecepcionDetalle detalle = fillDetalle(receptionDTO);
                     recepcion.tblRecepcionDetalle.Add(detalle);
                 }
             }
         }
 
-        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen, String compania)
+        private tblRecepcion fillCabezera(ReceptionDTO receptionDTO, String emplazamiento, String almacen)
         {
             tblRecepcion recepcion = new tblRecepcion();
             recepcion.recc_contacto = String.Empty;
@@ -89,12 +89,11 @@ namespace Calico.interfaces.recepcion
             return recepcion;
         }
 
-        private tblRecepcionDetalle fillDetalle(ReceptionDTO receptionDTO, String compania)
+        private tblRecepcionDetalle fillDetalle(ReceptionDTO receptionDTO)
         {
             tblRecepcionDetalle detalle = new tblRecepcionDetalle();
             detalle.recd_serie = String.Empty;
-            detalle.recd_compania = compania;
-            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) : 0;
+            detalle.recd_linea = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LNID) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_LNID)) * 1000 : 0;
             detalle.recd_lineaPedido = 0;
             detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
             detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;

@@ -69,6 +69,55 @@
           <Property Name="hrec_motivoDevolucion" Type="char" MaxLength="6" />
           <Property Name="hrec_observaciones" Type="char" MaxLength="500" />
         </EntityType>
+        <EntityType Name="tblInformePedido">
+          <Key>
+            <PropertyRef Name="ipec_proc_id" />
+          </Key>
+          <Property Name="ipec_proc_id" Type="int" Nullable="false" />
+          <Property Name="ipec_emplazamiento" Type="char" MaxLength="3" />
+          <Property Name="ipec_almacen" Type="char" MaxLength="3" />
+          <Property Name="ipec_tipo" Type="char" MaxLength="3" />
+          <Property Name="ipec_letra" Type="char" MaxLength="1" />
+          <Property Name="ipec_sucursal" Type="char" MaxLength="4" />
+          <Property Name="ipec_numero" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="ipec_global" Type="numeric" Precision="12" Scale="0" Nullable="false" />
+          <Property Name="ipec_remito" Type="numeric" Precision="12" Scale="0" Nullable="false" />
+          <Property Name="ipec_fechaPicking" Type="datetime" Nullable="false" />
+          <Property Name="ipec_fechaFinProceso" Type="datetime" Nullable="false" />
+          <Property Name="ipec_cliente" Type="char" MaxLength="10" />
+          <Property Name="ipec_destinatario" Type="char" MaxLength="10" />
+          <Property Name="ipec_provincia" Type="char" MaxLength="30" />
+          <Property Name="ipec_codigoPostal" Type="char" MaxLength="10" />
+          <Property Name="ipec_localidad" Type="char" MaxLength="40" />
+          <Property Name="ipec_domicilio" Type="char" MaxLength="250" />
+          <Property Name="ipec_centroCosto" Type="char" MaxLength="10" />
+          <Property Name="ipec_camion" Type="char" MaxLength="10" />
+          <Property Name="ipec_areaMuelle" Type="char" MaxLength="6" />
+          <Property Name="ipec_numeroRuteo" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ipec_entregaParcial" Type="bit" Nullable="false" />
+          <Property Name="ipec_importeFactura" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="ipec_contraRembolso" Type="numeric" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="ipec_prioridad" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="ipec_referenciaA" Type="char" MaxLength="30" />
+          <Property Name="ipec_referenciaB" Type="char" MaxLength="30" />
+          <Property Name="ipec_observaciones" Type="text" />
+        </EntityType>
+        <EntityType Name="tblInformePedidoDetalle">
+          <Key>
+            <PropertyRef Name="iped_id" />
+          </Key>
+          <Property Name="iped_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="iped_proc_id" Type="int" Nullable="false" />
+          <Property Name="iped_controlInterno" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="iped_linea" Type="numeric" Precision="10" Scale="0" Nullable="false" />
+          <Property Name="iped_compania" Type="char" MaxLength="3" />
+          <Property Name="iped_producto" Type="char" MaxLength="15" />
+          <Property Name="iped_lote" Type="char" MaxLength="15" />
+          <Property Name="iped_vencimiento" Type="datetime" Nullable="false" />
+          <Property Name="iped_serie" Type="char" MaxLength="15" />
+          <Property Name="iped_cantidad" Type="numeric" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="iped_estado" Type="char" MaxLength="3" />
+        </EntityType>
         <EntityType Name="tblInformeRecepcion">
           <Key>
             <PropertyRef Name="irec_proc_id" />
@@ -213,6 +262,18 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
+        <Association Name="FK_tblInformePedidoDetalle_tblInformePedido">
+          <End Role="tblInformePedido" Type="Self.tblInformePedido" Multiplicity="1" />
+          <End Role="tblInformePedidoDetalle" Type="Self.tblInformePedidoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblInformePedido">
+              <PropertyRef Name="ipec_proc_id" />
+            </Principal>
+            <Dependent Role="tblInformePedidoDetalle">
+              <PropertyRef Name="iped_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
           <End Role="tblInformeRecepcion" Type="Self.tblInformeRecepcion" Multiplicity="1" />
           <End Role="tblInformeRecepcionDetalle" Type="Self.tblInformeRecepcionDetalle" Multiplicity="*" />
@@ -249,6 +310,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="INTERFAZ_ArchivarInformePedido" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="int" Mode="In" />
+          <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
+        </Function>
         <Function Name="INTERFAZ_ArchivarInformeRecepcion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="id" Type="int" Mode="In" />
           <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
@@ -266,6 +331,8 @@
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistoricoPedido" EntityType="Self.tblHistoricoPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblHistoricoRecepcion" EntityType="Self.tblHistoricoRecepcion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblInformePedido" EntityType="Self.tblInformePedido" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblInformePedidoDetalle" EntityType="Self.tblInformePedidoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblInformeRecepcion" EntityType="Self.tblInformeRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblInformeRecepcionDetalle" EntityType="Self.tblInformeRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPedido" EntityType="Self.tblPedido" Schema="dbo" store:Type="Tables" />
@@ -273,6 +340,10 @@
           <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblInformePedidoDetalle_tblInformePedido" Association="Self.FK_tblInformePedidoDetalle_tblInformePedido">
+            <End Role="tblInformePedido" EntitySet="tblInformePedido" />
+            <End Role="tblInformePedidoDetalle" EntitySet="tblInformePedidoDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion" Association="Self.FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
             <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
             <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
@@ -359,6 +430,16 @@
             <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
           </AssociationSet>
           <EntitySet Name="tblHistoricoPedido" EntityType="CalicoModel.tblHistoricoPedido" />
+          <EntitySet Name="tblInformePedido" EntityType="CalicoModel.tblInformePedido" />
+          <EntitySet Name="tblInformePedidoDetalle" EntityType="CalicoModel.tblInformePedidoDetalle" />
+          <AssociationSet Name="FK_tblInformePedidoDetalle_tblInformePedido" Association="CalicoModel.FK_tblInformePedidoDetalle_tblInformePedido">
+            <End Role="tblInformePedido" EntitySet="tblInformePedido" />
+            <End Role="tblInformePedidoDetalle" EntitySet="tblInformePedidoDetalle" />
+          </AssociationSet>
+          <FunctionImport Name="INTERFAZ_ArchivarInformePedido">
+            <Parameter Name="id" Mode="In" Type="Int32" />
+            <Parameter Name="error" Mode="InOut" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="tblRecepcion">
           <Key>
@@ -577,6 +658,69 @@
           <Property Name="hpec_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
           <Property Name="hpec_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="tblInformePedido">
+          <Key>
+            <PropertyRef Name="ipec_proc_id" />
+          </Key>
+          <Property Name="ipec_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="ipec_emplazamiento" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_almacen" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_tipo" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_letra" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_sucursal" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_numero" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="ipec_global" Type="Decimal" Nullable="false" Precision="12" Scale="0" />
+          <Property Name="ipec_remito" Type="Decimal" Nullable="false" Precision="12" Scale="0" />
+          <Property Name="ipec_fechaPicking" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ipec_fechaFinProceso" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ipec_cliente" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_destinatario" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_provincia" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_codigoPostal" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_localidad" Type="String" MaxLength="40" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_domicilio" Type="String" MaxLength="250" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_centroCosto" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_camion" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_areaMuelle" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_numeroRuteo" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ipec_entregaParcial" Type="Boolean" Nullable="false" />
+          <Property Name="ipec_importeFactura" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="ipec_contraRembolso" Type="Decimal" Nullable="false" Precision="13" Scale="2" />
+          <Property Name="ipec_prioridad" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="ipec_referenciaA" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="ipec_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblInformePedidoDetalle" Relationship="CalicoModel.FK_tblInformePedidoDetalle_tblInformePedido" FromRole="tblInformePedido" ToRole="tblInformePedidoDetalle" />
+        </EntityType>
+        <EntityType Name="tblInformePedidoDetalle">
+          <Key>
+            <PropertyRef Name="iped_id" />
+          </Key>
+          <Property Name="iped_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="iped_proc_id" Type="Int32" Nullable="false" />
+          <Property Name="iped_controlInterno" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="iped_linea" Type="Decimal" Nullable="false" Precision="10" Scale="0" />
+          <Property Name="iped_compania" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="iped_producto" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="iped_lote" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="iped_vencimiento" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="iped_serie" Type="String" MaxLength="15" FixedLength="true" Unicode="false" />
+          <Property Name="iped_cantidad" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="iped_estado" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="tblInformePedido" Relationship="CalicoModel.FK_tblInformePedidoDetalle_tblInformePedido" FromRole="tblInformePedidoDetalle" ToRole="tblInformePedido" />
+        </EntityType>
+        <Association Name="FK_tblInformePedidoDetalle_tblInformePedido">
+          <End Type="CalicoModel.tblInformePedido" Role="tblInformePedido" Multiplicity="1" />
+          <End Type="CalicoModel.tblInformePedidoDetalle" Role="tblInformePedidoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblInformePedido">
+              <PropertyRef Name="ipec_proc_id" />
+            </Principal>
+            <Dependent Role="tblInformePedidoDetalle">
+              <PropertyRef Name="iped_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -804,6 +948,58 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tblInformePedido">
+            <EntityTypeMapping TypeName="CalicoModel.tblInformePedido">
+              <MappingFragment StoreEntitySet="tblInformePedido">
+                <ScalarProperty Name="ipec_observaciones" ColumnName="ipec_observaciones" />
+                <ScalarProperty Name="ipec_referenciaB" ColumnName="ipec_referenciaB" />
+                <ScalarProperty Name="ipec_referenciaA" ColumnName="ipec_referenciaA" />
+                <ScalarProperty Name="ipec_prioridad" ColumnName="ipec_prioridad" />
+                <ScalarProperty Name="ipec_contraRembolso" ColumnName="ipec_contraRembolso" />
+                <ScalarProperty Name="ipec_importeFactura" ColumnName="ipec_importeFactura" />
+                <ScalarProperty Name="ipec_entregaParcial" ColumnName="ipec_entregaParcial" />
+                <ScalarProperty Name="ipec_numeroRuteo" ColumnName="ipec_numeroRuteo" />
+                <ScalarProperty Name="ipec_areaMuelle" ColumnName="ipec_areaMuelle" />
+                <ScalarProperty Name="ipec_camion" ColumnName="ipec_camion" />
+                <ScalarProperty Name="ipec_centroCosto" ColumnName="ipec_centroCosto" />
+                <ScalarProperty Name="ipec_domicilio" ColumnName="ipec_domicilio" />
+                <ScalarProperty Name="ipec_localidad" ColumnName="ipec_localidad" />
+                <ScalarProperty Name="ipec_codigoPostal" ColumnName="ipec_codigoPostal" />
+                <ScalarProperty Name="ipec_provincia" ColumnName="ipec_provincia" />
+                <ScalarProperty Name="ipec_destinatario" ColumnName="ipec_destinatario" />
+                <ScalarProperty Name="ipec_cliente" ColumnName="ipec_cliente" />
+                <ScalarProperty Name="ipec_fechaFinProceso" ColumnName="ipec_fechaFinProceso" />
+                <ScalarProperty Name="ipec_fechaPicking" ColumnName="ipec_fechaPicking" />
+                <ScalarProperty Name="ipec_remito" ColumnName="ipec_remito" />
+                <ScalarProperty Name="ipec_global" ColumnName="ipec_global" />
+                <ScalarProperty Name="ipec_numero" ColumnName="ipec_numero" />
+                <ScalarProperty Name="ipec_sucursal" ColumnName="ipec_sucursal" />
+                <ScalarProperty Name="ipec_letra" ColumnName="ipec_letra" />
+                <ScalarProperty Name="ipec_tipo" ColumnName="ipec_tipo" />
+                <ScalarProperty Name="ipec_almacen" ColumnName="ipec_almacen" />
+                <ScalarProperty Name="ipec_emplazamiento" ColumnName="ipec_emplazamiento" />
+                <ScalarProperty Name="ipec_proc_id" ColumnName="ipec_proc_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblInformePedidoDetalle">
+            <EntityTypeMapping TypeName="CalicoModel.tblInformePedidoDetalle">
+              <MappingFragment StoreEntitySet="tblInformePedidoDetalle">
+                <ScalarProperty Name="iped_estado" ColumnName="iped_estado" />
+                <ScalarProperty Name="iped_cantidad" ColumnName="iped_cantidad" />
+                <ScalarProperty Name="iped_serie" ColumnName="iped_serie" />
+                <ScalarProperty Name="iped_vencimiento" ColumnName="iped_vencimiento" />
+                <ScalarProperty Name="iped_lote" ColumnName="iped_lote" />
+                <ScalarProperty Name="iped_producto" ColumnName="iped_producto" />
+                <ScalarProperty Name="iped_compania" ColumnName="iped_compania" />
+                <ScalarProperty Name="iped_linea" ColumnName="iped_linea" />
+                <ScalarProperty Name="iped_controlInterno" ColumnName="iped_controlInterno" />
+                <ScalarProperty Name="iped_proc_id" ColumnName="iped_proc_id" />
+                <ScalarProperty Name="iped_id" ColumnName="iped_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="INTERFAZ_ArchivarInformePedido" FunctionName="CalicoModel.Store.INTERFAZ_ArchivarInformePedido" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -6,8 +6,6 @@ using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calico.interfaces.recepcion
 {
@@ -96,14 +94,13 @@ namespace Calico.interfaces.recepcion
             Dictionary<String, tblRecepcion> dictionary = new Dictionary<string, tblRecepcion>();
             String emplazamiento = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
             String almacen = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
-            String compania = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_COMPANIA);
 
             if (!String.Empty.Equals(myJsonString))
             {
                 receptionDTO = recepcionUtils.MappingJsonRecepcion(myJsonString);
                 if (receptionDTO.Any())
                 {
-                    recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen, compania);
+                    recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen);
                 }
                 else
                 {
@@ -140,8 +137,15 @@ namespace Calico.interfaces.recepcion
                     // LLamo al SP y seteo su valor a la cabecera y sus detalles
                     int recc_proc_id = serviceRecepcion.CallProcedure(tipoProceso, tipoMensaje);
                     entry.Value.recc_proc_id = recc_proc_id;
+                    bool loaded = false;
+                    String compania = null;
                     foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
                     {
+                        if (!loaded)
+                        {
+                            compania = source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(entry.Value.recc_trec_codigo);
+                        }
+                        detalle.recd_compania = compania;
                         detalle.recd_proc_id = recc_proc_id;
                     }
                     // ¿La pude guardar?

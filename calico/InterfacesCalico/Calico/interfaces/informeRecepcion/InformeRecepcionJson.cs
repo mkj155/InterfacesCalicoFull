@@ -11,9 +11,10 @@ namespace Calico.interfaces.informeRecepcion
         public List<InformeRecepcionDTO> ReceiptsArray { get; set; }
         public String ReceiptsVersion { get; set; }
 
-        public InformeRecepcionJson(List<InformeRecepcionDTO> informeRecepcionDTOList)
+        public InformeRecepcionJson(List<InformeRecepcionDTO> informeRecepcionDTOList, String receiptsVersion)
         {
             ReceiptsArray = informeRecepcionDTOList;
+            ReceiptsVersion = receiptsVersion;
         }
     }
 }

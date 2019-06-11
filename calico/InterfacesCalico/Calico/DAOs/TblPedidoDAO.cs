@@ -49,11 +49,11 @@ namespace Calico.DAOs
                 }
                 catch (DbUpdateException dbe)
                 {
-                    Console.WriteLine("Error insertando la recepcion:" + dbe.Message);
+                    Console.WriteLine("Error insertando la pedido: " + dbe.Message);
                 }
                 catch (Exception ee)
                 {
-                    Console.WriteLine("Error desconocido insertando la recepcion:" + ee.Message);
+                    Console.WriteLine("Error desconocido insertando el pedido: " + ee.Message);
                 }
                 return true;
             }
