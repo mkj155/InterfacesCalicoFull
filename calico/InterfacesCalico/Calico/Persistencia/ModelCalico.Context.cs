@@ -14,7 +14,9 @@ namespace Calico.persistencia
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Core.Objects;
     using System.Linq;
-    
+    using System.Data.SqlClient;
+    using System.Data;
+
     public partial class CalicoEntities : DbContext
     {
         public CalicoEntities()
@@ -40,20 +42,29 @@ namespace Calico.persistencia
         public virtual DbSet<tblInformePedido> tblInformePedido { get; set; }
         public virtual DbSet<tblInformePedidoDetalle> tblInformePedidoDetalle { get; set; }
         public virtual DbSet<tblProceso> tblProceso { get; set; }
-    
+
         public virtual int INTERFAZ_CrearProceso(Nullable<int> tipoProceso, Nullable<int> tipoMensaje)
         {
-            var tipoProcesoParameter = tipoProceso.HasValue ?
-                new ObjectParameter("tipoProceso", tipoProceso) :
-                new ObjectParameter("tipoProceso", typeof(int));
-    
-            var tipoMensajeParameter = tipoMensaje.HasValue ?
-                new ObjectParameter("tipoMensaje", tipoMensaje) :
-                new ObjectParameter("tipoMensaje", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INTERFAZ_CrearProceso", tipoProcesoParameter, tipoMensajeParameter);
+            using (SqlConnection con = (SqlConnection)this.Database.Connection)
+            {
+                using (SqlCommand cmd = new SqlCommand("INTERFAZ_CrearProceso", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@tipoProceso", SqlDbType.Int).Value = tipoProceso;
+                    cmd.Parameters.Add("@tipoMensaje", SqlDbType.Int).Value = tipoMensaje;
+
+                    var returnParameter = cmd.Parameters.Add("@id", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    var id = returnParameter.Value;
+                    return Convert.ToInt32(id);
+                }
+            }
         }
-    
+
         public virtual int INTERFAZ_ArchivarInformeRecepcion(Nullable<int> id, ObjectParameter error)
         {
             var idParameter = id.HasValue ?
