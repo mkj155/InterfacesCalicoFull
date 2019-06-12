@@ -18,7 +18,7 @@ namespace Calico.interfaces.pedido
         private TblPedidoService servicePedido = new TblPedidoService();
         private PedidoUtils pedidoUtils = new PedidoUtils();
 
-        public bool ValidateDate() => true;
+        public bool ValidateDate() => false;
 
         public bool Process(DateTime? dateTime)
         {
@@ -50,17 +50,6 @@ namespace Calico.interfaces.pedido
                 return false;
             }
 
-            /* Obtenemos la fecha */
-            if (Utils.IsInvalidateDates(dateTime, process.fecha_ultima))
-            {
-                service.finishProcessByError(process, Constants.FAILED_LOAD_DATES, INTERFACE);
-                return false;
-            }
-            DateTime lastTime = Utils.GetDateToProcess(dateTime, process.fecha_ultima);
-
-            /* Convierto DateTime a String formato YYYYMMDD */
-            String lastStringTime = lastStringTime = Utils.ConvertDateTimeInString(lastTime);
-
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
             IConfigSource source = null;
@@ -77,7 +66,6 @@ namespace Calico.interfaces.pedido
             // INICIO BUSQUEDA DE DATOS
             String numeroInterfaz = source.Configs[INTERFACE].GetString(Constants.NUMERO_INTERFACE);
             String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_EMPLAZAMIENTO);
-            String almacen = source.Configs[INTERFACE].GetString(Constants.INTERFACE_ALMACEN);
             String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_COMPANIA);
             String sucursal = source.Configs[INTERFACE].GetString(Constants.INTERFACE_SUCURSAL);
             String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_CLIENTE);
@@ -103,14 +91,13 @@ namespace Calico.interfaces.pedido
             int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
             int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
-            // String urlWithDate = pedidoUtils.BuildUrl(urlPost, Constants.PARAM_FECHA, lastStringTime);
 
             /* Mapping */
             List<PedidoDTO> pedidosDTO = null;
             Dictionary<string, tblPedido> dictionary = new Dictionary<string, tblPedido>();
 
             /* Armamos la URL con parametros */
-            PedidoJson json = pedidoUtils.getJson(lastTime.ToString("yyyy/MM/dd"),fromStatus, toStatus, tiposPedido);
+            PedidoJson json = pedidoUtils.getJson(fromStatus, toStatus, tiposPedido);
             var jsonString = pedidoUtils.JsonToString(json);
             Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
             Console.WriteLine(jsonString);
@@ -118,11 +105,12 @@ namespace Calico.interfaces.pedido
             pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
             if (pedidosDTO.Any())
             {
-                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, almacen, compania, sucursal, cliente, source);
+                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, compania, sucursal, cliente, source);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {
-                    if (servicePedido.IsAlreadyProcess(almacen,entry.Value.pedc_tped_codigo, entry.Value.pedc_letra, sucursal, entry.Value.pedc_numero))
+                    entry.Value.pedc_almacen = source.Configs[Constants.ALMACEN].GetString(entry.Value.pedc_destinatario);
+                    if (servicePedido.IsAlreadyProcess(entry.Value.pedc_almacen, entry.Value.pedc_tped_codigo, entry.Value.pedc_letra, entry.Value.pedc_sucursal, entry.Value.pedc_numero))
                     {
                         Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
                         countAlreadyProcessPedido++;
@@ -154,7 +142,7 @@ namespace Calico.interfaces.pedido
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
             process.fin = DateTime.Now;
-            process.fecha_ultima = lastTime;
+            process.fecha_ultima = process.inicio;
             process.cant_lineas = countOKPedido;
             process.estado = Constants.ESTADO_OK;
             Console.WriteLine("Fecha_fin: " + process.fin);

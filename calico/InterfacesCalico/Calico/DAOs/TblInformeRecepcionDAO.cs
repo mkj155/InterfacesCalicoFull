@@ -52,7 +52,7 @@ namespace Calico.DAOs
             }
         }
 
-        public List<tblInformeRecepcion> FindInformes(String emplazamiento, String almacen, String tipo)
+        public List<tblInformeRecepcion> FindInformes(String emplazamiento, String[] almacenes, String[] tipos)
         {
             try
             {
@@ -60,8 +60,8 @@ namespace Calico.DAOs
                 {
                     var query = (from R in context.tblInformeRecepcion
                                 where R.irec_emplazamiento == emplazamiento
-                                   && R.irec_almacen == almacen
-                                   && R.irec_tipo == tipo
+                                   && almacenes.Contains(R.irec_almacen)
+                                   && tipos.Contains(R.irec_tipo)
                                 select R).Include(D => D.tblInformeRecepcionDetalle);
                     return query.ToList<tblInformeRecepcion>();
                 }

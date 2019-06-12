@@ -31,10 +31,9 @@ namespace Calico.interfaces.pedidos
             return String.Empty;
         }
 
-        public PedidoJson getJson(String dateTime,String fromStatus,String toStatus,String[] tipos)
+        public PedidoJson getJson(String fromStatus,String toStatus,String[] tipos)
         {
             PedidoJson json = new PedidoJson();
-            json.DateUpdated = dateTime;
             json.fromStatus = fromStatus;
             json.toStatus = toStatus;
       
@@ -134,13 +133,12 @@ namespace Calico.interfaces.pedidos
             JObject json = JObject.Parse(myJsonString);
 
             Console.WriteLine("Servicio Rest KO");
-            Console.WriteLine();
             Console.WriteLine("Detalle: ");
             Console.WriteLine(json["message"]);
         }
 
 
-        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String almacen, String compania,String sucursal, String cliente, IConfigSource source)
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String compania,String sucursal, String cliente, IConfigSource source)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
@@ -152,7 +150,7 @@ namespace Calico.interfaces.pedidos
                     String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4201_DCTO);
 
                     /* CABEZERA */
-                    pedido = fillCabezera(pedidoDTO, emplazamiento, almacen, letra, sucursal, cliente, tipoPedido);
+                    pedido = fillCabezera(pedidoDTO, emplazamiento, letra, sucursal, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
@@ -167,11 +165,10 @@ namespace Calico.interfaces.pedidos
             }
         }
 
-        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String almacen, String letra, String sucursal, String cliente, String tipoPedido)
+        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String letra, String sucursal, String cliente, String tipoPedido)
         {
             tblPedido pedido = new tblPedido();
             pedido.pedc_emplazamiento = emplazamiento;
-            pedido.pedc_almacen = almacen;
             pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
             pedido.pedc_sucursal = sucursal;

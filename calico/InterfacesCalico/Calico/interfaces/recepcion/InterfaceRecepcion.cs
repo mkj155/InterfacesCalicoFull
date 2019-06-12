@@ -93,14 +93,13 @@ namespace Calico.interfaces.recepcion
             List<ReceptionDTO> receptionDTO = null;
             Dictionary<String, tblRecepcion> dictionary = new Dictionary<string, tblRecepcion>();
             String emplazamiento = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
-            String almacen = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
 
             if (!String.Empty.Equals(myJsonString))
             {
                 receptionDTO = recepcionUtils.MappingJsonRecepcion(myJsonString);
                 if (receptionDTO.Any())
                 {
-                    recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento, almacen);
+                    recepcionUtils.MappingReceptionDTORecepcion(receptionDTO, dictionary, emplazamiento);
                 }
                 else
                 {
@@ -125,8 +124,9 @@ namespace Calico.interfaces.recepcion
             // Validamos si hay que insertar o descartar la recepcion
             foreach (KeyValuePair<string, tblRecepcion> entry in dictionary)
             {
+                entry.Value.recc_almacen = source.Configs[Constants.ALMACEN].GetString(entry.Value.recc_proveedor);
                 // ¿Ya está procesada?
-                if (serviceRecepcion.IsAlreadyProcess(emplazamiento, almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
+                if (serviceRecepcion.IsAlreadyProcess(entry.Value.recc_emplazamiento, entry.Value.recc_almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
                 {
                     Console.WriteLine("La recepcion " + entry.Value.recc_numero + " ya fue tratada, no se procesara");
                     countAlreadyProcess++;

@@ -66,13 +66,14 @@ namespace Calico.interfaces.informeRecepcion
 
             // INICIO BUSQUEDA DE DATOS
             String emplazamiento = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
-            String almacen = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_ALMACEN);
-            String tipo = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_TIPO);
             String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
             String OrderType = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_ORDER_TYPE);
             String receiptsVersion = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION);
 
-            List<tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacen, tipo);
+            var almacenes = source.Configs[INTERFACE + "." + Constants.ALMACEN].GetValues();
+            var tipos = source.Configs[INTERFACE + "." + Constants.INTERFACE_TIPO].GetValues();
+
+            List <tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacenes, tipos);
             List<InformeRecepcionJson> jsonList = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
