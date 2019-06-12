@@ -52,6 +52,10 @@ namespace Calico.common
         public const String INTERFACE_PEDIDOS_FROM_STATUS = "fromStatus";
         public const String INTERFACE_PEDIDOS_TO_STATUS = "toStatus";
 
+        // ANULACION REMITO
+        public const String INTERFACE_ANULACION_REMITO = "AnulacionRemito";
+        public const String INTERFACE_ANULACION_REMITO_URL = "AnulacionRemitoURL";
+
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";

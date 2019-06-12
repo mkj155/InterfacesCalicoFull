@@ -82,6 +82,10 @@
     <Compile Include="common\Constants.cs" />
     <Compile Include="common\InterfaceFactory.cs" />
     <Compile Include="common\Utils.cs" />
+    <Compile Include="interfaces\anulacionRemito\AnulacionRemitoDTO.cs" />
+    <Compile Include="interfaces\anulacionRemito\AnulacionRemitoJson.cs" />
+    <Compile Include="interfaces\anulacionRemito\AnulacionRemitoUtils.cs" />
+    <Compile Include="interfaces\anulacionRemito\InterfaceAnulacionRemito.cs" />
     <Compile Include="interfaces\informePedido\InformePedidoDTO.cs" />
     <Compile Include="interfaces\informePedido\InformePedidoJson.cs" />
     <Compile Include="interfaces\informePedido\InformePedidoUtils.cs" />
