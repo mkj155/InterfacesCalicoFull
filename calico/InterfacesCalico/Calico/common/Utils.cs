@@ -100,9 +100,9 @@ namespace Calico.common
             String date = String.Empty;
             if (possibleDate.Length == 8)
             {
-                String dd = possibleDate.Substring(0, 2);
-                String mm = possibleDate.Substring(2, 2);
-                String yyyy = possibleDate.Substring(4, 4);
+                String yyyy = possibleDate.Substring(0, 4);
+                String mm = possibleDate.Substring(4, 2);
+                String dd = possibleDate.Substring(6, 2);
                 date = dd + "/" + mm + "/" + yyyy;
             }
             return date;
