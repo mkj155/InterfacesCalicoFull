@@ -10,15 +10,15 @@ namespace Calico.interfaces.pedidos
     {
         public String fromStatus { get; set; }
         public String toStatus { get; set; }
-        public String OrTy1 { get; set; }
-        public String OrTy2 { get; set; }
-        public String OrTy3 { get; set; }
-        public String OrTy4 { get; set; }
-        public String OrTy5 { get; set; }
-        public String OrTy6 { get; set; }
-        public String OrTy7 { get; set; }
-        public String OrTy8 { get; set; }
-        public String OrTy9 { get; set; }
+        public String OrTy01 { get; set; }
+        public String OrTy02 { get; set; }
+        public String OrTy03 { get; set; }
+        public String OrTy04 { get; set; }
+        public String OrTy05 { get; set; }
+        public String OrTy06 { get; set; }
+        public String OrTy07 { get; set; }
+        public String OrTy08 { get; set; }
+        public String OrTy09 { get; set; }
         public String OrTy10 { get; set; }
         public String OrTy11 { get; set; }
         public String OrTy12 { get; set; }

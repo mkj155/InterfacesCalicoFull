@@ -88,7 +88,6 @@ namespace Calico.interfaces.informePedido
             /* Obtenemos la URL del archivo */
             String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_INFORME_PEDIDO_URL);
 
-            // TODO MATI
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
@@ -99,8 +98,12 @@ namespace Calico.interfaces.informePedido
             foreach (tblInformePedido informe in informes)
             {
                 callArchivar = true;
-                String orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra);
-                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany,orderType, lastStatus,nextStatus,version);
+                String orderType = String.Empty;
+                if (!String.IsNullOrWhiteSpace(informe.ipec_letra))
+                {
+                    orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra.Trim());
+                }
+                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany, orderType, lastStatus, nextStatus, version);
 
                 if (jsonList.Any())
                 {
