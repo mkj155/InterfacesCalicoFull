@@ -98,8 +98,12 @@ namespace Calico.interfaces.informePedido
             foreach (tblInformePedido informe in informes)
             {
                 callArchivar = true;
-                String orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra);
-                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany,orderType, lastStatus,nextStatus,version);
+                String orderType = String.Empty;
+                if (!String.IsNullOrWhiteSpace(informe.ipec_letra))
+                {
+                    orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra.Trim());
+                }
+                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany, orderType, lastStatus,nextStatus,version);
 
                 if (jsonList.Any())
                 {

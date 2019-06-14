@@ -96,6 +96,7 @@ namespace Calico.interfaces.recepcion
             detalle.recd_lineaPedido = 0;
             detalle.recd_lote = !String.IsNullOrWhiteSpace(receptionDTO.F4211_LOTN) ? receptionDTO.F4211_LOTN.Trim() : String.Empty;
             detalle.recd_cantidad = !String.IsNullOrWhiteSpace(receptionDTO.F4211_UORG) ? Convert.ToInt64(Convert.ToDouble(receptionDTO.F4211_UORG)) : 0;
+            detalle.recd_compania = !String.IsNullOrWhiteSpace(receptionDTO.F4211_SPR1) ? receptionDTO.F4211_SPR1.Trim() : String.Empty;
 
             if (!String.IsNullOrWhiteSpace(receptionDTO.F4211_LITM) && receptionDTO.F4211_LITM.Length > 15)
             {

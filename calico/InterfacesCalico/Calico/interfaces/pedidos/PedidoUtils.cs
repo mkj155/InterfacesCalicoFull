@@ -36,16 +36,16 @@ namespace Calico.interfaces.pedidos
             PedidoJson json = new PedidoJson();
             json.fromStatus = fromStatus;
             json.toStatus = toStatus;
-      
-            json.OrTy1 = GetValueOrEmpty(tipos,1);
-            json.OrTy2 = GetValueOrEmpty(tipos, 2);
-            json.OrTy3 = GetValueOrEmpty(tipos, 3);
-            json.OrTy4 = GetValueOrEmpty(tipos, 4);
-            json.OrTy5 = GetValueOrEmpty(tipos, 5);
-            json.OrTy6 = GetValueOrEmpty(tipos, 6);
-            json.OrTy7 = GetValueOrEmpty(tipos, 7);
-            json.OrTy8 = GetValueOrEmpty(tipos, 8);
-            json.OrTy9 = GetValueOrEmpty(tipos, 9);
+            
+            json.OrTy01 = GetValueOrEmpty(tipos, 1);
+            json.OrTy02 = GetValueOrEmpty(tipos, 2);
+            json.OrTy03 = GetValueOrEmpty(tipos, 3);
+            json.OrTy04 = GetValueOrEmpty(tipos, 4);
+            json.OrTy05 = GetValueOrEmpty(tipos, 5);
+            json.OrTy06 = GetValueOrEmpty(tipos, 6);
+            json.OrTy07 = GetValueOrEmpty(tipos, 7);
+            json.OrTy08 = GetValueOrEmpty(tipos, 8);
+            json.OrTy09 = GetValueOrEmpty(tipos, 9);
             json.OrTy10 = GetValueOrEmpty(tipos, 10);
             json.OrTy11 = GetValueOrEmpty(tipos, 11);
             json.OrTy12 = GetValueOrEmpty(tipos, 12);
@@ -184,7 +184,7 @@ namespace Calico.interfaces.pedidos
             }
 
             pedido.pedc_cliente = cliente;
-            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_MCU) ? pedidoDTO.F4201_MCU.Trim() : String.Empty;
+            pedido.pedc_destinatario = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_AN8) ? pedidoDTO.F4201_AN8.Trim() : String.Empty;
             pedido.pedc_referenciaA = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR01) ? pedidoDTO.F4201_VR01.Trim() : String.Empty;
             pedido.pedc_referenciaB = !String.IsNullOrWhiteSpace(pedidoDTO.F4201_VR02) ? pedidoDTO.F4201_VR02.Trim() : String.Empty;
             pedido.pedc_pais =  !String.IsNullOrWhiteSpace(pedidoDTO.F4006_COUN) ? pedidoDTO.F4006_COUN.Trim() : String.Empty;
@@ -212,7 +212,7 @@ namespace Calico.interfaces.pedidos
             tblPedidoDetalle detalle = new tblPedidoDetalle();
             detalle.pedd_linea = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LNID) ? Convert.ToDecimal(pedidoDTO.F4211_LNID) : 0;
             detalle.pedd_compania = compania;
-            detalle.pedd_producto = String.Empty;
+            detalle.pedd_producto = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LITM) ? pedidoDTO.F4211_LITM : String.Empty;
             detalle.pedd_lote = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_LOTN) ? pedidoDTO.F4211_LOTN : String.Empty;
             detalle.pedd_cantidad = !String.IsNullOrWhiteSpace(pedidoDTO.F4211_UORG) ? Convert.ToDecimal(pedidoDTO.F4211_UORG) : 0;
 
