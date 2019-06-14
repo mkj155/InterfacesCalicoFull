@@ -50,7 +50,7 @@ namespace Calico.interfaces.informeRecepcion
                 Console.WriteLine("No se pudo lockear la row para la interface " + INTERFACE + " se cancela la ejecucion");
                 return false;
             }
-
+            
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
             IConfigSource source = null;

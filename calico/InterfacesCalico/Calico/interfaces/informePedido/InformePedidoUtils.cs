@@ -2,14 +2,10 @@
 using Calico.persistencia;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Calico.interfaces.informePedido
 {
@@ -88,16 +84,7 @@ namespace Calico.interfaces.informePedido
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         myJsonString = reader.ReadToEnd();
-                        //if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
-                        //{
-                            return true;
-                        //}
-                        //else
-                        //{
-                        //    handleErrorRest(myJsonString, out LAST_ERROR);
-                        //    return false;
-                        //}
-
+                        return true;
                     }
                 }
             }
@@ -107,7 +94,7 @@ namespace Calico.interfaces.informePedido
                 {
                     HttpWebResponse response = (HttpWebResponse)e.Response;
                     StreamReader reader = new StreamReader(response.GetResponseStream());
-                    handleErrorRest(reader.ReadToEnd(), out LAST_ERROR);
+                    HandleErrorRest(reader.ReadToEnd(), out LAST_ERROR);
                 }
             }
             catch (Exception ex)
@@ -119,7 +106,7 @@ namespace Calico.interfaces.informePedido
 
         }
 
-        public static void handleErrorRest(String myJsonString, out string error)
+        public static void HandleErrorRest(String myJsonString, out string error)
         {
             JObject json = JObject.Parse(myJsonString);
 

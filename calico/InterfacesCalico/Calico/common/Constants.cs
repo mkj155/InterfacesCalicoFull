@@ -5,6 +5,7 @@ namespace Calico.common
     public class Constants
     {
         /* INTERFACES */
+        public const String PROPERTY_FILE_NAME = "calico_config.ini";
         public const String NUMERO_INTERFACE = "NumeroInterface";
         public const String FECHA_DEFAULT = "1973/01/01";
         public const String NUMERO_CLIENTE = "NumeroCliente";
