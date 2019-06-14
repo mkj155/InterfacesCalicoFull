@@ -208,6 +208,17 @@
           <Property Name="pedd_epro_codigo" Type="char" MaxLength="3" />
           <Property Name="pedd_despachoParcial" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="tblProceso">
+          <Key>
+            <PropertyRef Name="proc_id" />
+          </Key>
+          <Property Name="proc_id" Type="int" Nullable="false" />
+          <Property Name="proc_fechaIngreso" Type="datetime" Nullable="false" />
+          <Property Name="proc_fechaEjecucion" Type="datetime" Nullable="false" />
+          <Property Name="proc_tipoProceso" Type="int" Nullable="false" />
+          <Property Name="proc_tipoMensaje" Type="int" Nullable="false" />
+          <Property Name="proc_identificador" Type="varchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="tblRecepcion">
           <Key>
             <PropertyRef Name="recc_proc_id" />
@@ -262,6 +273,18 @@
           <Property Name="subc_iva" Type="char" MaxLength="2" />
           <Property Name="subc_correoElectronico" Type="text" />
         </EntityType>
+        <Association Name="FK_tblInformePedido_tblProceso">
+          <End Role="tblProceso" Type="Self.tblProceso" Multiplicity="1" />
+          <End Role="tblInformePedido" Type="Self.tblInformePedido" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblInformePedido">
+              <PropertyRef Name="ipec_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblInformePedidoDetalle_tblInformePedido">
           <End Role="tblInformePedido" Type="Self.tblInformePedido" Multiplicity="1" />
           <End Role="tblInformePedidoDetalle" Type="Self.tblInformePedidoDetalle" Multiplicity="*" />
@@ -271,6 +294,18 @@
             </Principal>
             <Dependent Role="tblInformePedidoDetalle">
               <PropertyRef Name="iped_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblInformeRecepcion_tblProceso">
+          <End Role="tblProceso" Type="Self.tblProceso" Multiplicity="1" />
+          <End Role="tblInformeRecepcion" Type="Self.tblInformeRecepcion" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblInformeRecepcion">
+              <PropertyRef Name="irec_proc_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -286,6 +321,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblPedido_tblProceso">
+          <End Role="tblProceso" Type="Self.tblProceso" Multiplicity="1" />
+          <End Role="tblPedido" Type="Self.tblPedido" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblPedido">
+              <PropertyRef Name="pedc_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblPedidoDetalle_tblPedido">
           <End Role="tblPedido" Type="Self.tblPedido" Multiplicity="1" />
           <End Role="tblPedidoDetalle" Type="Self.tblPedidoDetalle" Multiplicity="*" />
@@ -298,6 +345,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblRecepcion_tblProceso">
+          <End Role="tblProceso" Type="Self.tblProceso" Multiplicity="1" />
+          <End Role="tblRecepcion" Type="Self.tblRecepcion" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblRecepcion">
+              <PropertyRef Name="recc_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblRecepcionDetalle_tblRecepcion">
           <End Role="tblRecepcion" Type="Self.tblRecepcion" Multiplicity="1" />
           <End Role="tblRecepcionDetalle" Type="Self.tblRecepcionDetalle" Multiplicity="*" />
@@ -307,6 +366,18 @@
             </Principal>
             <Dependent Role="tblRecepcionDetalle">
               <PropertyRef Name="recd_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblSubCliente_tblProceso">
+          <End Role="tblProceso" Type="Self.tblProceso" Multiplicity="1" />
+          <End Role="tblSubCliente" Type="Self.tblSubCliente" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblSubCliente">
+              <PropertyRef Name="subc_proc_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -337,24 +408,45 @@
           <EntitySet Name="tblInformeRecepcionDetalle" EntityType="Self.tblInformeRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPedido" EntityType="Self.tblPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPedidoDetalle" EntityType="Self.tblPedidoDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblProceso" EntityType="Self.tblProceso" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcion" EntityType="Self.tblRecepcion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRecepcionDetalle" EntityType="Self.tblRecepcionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSubCliente" EntityType="Self.tblSubCliente" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblInformePedido_tblProceso" Association="Self.FK_tblInformePedido_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblInformePedido" EntitySet="tblInformePedido" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblInformePedidoDetalle_tblInformePedido" Association="Self.FK_tblInformePedidoDetalle_tblInformePedido">
             <End Role="tblInformePedido" EntitySet="tblInformePedido" />
             <End Role="tblInformePedidoDetalle" EntitySet="tblInformePedidoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblInformeRecepcion_tblProceso" Association="Self.FK_tblInformeRecepcion_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
           </AssociationSet>
           <AssociationSet Name="FK_tblInformeRecepcionDetalle_tblInformeRecepcion" Association="Self.FK_tblInformeRecepcionDetalle_tblInformeRecepcion">
             <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
             <End Role="tblInformeRecepcionDetalle" EntitySet="tblInformeRecepcionDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK_tblPedido_tblProceso" Association="Self.FK_tblPedido_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblPedido" EntitySet="tblPedido" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblPedidoDetalle_tblPedido" Association="Self.FK_tblPedidoDetalle_tblPedido">
             <End Role="tblPedido" EntitySet="tblPedido" />
             <End Role="tblPedidoDetalle" EntitySet="tblPedidoDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK_tblRecepcion_tblProceso" Association="Self.FK_tblRecepcion_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblRecepcion" EntitySet="tblRecepcion" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblRecepcionDetalle_tblRecepcion" Association="Self.FK_tblRecepcionDetalle_tblRecepcion">
             <End Role="tblRecepcion" EntitySet="tblRecepcion" />
             <End Role="tblRecepcionDetalle" EntitySet="tblRecepcionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblSubCliente_tblProceso" Association="Self.FK_tblSubCliente_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblSubCliente" EntitySet="tblSubCliente" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -393,6 +485,7 @@
           <Property Name="subc_cuit" Type="String" MaxLength="13" FixedLength="true" Unicode="false" />
           <Property Name="subc_iva" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
           <Property Name="subc_correoElectronico" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblProceso" Relationship="CalicoModel.FK_tblSubCliente_tblProceso" FromRole="tblSubCliente" ToRole="tblProceso" />
         </EntityType>
         <EntityContainer Name="CalicoEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BIANCHI_PROCESS" EntityType="Self.BIANCHI_PROCESS" />
@@ -436,6 +529,27 @@
             <End Role="tblInformePedido" EntitySet="tblInformePedido" />
             <End Role="tblInformePedidoDetalle" EntitySet="tblInformePedidoDetalle" />
           </AssociationSet>
+          <EntitySet Name="tblProceso" EntityType="CalicoModel.tblProceso" />
+          <AssociationSet Name="FK_tblInformePedido_tblProceso" Association="CalicoModel.FK_tblInformePedido_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblInformePedido" EntitySet="tblInformePedido" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblInformeRecepcion_tblProceso" Association="CalicoModel.FK_tblInformeRecepcion_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblInformeRecepcion" EntitySet="tblInformeRecepcion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblPedido_tblProceso" Association="CalicoModel.FK_tblPedido_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblPedido" EntitySet="tblPedido" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblRecepcion_tblProceso" Association="CalicoModel.FK_tblRecepcion_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblRecepcion" EntitySet="tblRecepcion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblSubCliente_tblProceso" Association="CalicoModel.FK_tblSubCliente_tblProceso">
+            <End Role="tblProceso" EntitySet="tblProceso" />
+            <End Role="tblSubCliente" EntitySet="tblSubCliente" />
+          </AssociationSet>
           <FunctionImport Name="INTERFAZ_ArchivarInformePedido">
             <Parameter Name="id" Mode="In" Type="Int32" />
             <Parameter Name="error" Mode="InOut" Type="String" />
@@ -459,6 +573,7 @@
           <Property Name="recc_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
           <Property Name="recc_observaciones" Type="String" MaxLength="500" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="tblRecepcionDetalle" Relationship="CalicoModel.FK_tblRecepcionDetalle_tblRecepcion" FromRole="tblRecepcion" ToRole="tblRecepcionDetalle" />
+          <NavigationProperty Name="tblProceso" Relationship="CalicoModel.FK_tblRecepcion_tblProceso" FromRole="tblRecepcion" ToRole="tblProceso" />
         </EntityType>
         <EntityType Name="tblRecepcionDetalle">
           <Key>
@@ -540,6 +655,7 @@
           <Property Name="pedc_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
           <Property Name="pedc_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="tblPedidoDetalle" Relationship="CalicoModel.FK_tblPedidoDetalle_tblPedido" FromRole="tblPedido" ToRole="tblPedidoDetalle" />
+          <NavigationProperty Name="tblProceso" Relationship="CalicoModel.FK_tblPedido_tblProceso" FromRole="tblPedido" ToRole="tblProceso" />
         </EntityType>
         <EntityType Name="tblPedidoDetalle">
           <Key>
@@ -589,6 +705,7 @@
           <Property Name="irec_devolucion" Type="Boolean" />
           <Property Name="irec_motivoDevolucion" Type="String" MaxLength="6" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="tblInformeRecepcionDetalle" Relationship="CalicoModel.FK_tblInformeRecepcionDetalle_tblInformeRecepcion" FromRole="tblInformeRecepcion" ToRole="tblInformeRecepcionDetalle" />
+          <NavigationProperty Name="tblProceso" Relationship="CalicoModel.FK_tblInformeRecepcion_tblProceso" FromRole="tblInformeRecepcion" ToRole="tblProceso" />
         </EntityType>
         <EntityType Name="tblInformeRecepcionDetalle">
           <Key>
@@ -691,6 +808,7 @@
           <Property Name="ipec_referenciaB" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
           <Property Name="ipec_observaciones" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="tblInformePedidoDetalle" Relationship="CalicoModel.FK_tblInformePedidoDetalle_tblInformePedido" FromRole="tblInformePedido" ToRole="tblInformePedidoDetalle" />
+          <NavigationProperty Name="tblProceso" Relationship="CalicoModel.FK_tblInformePedido_tblProceso" FromRole="tblInformePedido" ToRole="tblProceso" />
         </EntityType>
         <EntityType Name="tblInformePedidoDetalle">
           <Key>
@@ -718,6 +836,82 @@
             </Principal>
             <Dependent Role="tblInformePedidoDetalle">
               <PropertyRef Name="iped_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblProceso">
+          <Key>
+            <PropertyRef Name="proc_id" />
+          </Key>
+          <Property Name="proc_id" Type="Int32" Nullable="false" />
+          <Property Name="proc_fechaIngreso" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="proc_fechaEjecucion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="proc_tipoProceso" Type="Int32" Nullable="false" />
+          <Property Name="proc_tipoMensaje" Type="Int32" Nullable="false" />
+          <Property Name="proc_identificador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblInformePedido" Relationship="CalicoModel.FK_tblInformePedido_tblProceso" FromRole="tblProceso" ToRole="tblInformePedido" />
+          <NavigationProperty Name="tblInformeRecepcion" Relationship="CalicoModel.FK_tblInformeRecepcion_tblProceso" FromRole="tblProceso" ToRole="tblInformeRecepcion" />
+          <NavigationProperty Name="tblPedido" Relationship="CalicoModel.FK_tblPedido_tblProceso" FromRole="tblProceso" ToRole="tblPedido" />
+          <NavigationProperty Name="tblRecepcion" Relationship="CalicoModel.FK_tblRecepcion_tblProceso" FromRole="tblProceso" ToRole="tblRecepcion" />
+          <NavigationProperty Name="tblSubCliente" Relationship="CalicoModel.FK_tblSubCliente_tblProceso" FromRole="tblProceso" ToRole="tblSubCliente" />
+        </EntityType>
+        <Association Name="FK_tblInformePedido_tblProceso">
+          <End Type="CalicoModel.tblProceso" Role="tblProceso" Multiplicity="1" />
+          <End Type="CalicoModel.tblInformePedido" Role="tblInformePedido" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblInformePedido">
+              <PropertyRef Name="ipec_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblInformeRecepcion_tblProceso">
+          <End Type="CalicoModel.tblProceso" Role="tblProceso" Multiplicity="1" />
+          <End Type="CalicoModel.tblInformeRecepcion" Role="tblInformeRecepcion" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblInformeRecepcion">
+              <PropertyRef Name="irec_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblPedido_tblProceso">
+          <End Type="CalicoModel.tblProceso" Role="tblProceso" Multiplicity="1" />
+          <End Type="CalicoModel.tblPedido" Role="tblPedido" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblPedido">
+              <PropertyRef Name="pedc_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblRecepcion_tblProceso">
+          <End Type="CalicoModel.tblProceso" Role="tblProceso" Multiplicity="1" />
+          <End Type="CalicoModel.tblRecepcion" Role="tblRecepcion" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblRecepcion">
+              <PropertyRef Name="recc_proc_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblSubCliente_tblProceso">
+          <End Type="CalicoModel.tblProceso" Role="tblProceso" Multiplicity="1" />
+          <End Type="CalicoModel.tblSubCliente" Role="tblSubCliente" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tblProceso">
+              <PropertyRef Name="proc_id" />
+            </Principal>
+            <Dependent Role="tblSubCliente">
+              <PropertyRef Name="subc_proc_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -996,6 +1190,18 @@
                 <ScalarProperty Name="iped_controlInterno" ColumnName="iped_controlInterno" />
                 <ScalarProperty Name="iped_proc_id" ColumnName="iped_proc_id" />
                 <ScalarProperty Name="iped_id" ColumnName="iped_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblProceso">
+            <EntityTypeMapping TypeName="CalicoModel.tblProceso">
+              <MappingFragment StoreEntitySet="tblProceso">
+                <ScalarProperty Name="proc_identificador" ColumnName="proc_identificador" />
+                <ScalarProperty Name="proc_tipoMensaje" ColumnName="proc_tipoMensaje" />
+                <ScalarProperty Name="proc_tipoProceso" ColumnName="proc_tipoProceso" />
+                <ScalarProperty Name="proc_fechaEjecucion" ColumnName="proc_fechaEjecucion" />
+                <ScalarProperty Name="proc_fechaIngreso" ColumnName="proc_fechaIngreso" />
+                <ScalarProperty Name="proc_id" ColumnName="proc_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

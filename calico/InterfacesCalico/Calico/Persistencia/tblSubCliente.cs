@@ -28,5 +28,7 @@ namespace Calico.persistencia
         public string subc_cuit { get; set; }
         public string subc_iva { get; set; }
         public string subc_correoElectronico { get; set; }
+    
+        public virtual tblProceso tblProceso { get; set; }
     }
 }

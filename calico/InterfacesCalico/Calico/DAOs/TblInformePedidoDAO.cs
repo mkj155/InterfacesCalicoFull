@@ -53,16 +53,18 @@ namespace Calico.DAOs
         }
 
 
-        public List<tblInformePedido> FindInformes(String emplazamiento, String almacen, String tipo)
+        public List<tblInformePedido> FindInformes(String emplazamiento, String[] almacenes, String[] tipos, int tipoProceso)
         {
             try
             {
                 using (CalicoEntities context = new CalicoEntities())
                 {
                     var query = (from R in context.tblInformePedido
-                                 where R.ipec_emplazamiento == emplazamiento
-                                    && R.ipec_almacen == almacen
-                                    && R.ipec_tipo == tipo
+                                 join P in context.tblProceso on R.ipec_proc_id equals P.proc_id
+                                 where R.ipec_proc_id == tipoProceso
+                                    && R.ipec_emplazamiento == emplazamiento
+                                    && almacenes.Contains(R.ipec_almacen)
+                                    && tipos.Contains(R.ipec_tipo)
                                  select R).Include(D => D.tblInformePedidoDetalle);
                     return query.ToList<tblInformePedido>();
                 }

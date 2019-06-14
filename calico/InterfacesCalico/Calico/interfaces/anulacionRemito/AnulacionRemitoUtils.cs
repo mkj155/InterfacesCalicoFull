@@ -11,34 +11,34 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calico.interfaces.informePedido
+namespace Calico.interfaces.anulacionRemito
 {
-    class InformePedidoUtils
+    class AnulacionRemitoUtils
     {
 
         public static String LAST_ERROR = String.Empty;
 
-        internal static List<InformePedidoJson> MappingInforme(tblInformePedido informe, String orderCompany,String orderType, String lastStatus,String nextStatus, String version)
+        internal static List<AnulacionRemitoJson> MappingInforme(tblInformePedido informe, String orderCompany,String orderType, String lastStatus,String nextStatus, String version)
         {
-            List<InformePedidoJson> jsonList = new List<InformePedidoJson>();
+            List<AnulacionRemitoJson> jsonList = new List<AnulacionRemitoJson>();
 
             foreach (tblInformePedidoDetalle detalle in informe.tblInformePedidoDetalle)
             {
-                InformePedidoDTO informeDTO = new InformePedidoDTO();
+                AnulacionRemitoDTO informeDTO = new AnulacionRemitoDTO();
 
                 informeDTO.OrderCompany = orderCompany;
                 informeDTO.OrderNumber = informe.ipec_numero.ToString();
                 informeDTO.OrderType = orderType;
                 informeDTO.OrderLineNumber = detalle.iped_linea.ToString();
                 informeDTO.Lot = Utils.GetValueOrEmpty(detalle.iped_lote);
-                informeDTO.ItemNumber = detalle.iped_producto.TrimStart(new Char[] { '0' }).Trim(); // sin CEROS a la izquierda;
+                informeDTO.ItemNumber = detalle.iped_producto.TrimStart(new Char[] { '0' }); // sin CEROS a la izquierda;
                 informeDTO.ChgLastStatus = lastStatus;
                 informeDTO.ChgReference = Utils.GetValueOrEmpty(informe.ipec_referenciaA);
                 informeDTO.ChgNextStatus = nextStatus;
-                informeDTO.ChgDispatchQuantity = Decimal.ToInt32(detalle.iped_cantidad).ToString();
+                informeDTO.ChgDispatchQuantity = detalle.iped_cantidad.ToString();
                 informeDTO.ChgLot = Utils.GetValueOrEmpty(detalle.iped_lote);
                 informeDTO.ChgDispatchDate = informe.ipec_fechaFinProceso.ToString("yyyy/MM/dd");
-                InformePedidoJson json = GetObjectJsonFromDTO(informeDTO);
+                AnulacionRemitoJson json = GetObjectJsonFromDTO(informeDTO);
                 json.P554211I_Version = version;
                 jsonList.Add(json);
             }
@@ -46,17 +46,17 @@ namespace Calico.interfaces.informePedido
             return jsonList;
         }
 
-        public static String JsonToString(InformePedidoJson obj)
+        public static String JsonToString(AnulacionRemitoJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
             return json;
         }
 
-        public static InformePedidoJson GetObjectJsonFromDTO(InformePedidoDTO detalle)
+        public static AnulacionRemitoJson GetObjectJsonFromDTO(AnulacionRemitoDTO detalle)
         {
-            List<InformePedidoDTO> list = new List<InformePedidoDTO>();
+            List<AnulacionRemitoDTO> list = new List<AnulacionRemitoDTO>();
             list.Add(detalle);
-            return new InformePedidoJson(list);
+            return new AnulacionRemitoJson(list);
         }
 
         public static bool ExistChildrenInJson(String jsonString, String father, String children)
@@ -88,15 +88,15 @@ namespace Calico.interfaces.informePedido
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         myJsonString = reader.ReadToEnd();
-                        //if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
-                        //{
+                        if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
+                        {
                             return true;
-                        //}
-                        //else
-                        //{
-                        //    handleErrorRest(myJsonString, out LAST_ERROR);
-                        //    return false;
-                        //}
+                        }
+                        else
+                        {
+                            handleErrorRest(myJsonString, out LAST_ERROR);
+                            return false;
+                        }
 
                     }
                 }

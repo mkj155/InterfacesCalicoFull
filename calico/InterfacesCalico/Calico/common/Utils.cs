@@ -11,6 +11,8 @@ namespace Calico.common
 {
     class Utils
     {
+        private static String format = "dd/MM/yyyy";
+
         /// <summary>
         /// TRUE si la fecha esta en un formato correcto
         /// </summary>
@@ -31,7 +33,7 @@ namespace Calico.common
 
         public static String GetValueOrEmpty(String value)
         {
-            if (String.IsNullOrWhiteSpace(value)) {
+            if (!String.IsNullOrWhiteSpace(value)) {
                 return value.Trim();
             }
             else
@@ -101,7 +103,7 @@ namespace Calico.common
                 String yyyy = possibleDate.Substring(0, 4);
                 String mm = possibleDate.Substring(4, 2);
                 String dd = possibleDate.Substring(6, 2);
-                date = yyyy + "/" + mm + "/" + dd;
+                date = dd + "/" + mm + "/" + yyyy;
             }
             return date;
         }
@@ -116,7 +118,7 @@ namespace Calico.common
             String year = dateTime.Year.ToString("D4");
             String month = dateTime.Month.ToString("D2");
             String day = dateTime.Day.ToString("D2");
-            return year + month + day;
+            return day + month + year;
         }
 
         /// <summary>
@@ -132,9 +134,9 @@ namespace Calico.common
                 foreach (String arg in args)
                 {
                     String date = FormatDate(arg);
-                    if (date.Length > 0 && ValidateDate(date, "yyyy/MM/dd"))
+                    if (date.Length > 0 && ValidateDate(date, format))
                     {
-                        return ParseDate(date, "yyyy/MM/dd");
+                        return ParseDate(date, format);
                     }
                 }
             }
