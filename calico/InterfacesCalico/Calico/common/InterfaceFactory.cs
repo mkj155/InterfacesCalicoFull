@@ -34,6 +34,10 @@ namespace Calico.common
             {
                 interfaz = new InterfaceInformePedido();
             }
+            else if (Constants.INTERFACE_ANULACION_REMITO.Equals(interfaceName))
+            {
+                interfaz = new InterfaceAnulacionRemito();
+            }
             return interfaz;
         }
 
