@@ -14,7 +14,7 @@ namespace Calico.common
         public const String SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
         public const String INTERFACE_TIPO = "Tipo";
-        public const String INTERFACE_TIPO_PROCESO = "Tipo";
+        public const String INTERFACE_TIPO_PROCESO = "tipoProceso";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";

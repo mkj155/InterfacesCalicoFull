@@ -71,7 +71,7 @@ namespace Calico.interfaces.informePedido
             String lastStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_LAST_STATUS);
             String nextStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_NEXT_STATUS);
             String version = source.Configs[INTERFACE].GetString(Constants.INTERFACE_INFORME_PEDIDO_P554211I_VERSION);
-            String tipoProceso = source.Configs[INTERFACE].GetString(Constants.INTERFACE_TIPO_PROCESO);
+            int tipoProceso = source.Configs[INTERFACE].GetInt(Constants.INTERFACE_TIPO_PROCESO);
 
             var almacenes = source.Configs[INTERFACE + "." + Constants.ALMACEN].GetValues();
             var tipos = source.Configs[INTERFACE + "." + Constants.INTERFACE_TIPO].GetValues();
@@ -88,7 +88,6 @@ namespace Calico.interfaces.informePedido
             /* Obtenemos la URL del archivo */
             String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_ANULACION_REMITO_URL);
 
-            // TODO MATI
             int count = 0;
             int countError = 0;
             Boolean callArchivar;

@@ -33,7 +33,7 @@ namespace Calico.common
 
         public static String GetValueOrEmpty(String value)
         {
-            if (String.IsNullOrWhiteSpace(value)) {
+            if (!String.IsNullOrWhiteSpace(value)) {
                 return value.Trim();
             }
             else

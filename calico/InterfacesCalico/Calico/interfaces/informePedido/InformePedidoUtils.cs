@@ -31,11 +31,11 @@ namespace Calico.interfaces.informePedido
                 informeDTO.OrderType = orderType;
                 informeDTO.OrderLineNumber = detalle.iped_linea.ToString();
                 informeDTO.Lot = Utils.GetValueOrEmpty(detalle.iped_lote);
-                informeDTO.ItemNumber = detalle.iped_producto.TrimStart(new Char[] { '0' }); // sin CEROS a la izquierda;
+                informeDTO.ItemNumber = detalle.iped_producto.TrimStart(new Char[] { '0' }).Trim(); // sin CEROS a la izquierda;
                 informeDTO.ChgLastStatus = lastStatus;
                 informeDTO.ChgReference = Utils.GetValueOrEmpty(informe.ipec_referenciaA);
                 informeDTO.ChgNextStatus = nextStatus;
-                informeDTO.ChgDispatchQuantity = detalle.iped_cantidad.ToString();
+                informeDTO.ChgDispatchQuantity = Decimal.ToInt32(detalle.iped_cantidad).ToString();
                 informeDTO.ChgLot = Utils.GetValueOrEmpty(detalle.iped_lote);
                 informeDTO.ChgDispatchDate = informe.ipec_fechaFinProceso.ToString("yyyy/MM/dd");
                 InformePedidoJson json = GetObjectJsonFromDTO(informeDTO);

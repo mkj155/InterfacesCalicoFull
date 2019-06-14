@@ -53,7 +53,7 @@ namespace Calico.DAOs
         }
 
 
-        public List<tblInformePedido> FindInformes(String emplazamiento, String[] almacenes, String[] tipos, String tipoProceso)
+        public List<tblInformePedido> FindInformes(String emplazamiento, String[] almacenes, String[] tipos, int tipoProceso)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Calico.DAOs
                 {
                     var query = (from R in context.tblInformePedido
                                  join P in context.tblProceso on R.ipec_proc_id equals P.proc_id
-                                 where R.ipec_tipo == tipoProceso
+                                 where R.ipec_proc_id == tipoProceso
                                     && R.ipec_emplazamiento == emplazamiento
                                     && almacenes.Contains(R.ipec_almacen)
                                     && tipos.Contains(R.ipec_tipo)
