@@ -19,6 +19,7 @@ namespace Calico.interfaces.informePedido
 
         private BianchiService service = new BianchiService();
         private TblInformePedidoService serviceInformePedido = new TblInformePedidoService();
+        private InformePedidoUtils informePedidoUtils = new InformePedidoUtils();
 
         public bool ValidateDate() => false;
 
@@ -91,9 +92,6 @@ namespace Calico.interfaces.informePedido
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
-            //int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            //int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
-            //Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             foreach (tblInformePedido informe in informes)
             {
@@ -103,18 +101,18 @@ namespace Calico.interfaces.informePedido
                 {
                     orderType = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(informe.ipec_letra.Trim());
                 }
-                jsonList = InformePedidoUtils.MappingInforme(informe, orderCompany, orderType, lastStatus, nextStatus, version);
+                jsonList = informePedidoUtils.MappingInforme(informe, orderCompany, orderType, lastStatus, nextStatus, version);
 
                 if (jsonList.Any())
                 {
                     Console.WriteLine("Se llevara a cabo el envio al servicio REST de los detalles de la cabecera: " + informe.ipec_proc_id);
                     foreach (InformePedidoJson json in jsonList)
                     {
-                        var jsonString = InformePedidoUtils.JsonToString(json);
+                        var jsonString = informePedidoUtils.JsonToString(json);
                         Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
                         Console.WriteLine(jsonString);
                         /* Send request */
-                        if (!(InformePedidoUtils.SendRequestPost(url, user, pass, jsonString)))
+                        if (!(informePedidoUtils.SendRequestPost(url, user, pass, jsonString)))
                         {
                             Console.WriteLine("Se llamara al procedure para informar el error");
                             serviceInformePedido.CallProcedureInformarEjecucion(informe.ipec_proc_id, InformePedidoUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));

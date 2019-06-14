@@ -14,7 +14,7 @@ namespace Calico.interfaces.informePedido
 
         public static String LAST_ERROR = String.Empty;
 
-        internal static List<InformePedidoJson> MappingInforme(tblInformePedido informe, String orderCompany,String orderType, String lastStatus,String nextStatus, String version)
+        public List<InformePedidoJson> MappingInforme(tblInformePedido informe, String orderCompany,String orderType, String lastStatus,String nextStatus, String version)
         {
             List<InformePedidoJson> jsonList = new List<InformePedidoJson>();
 
@@ -42,25 +42,25 @@ namespace Calico.interfaces.informePedido
             return jsonList;
         }
 
-        public static String JsonToString(InformePedidoJson obj)
+        public String JsonToString(InformePedidoJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
             return json;
         }
 
-        public static InformePedidoJson GetObjectJsonFromDTO(InformePedidoDTO detalle)
+        public InformePedidoJson GetObjectJsonFromDTO(InformePedidoDTO detalle)
         {
             List<InformePedidoDTO> list = new List<InformePedidoDTO>();
             list.Add(detalle);
             return new InformePedidoJson(list);
         }
 
-        public static bool ExistChildrenInJson(String jsonString, String father, String children)
+        public bool ExistChildrenInJson(String jsonString, String father, String children)
         {
             return false;
         }
 
-        public static Boolean SendRequestPost(string url, String user, String pass, String json)
+        public Boolean SendRequestPost(string url, String user, String pass, String json)
         {
             String myJsonString = String.Empty;
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
@@ -106,7 +106,7 @@ namespace Calico.interfaces.informePedido
 
         }
 
-        public static void HandleErrorRest(String myJsonString, out string error)
+        public void HandleErrorRest(String myJsonString, out string error)
         {
             JObject json = JObject.Parse(myJsonString);
 

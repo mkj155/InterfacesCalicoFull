@@ -95,18 +95,18 @@ namespace Calico.interfaces.informeRecepcion
             foreach (tblInformeRecepcion informe in informes)
             {
                 callArchivar = true;
-                jsonList = InformeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType, receiptsVersion);
+                jsonList = informeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType, receiptsVersion);
 
                 if (jsonList.Any())
                 {
                     Console.WriteLine("Se llevara a cabo el envio al servicio REST de los detalles de la cabecera: " + informe.irec_proc_id);
                     foreach (InformeRecepcionJson json in jsonList)
                     {
-                        var jsonString = InformeRecepcionUtils.JsonToString(json);
+                        var jsonString = informeRecepcionUtils.JsonToString(json);
                         Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
                         Console.WriteLine(jsonString);
                         /* Send request */
-                        if (!(InformeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
+                        if (!(informeRecepcionUtils.SendRequestPost(url, user, pass, jsonString)))
                         {
                             Console.WriteLine("Se llamara al procedure para informar el error");
                             serviceInformeRecepcion.CallProcedureInformarEjecucion(informe.irec_proc_id, InformeRecepcionUtils.LAST_ERROR, new ObjectParameter("error", typeof(String)));
