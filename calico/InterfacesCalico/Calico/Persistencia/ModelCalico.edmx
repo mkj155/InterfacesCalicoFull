@@ -381,6 +381,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="INTERFAZ_ArchivarInformePedido" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="int" Mode="In" />
+          <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
+        </Function>
         <Function Name="INTERFAZ_ArchivarInformeRecepcion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="id" Type="int" Mode="In" />
           <Parameter Name="error" Type="varchar(max)" Mode="InOut" />
@@ -525,10 +529,6 @@
             <End Role="tblInformePedido" EntitySet="tblInformePedido" />
             <End Role="tblInformePedidoDetalle" EntitySet="tblInformePedidoDetalle" />
           </AssociationSet>
-          <FunctionImport Name="INTERFAZ_ArchivarInformePedido">
-            <Parameter Name="id" Mode="In" Type="Int32" />
-            <Parameter Name="error" Mode="InOut" Type="String" />
-          </FunctionImport>
           <EntitySet Name="tblProceso" EntityType="CalicoModel.tblProceso" />
           <AssociationSet Name="FK_tblInformePedido_tblProceso" Association="CalicoModel.FK_tblInformePedido_tblProceso">
             <End Role="tblProceso" EntitySet="tblProceso" />
@@ -550,6 +550,10 @@
             <End Role="tblProceso" EntitySet="tblProceso" />
             <End Role="tblSubCliente" EntitySet="tblSubCliente" />
           </AssociationSet>
+          <FunctionImport Name="INTERFAZ_ArchivarInformePedido">
+            <Parameter Name="id" Mode="In" Type="Int32" />
+            <Parameter Name="error" Mode="InOut" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="tblRecepcion">
           <Key>
@@ -1201,6 +1205,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="INTERFAZ_ArchivarInformePedido" FunctionName="CalicoModel.Store.INTERFAZ_ArchivarInformePedido" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

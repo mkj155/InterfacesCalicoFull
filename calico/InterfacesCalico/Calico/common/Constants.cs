@@ -11,10 +11,10 @@ namespace Calico.common
         public const String INTERFACE_EMPLAZAMIENTO = "Emplazamiento";
         public const String ALMACEN = "Almacen";
         public const String INTERFACE_COMPANIA = "Compania";
-        public const String INTERFACE_SUCURSAL = "Sucursal";
+        public const String SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
         public const String INTERFACE_TIPO = "Tipo";
-        public const String INTERFACE_TIPO_PROCESO = "Tipo";
+        public const String INTERFACE_TIPO_PROCESO = "tipoProceso";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
         public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
@@ -51,6 +51,10 @@ namespace Calico.common
         public const String INTERFACE_INFORME_PEDIDO_P554211I_VERSION = "P554211I_Version";
         public const String INTERFACE_PEDIDOS_FROM_STATUS = "fromStatus";
         public const String INTERFACE_PEDIDOS_TO_STATUS = "toStatus";
+
+        // ANULACION REMITO
+        public const String INTERFACE_ANULACION_REMITO = "AnulacionRemito";
+        public const String INTERFACE_ANULACION_REMITO_URL = "AnulacionRemitoURL";
 
         // JSON
         public const String JSON_PREFIX = "fs_DATABROWSE_";

@@ -138,7 +138,7 @@ namespace Calico.interfaces.pedidos
         }
 
 
-        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String compania,String sucursal, String cliente, IConfigSource source)
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String compania, String cliente, IConfigSource source)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
@@ -150,7 +150,7 @@ namespace Calico.interfaces.pedidos
                     String letra = source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4201_DCTO);
 
                     /* CABEZERA */
-                    pedido = fillCabezera(pedidoDTO, emplazamiento, letra, sucursal, cliente, tipoPedido);
+                    pedido = fillCabezera(pedidoDTO, emplazamiento, letra, cliente, tipoPedido);
                     /* DETALLE */
                     tblPedidoDetalle detalle = fillDetalle(pedidoDTO, compania);
                     pedido.tblPedidoDetalle.Add(detalle);
@@ -165,13 +165,12 @@ namespace Calico.interfaces.pedidos
             }
         }
 
-        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String letra, String sucursal, String cliente, String tipoPedido)
+        private tblPedido fillCabezera(PedidoDTO pedidoDTO, String emplazamiento, String letra, String cliente, String tipoPedido)
         {
             tblPedido pedido = new tblPedido();
             pedido.pedc_emplazamiento = emplazamiento;
             pedido.pedc_tped_codigo = tipoPedido;
             pedido.pedc_letra = letra;
-            pedido.pedc_sucursal = sucursal;
             pedido.pedc_numero = Convert.ToDecimal(pedidoDTO.F4201_DOCO);
 
             if (!String.IsNullOrWhiteSpace(pedidoDTO.F4201_OPDJ))

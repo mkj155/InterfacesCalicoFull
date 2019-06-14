@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace Calico.interfaces.informePedido
 {
-    class InterfaceInformePedido : InterfaceGeneric
+    class InterfaceAnulacionRemito : InterfaceGeneric
     {
 
-        private const String INTERFACE = Constants.INTERFACE_INFORME_PEDIDOS;
+        private const String INTERFACE = Constants.INTERFACE_ANULACION_REMITO;
 
         private BianchiService service = new BianchiService();
         private TblInformePedidoService serviceInformePedido = new TblInformePedidoService();
@@ -86,9 +86,8 @@ namespace Calico.interfaces.informePedido
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_INFORME_PEDIDO_URL);
+            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_ANULACION_REMITO_URL);
 
-            // TODO MATI
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
@@ -120,7 +119,8 @@ namespace Calico.interfaces.informePedido
                         }
                         else
                         {
-                            Console.WriteLine("El servicio REST retorno OK: " + jsonString);
+                            Console.WriteLine("El servicio REST retorno OK:");
+                            Console.WriteLine(jsonString);
                             count++;
                         }
                     }
@@ -139,7 +139,7 @@ namespace Calico.interfaces.informePedido
 
             }
 
-            Console.WriteLine("Finalizó el proceso de actualización de Recepciones");
+            Console.WriteLine("Finalizó el proceso de envio de anulaciones");
 
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
