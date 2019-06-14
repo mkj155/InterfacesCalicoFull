@@ -88,15 +88,15 @@ namespace Calico.interfaces.informePedido
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         myJsonString = reader.ReadToEnd();
-                        if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
-                        {
+                        //if (ExistChildrenInJson(myJsonString, Constants.INTERFACE_REPEATING_REQUEST, Constants.INTERFACE_RECEIPT_DOCUMENT))
+                        //{
                             return true;
-                        }
-                        else
-                        {
-                            handleErrorRest(myJsonString, out LAST_ERROR);
-                            return false;
-                        }
+                        //}
+                        //else
+                        //{
+                        //    handleErrorRest(myJsonString, out LAST_ERROR);
+                        //    return false;
+                        //}
 
                     }
                 }

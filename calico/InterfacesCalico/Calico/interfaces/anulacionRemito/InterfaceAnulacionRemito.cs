@@ -119,7 +119,8 @@ namespace Calico.interfaces.informePedido
                         }
                         else
                         {
-                            Console.WriteLine("El servicio REST retorno OK: " + jsonString);
+                            Console.WriteLine("El servicio REST retorno OK:");
+                            Console.WriteLine(jsonString);
                             count++;
                         }
                     }
