@@ -143,7 +143,8 @@ namespace Calico.interfaces.recepcion
                     {
                         if (!loaded)
                         {
-                            compania = source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(entry.Value.recc_trec_codigo);
+                            compania = source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(detalle.recd_compania);
+                            loaded = true;
                         }
                         detalle.recd_compania = compania;
                         detalle.recd_proc_id = recc_proc_id;
