@@ -19,6 +19,6 @@ namespace Calico.interfaces.recepcion
         public string F4211_MCU { get; set; }
         public string F4211_LITM { get; set; }
         public string F4108_MMEJ { get; set; }
-        public string F4211_SPR1 { get; set; }
+        public string F4211_SRP1 { get; set; }
     }
 }

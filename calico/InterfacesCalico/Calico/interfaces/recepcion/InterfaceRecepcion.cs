@@ -137,16 +137,10 @@ namespace Calico.interfaces.recepcion
                     // LLamo al SP y seteo su valor a la cabecera y sus detalles
                     int recc_proc_id = serviceRecepcion.CallProcedure(tipoProceso, tipoMensaje);
                     entry.Value.recc_proc_id = recc_proc_id;
-                    bool loaded = false;
-                    String compania = null;
+
                     foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
                     {
-                        if (!loaded)
-                        {
-                            compania = source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(detalle.recd_compania);
-                            loaded = true;
-                        }
-                        detalle.recd_compania = compania;
+                        detalle.recd_compania = Utils.GetValueOrEmpty(source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(detalle.recd_compania));
                         detalle.recd_proc_id = recc_proc_id;
                     }
                     // ¿La pude guardar?

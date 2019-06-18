@@ -66,7 +66,6 @@ namespace Calico.interfaces.pedido
             // INICIO BUSQUEDA DE DATOS
             String numeroInterfaz = source.Configs[INTERFACE].GetString(Constants.NUMERO_INTERFACE);
             String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_EMPLAZAMIENTO);
-            String compania = source.Configs[INTERFACE].GetString(Constants.INTERFACE_COMPANIA);
             String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_CLIENTE);
             String fromStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_FROM_STATUS);
             String toStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_TO_STATUS);
@@ -104,12 +103,11 @@ namespace Calico.interfaces.pedido
             pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
             if (pedidosDTO.Any())
             {
-                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, compania, cliente, source);
+                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente, source);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {
-                    entry.Value.pedc_almacen = source.Configs[Constants.ALMACEN].GetString(entry.Value.pedc_destinatario);
-                    entry.Value.pedc_sucursal = source.Configs[Constants.SUCURSAL].GetString(entry.Value.pedc_destinatario);
+
                     if (servicePedido.IsAlreadyProcess(entry.Value.pedc_almacen, entry.Value.pedc_tped_codigo, entry.Value.pedc_letra, entry.Value.pedc_sucursal, entry.Value.pedc_numero))
                     {
                         Console.WriteLine("El pedido " + entry.Value.pedc_numero + " ya fue tratado, no se procesara");
