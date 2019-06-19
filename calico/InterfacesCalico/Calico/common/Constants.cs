@@ -9,28 +9,23 @@ namespace Calico.common
         public const String NUMERO_INTERFACE = "NumeroInterface";
         public const String FECHA_DEFAULT = "1973/01/01";
         public const String NUMERO_CLIENTE = "NumeroCliente";
-        public const String INTERFACE_EMPLAZAMIENTO = "Emplazamiento";
+        public const String EMPLAZAMIENTO = "Emplazamiento";
         public const String ALMACEN = "Almacen";
-        public const String INTERFACE_COMPANIA = "Compania";
+        public const String COMPANIA = "Compania";
         public const String SUCURSAL = "Sucursal";
         public const String INTERFACE_CLIENTE = "Cliente";
-        public const String INTERFACE_TIPO = "Tipo";
-        public const String INTERFACE_TIPO_PROCESO = "tipoProceso";
+        public const String TIPO = "Tipo";
+        public const String TIPO_PROCESO = "tipoProceso";
+        public const String ORDER_COMPANY = "OrderCompany";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
-        public const String NUMERO_CLIENTE_INTERFACE_CLIENTE = "NumeroCliente";
         // RECEPCION
         public const String INTERFACE_RECEPCION = "Recepcion";
         public const String INTERFACE_RECEPCION_URL = "ReceptionURL";
-        public const String INTERFACE_RECEPCION_EMPLAZAMIENTO = "Emplazamiento";
         public const String INTERFACE_RECEPCION_CODIGO = "Codigo";
-        public const String INTERFACE_RECEPCION_COMPANIA = "Compania";
-        public const String NUMERO_CLIENTE_INTERFACE_RECEPCION = "NumeroCliente";
         // INFORME_RECEPCION
         public const String INTERFACE_INFORME_RECEPCION = "InformeRecepcion";
         public const String INTERFACE_INFORME_RECEPCION_URL = "InformeRecepcionURL";
-        public const String NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION = "NumeroCliente";
-        public const String INTERFACE_INFORME_RECEPCION_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION = "ReceiptsVersion";
         public const String INTERFACE_INFORME_RECEPCION_TIPO = "Tipo";
         public const String INTERFACE_REPEATING_REQUEST = "Repeating Requests";
@@ -42,17 +37,14 @@ namespace Calico.common
         public const String INTERFACE_PEDIDOS_LETRA = "Letra";
         public const String INTERFACE_PEDIDOS_URL = "PedidosURL";
         public const String INTERFACE_PEDIDOS_URL_POST = "PedidosURL_POST";
-        
 		// INFORME PEDIDOS
         public const String INTERFACE_INFORME_PEDIDOS = "InformePedido";
         public const String INTERFACE_INFORME_PEDIDO_URL = "InformePedidoURL";
         public const String INTERFACE_INFORME_PEDIDO_LAST_STATUS = "laststatus";
         public const String INTERFACE_INFORME_PEDIDO_NEXT_STATUS = "nextstatus";
-        public const String INTERFACE_INFORME_PEDIDO_ORDER_COMPANY = "OrderCompany";
         public const String INTERFACE_INFORME_PEDIDO_P554211I_VERSION = "P554211I_Version";
         public const String INTERFACE_PEDIDOS_FROM_STATUS = "fromStatus";
         public const String INTERFACE_PEDIDOS_TO_STATUS = "toStatus";
-
         // ANULACION REMITO
         public const String INTERFACE_ANULACION_REMITO = "AnulacionRemito";
         public const String INTERFACE_ANULACION_REMITO_URL = "AnulacionRemitoURL";

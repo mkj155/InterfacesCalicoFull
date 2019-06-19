@@ -52,42 +52,37 @@ namespace Calico.interfaces.pedido
 
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
-            IConfigSource source = null;
-            try
-            {
-                source = new IniConfigSource("calico_config.ini");
-            }
-            catch(Exception)
+            if (!FilePropertyUtils.Instance.ReadFile(Constants.PROPERTY_FILE_NAME))
             {
                 service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
                 return false;
             }
 
             // INICIO BUSQUEDA DE DATOS
-            String numeroInterfaz = source.Configs[INTERFACE].GetString(Constants.NUMERO_INTERFACE);
-            String emplazamiento = source.Configs[INTERFACE].GetString(Constants.INTERFACE_EMPLAZAMIENTO);
-            String cliente = source.Configs[INTERFACE].GetString(Constants.INTERFACE_CLIENTE);
-            String fromStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_FROM_STATUS);
-            String toStatus = source.Configs[INTERFACE].GetString(Constants.INTERFACE_PEDIDOS_TO_STATUS);
+            String numeroInterfaz = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.NUMERO_INTERFACE);
+            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
+            String cliente = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_CLIENTE);
+            String fromStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_PEDIDOS_FROM_STATUS);
+            String toStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_PEDIDOS_TO_STATUS);
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
-            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
-            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+            String user = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.USER);
+            String pass = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            String urlPost = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_PEDIDOS_URL_POST);
+            String urlPost = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.INTERFACE_PEDIDOS_URL_POST);
 
             /* Obtenemos los tipos de pedidos del archivo externo para llamar a la URL segun tipo */
-            String[] tiposPedido = source.Configs[INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetKeys();
+            String[] tiposPedido = FilePropertyUtils.Instance.GetKeysArrayString(INTERFACE + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO);
 
             int countOKPedido = 0;
             int countErrorPedido = 0;
             int countAlreadyProcessPedido = 0;
             int? tipoMensaje = 0;
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE);
+            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.TIPO_PROCESO);
+            int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             /* Mapping */
@@ -103,7 +98,7 @@ namespace Calico.interfaces.pedido
             pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
             if (pedidosDTO.Any())
             {
-                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente, source);
+                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {

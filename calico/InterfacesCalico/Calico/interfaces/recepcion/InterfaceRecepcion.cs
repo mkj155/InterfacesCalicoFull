@@ -2,7 +2,6 @@
 using Calico.persistencia;
 using Calico.service;
 using InterfacesCalico.generic;
-using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,12 +61,7 @@ namespace Calico.interfaces.recepcion
 
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
-            IConfigSource source = null;
-            try
-            {
-                source = new IniConfigSource("calico_config.ini");
-            }
-            catch(Exception)
+            if (!FilePropertyUtils.Instance.ReadFile(Constants.PROPERTY_FILE_NAME))
             {
                 service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
                 return false;
@@ -75,12 +69,12 @@ namespace Calico.interfaces.recepcion
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
-            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
-            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+            String user = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.USER);
+            String pass = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
             
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_RECEPCION_URL);
+            String url = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.INTERFACE_RECEPCION_URL);
 
             /* Armamos la URL con parametros */
             urlPath = recepcionUtils.BuildUrl(url, lastStringTime);
@@ -92,7 +86,7 @@ namespace Calico.interfaces.recepcion
             /* Mapping */
             List<ReceptionDTO> receptionDTO = null;
             Dictionary<String, tblRecepcion> dictionary = new Dictionary<string, tblRecepcion>();
-            String emplazamiento = source.Configs[Constants.INTERFACE_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
+            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
 
             if (!String.Empty.Equals(myJsonString))
             {
@@ -117,14 +111,14 @@ namespace Calico.interfaces.recepcion
             int countError = 0;
             int countAlreadyProcess = 0;
             int? tipoMensaje = 0;
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_RECEPCION);
+            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.TIPO_PROCESO);
+            int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             // Validamos si hay que insertar o descartar la recepcion
             foreach (KeyValuePair<string, tblRecepcion> entry in dictionary)
             {
-                entry.Value.recc_almacen = source.Configs[Constants.ALMACEN].GetString(entry.Value.recc_proveedor);
+                entry.Value.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, entry.Value.recc_proveedor);
                 // ¿Ya está procesada?
                 if (serviceRecepcion.IsAlreadyProcess(entry.Value.recc_emplazamiento, entry.Value.recc_almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
                 {
@@ -140,7 +134,7 @@ namespace Calico.interfaces.recepcion
 
                     foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
                     {
-                        detalle.recd_compania = Utils.GetValueOrEmpty(source.Configs[Constants.INTERFACE_RECEPCION + "." + Constants.INTERFACE_RECEPCION_COMPANIA].GetString(detalle.recd_compania));
+                        detalle.recd_compania = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.COMPANIA, detalle.recd_compania);
                         detalle.recd_proc_id = recc_proc_id;
                     }
                     // ¿La pude guardar?

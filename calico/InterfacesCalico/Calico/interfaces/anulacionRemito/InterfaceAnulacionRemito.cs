@@ -59,15 +59,15 @@ namespace Calico.interfaces.informePedido
             }
 
             // INICIO BUSQUEDA DE DATOS
-            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_EMPLAZAMIENTO);
-            String orderCompany = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_INFORME_PEDIDO_ORDER_COMPANY);
+            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
+            String orderCompany = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.ORDER_COMPANY);
             String lastStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_INFORME_PEDIDO_LAST_STATUS);
             String nextStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_INFORME_PEDIDO_NEXT_STATUS);
             String version = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_INFORME_PEDIDO_P554211I_VERSION);
-            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE,Constants.INTERFACE_TIPO_PROCESO);
+            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE,Constants.TIPO_PROCESO);
 
             var almacenes = FilePropertyUtils.Instance.GetValueArrayString(INTERFACE + "." + Constants.ALMACEN);
-            var tipos = FilePropertyUtils.Instance.GetValueArrayString(INTERFACE + "." + Constants.INTERFACE_TIPO);
+            var tipos = FilePropertyUtils.Instance.GetValueArrayString(INTERFACE + "." + Constants.TIPO);
 
             List<tblInformePedido> informes = serviceInformePedido.FindInformes(emplazamiento, almacenes, tipos, tipoProceso);
             List<InformePedidoJson> jsonList = null;
@@ -88,11 +88,7 @@ namespace Calico.interfaces.informePedido
             foreach (tblInformePedido informe in informes)
             {
                 callArchivar = true;
-                String orderType = String.Empty;
-                if (!String.IsNullOrWhiteSpace(informe.ipec_letra))
-                {
-                    orderType = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA, informe.ipec_letra);
-                }
+                String orderType = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.INTERFACE_PEDIDOS_LETRA, informe.ipec_letra);
                 jsonList = informePedidoUtils.MappingInforme(informe, orderCompany, orderType, lastStatus,nextStatus,version);
 
                 if (jsonList.Any())

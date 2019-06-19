@@ -70,5 +70,14 @@ namespace Calico.common
             return new String[] { };
         }
 
+        public String[] GetKeysArrayString(String group)
+        {
+            if (source != null && !String.IsNullOrWhiteSpace(group))
+            {
+                return source.Configs[group].GetKeys();
+            }
+            return new String[] { };
+        }
+
     }
 }

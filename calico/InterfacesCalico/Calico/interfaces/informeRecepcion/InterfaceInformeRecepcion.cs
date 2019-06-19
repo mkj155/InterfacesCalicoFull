@@ -2,7 +2,6 @@
 using Calico.persistencia;
 using Calico.service;
 using InterfacesCalico.generic;
-using Nini.Config;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
@@ -50,52 +49,47 @@ namespace Calico.interfaces.informeRecepcion
                 Console.WriteLine("No se pudo lockear la row para la interface " + INTERFACE + " se cancela la ejecucion");
                 return false;
             }
-            
+
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
-            IConfigSource source = null;
-            try
-            {
-                source = new IniConfigSource("calico_config.ini");
-            }
-            catch (Exception)
+            if (!FilePropertyUtils.Instance.ReadFile(Constants.PROPERTY_FILE_NAME))
             {
                 service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
                 return false;
             }
 
             // INICIO BUSQUEDA DE DATOS
-            String emplazamiento = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_RECEPCION_EMPLAZAMIENTO);
-            String OrderCompany = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_ORDER_COMPANY);
-            String OrderType = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_ORDER_TYPE);
-            String receiptsVersion = source.Configs[Constants.INTERFACE_INFORME_RECEPCION].GetString(Constants.INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION);
+            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
+            String orderCompany = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.ORDER_COMPANY);
+            String OrderType = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_ORDER_TYPE);
+            String receiptsVersion = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_INFORME_RECEPCION_RECEIPTS_VERSION);
 
-            var almacenes = source.Configs[INTERFACE + "." + Constants.ALMACEN].GetValues();
-            var tipos = source.Configs[INTERFACE + "." + Constants.INTERFACE_TIPO].GetValues();
+            var almacenes = FilePropertyUtils.Instance.GetValueArrayString(INTERFACE + "." + Constants.ALMACEN);
+            var tipos = FilePropertyUtils.Instance.GetValueArrayString(INTERFACE + "." + Constants.TIPO);
 
             List <tblInformeRecepcion> informes = serviceInformeRecepcion.FindInformes(emplazamiento, almacenes, tipos);
             List<InformeRecepcionJson> jsonList = null;
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
-            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
-            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+            String user = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.USER);
+            String pass = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            String url = source.Configs[INTERFACE + "." + Constants.URLS].GetString(Constants.INTERFACE_INFORME_RECEPCION_URL);
+            String url = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.INTERFACE_INFORME_RECEPCION_URL);
 
             int count = 0;
             int countError = 0;
             Boolean callArchivar;
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
-            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_INFORME_RECEPCION);
+            int? tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_INTERFACE);
+            int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 
             foreach (tblInformeRecepcion informe in informes)
             {
                 callArchivar = true;
-                jsonList = informeRecepcionUtils.MappingInforme(informe, OrderCompany, OrderType, receiptsVersion);
+                jsonList = informeRecepcionUtils.MappingInforme(informe, orderCompany, OrderType, receiptsVersion);
 
                 if (jsonList.Any())
                 {

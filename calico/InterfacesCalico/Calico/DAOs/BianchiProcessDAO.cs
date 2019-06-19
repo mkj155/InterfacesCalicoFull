@@ -8,7 +8,6 @@ namespace Calico.DAOs
 {
     class BianchiProcessDAO : Dao<BIANCHI_PROCESS>
     {
-
         private CalicoEntities entity;
         private DbContextTransaction scope;
 
@@ -117,8 +116,8 @@ namespace Calico.DAOs
         public void LockRow(int id)
         {
             this.entity = new CalicoEntities();
-            scope = entity.Database.BeginTransaction();
-            entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK) where id = " + id);
+            this.scope = this.entity.Database.BeginTransaction();
+            this.entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK) where id = " + id);
         }
 
         public void UnlockRow()

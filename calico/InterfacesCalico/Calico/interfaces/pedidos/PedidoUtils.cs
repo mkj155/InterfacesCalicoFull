@@ -138,20 +138,20 @@ namespace Calico.interfaces.pedidos
         }
 
 
-        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String cliente, IConfigSource source)
+        public void MappingPedidoDTOPedido(List<PedidoDTO> pedidoDTOList, Dictionary<string, tblPedido> dictionary, String emplazamiento, String cliente)
         {
             foreach(PedidoDTO pedidoDTO in pedidoDTOList)
             {
                 tblPedido pedido = null;
-                String compania = Utils.GetValueOrEmpty(source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_COMPANIA].GetString(pedidoDTO.F4211_SRP1.Trim()));
+                String compania = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.COMPANIA, pedidoDTO.F4211_SRP1));
 
                 dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
                 if (pedido == null)
                 {
-                    String tipoPedido = Utils.GetValueOrEmpty(source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO].GetString(pedidoDTO.F4201_DCTO.Trim()));
-                    String letra = Utils.GetValueOrEmpty(source.Configs[Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA].GetString(pedidoDTO.F4201_DCTO.Trim()));
-                    String almacen = Utils.GetValueOrEmpty(source.Configs[Constants.ALMACEN].GetString(pedidoDTO.F4201_MCU.Trim()));
-                    String sucursal = Utils.GetValueOrEmpty(source.Configs[Constants.SUCURSAL].GetString(pedidoDTO.F4201_MCU.Trim()));
+                    String tipoPedido = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO, pedidoDTO.F4201_DCTO));
+                    String letra = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA, pedidoDTO.F4201_DCTO));
+                    String almacen = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, pedidoDTO.F4201_MCU));
+                    String sucursal = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.SUCURSAL, pedidoDTO.F4201_MCU));
 
                     /* CABEZERA */
                     pedido = fillCabezera(pedidoDTO, emplazamiento, letra, cliente, tipoPedido, almacen, sucursal);

@@ -60,15 +60,20 @@ namespace Calico.interfaces.clientes
 
             /* Cargamos archivo con parametros propios para cada interface */
             Console.WriteLine("Cargamos archivo de configuracion");
-            IConfigSource source = new IniConfigSource("calico_config.ini");
+            Console.WriteLine("Cargamos archivo de configuracion");
+            if (!FilePropertyUtils.Instance.ReadFile(Constants.PROPERTY_FILE_NAME))
+            {
+                service.finishProcessByError(process, Constants.FAILED_LOAD_FILE, INTERFACE);
+                return false;
+            }
 
             /* Obtenemos las keys de las URLs del archivo externo */
-            String[] URLkeys = source.Configs[INTERFACE + "." + Constants.URLS].GetKeys();
+            String[] URLkeys = FilePropertyUtils.Instance.GetKeysArrayString(INTERFACE + "." + Constants.URLS);
 
             /* Preparamos la URL con sus parametros y llamamos al servicio */
             String urlPath = String.Empty;
-            String user = source.Configs[Constants.BASIC_AUTH].Get(Constants.USER);
-            String pass = source.Configs[Constants.BASIC_AUTH].Get(Constants.PASS);
+            String user = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.USER);
+            String pass = FilePropertyUtils.Instance.GetValueString(Constants.BASIC_AUTH, Constants.PASS);
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos las URLs, las armamos con sus parametros, obtenemos los datos y armamos los objetos Clientes */
@@ -76,7 +81,7 @@ namespace Calico.interfaces.clientes
             foreach (String key in URLkeys)
             {
                 // Obtenemos las URLs
-                String url = source.Configs[INTERFACE + "." + Constants.URLS].Get(key);
+                String url = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, key);
                 // Armamos la URL
                 urlPath = clientesUtils.BuildUrl(url, key, lastStringTime);
                 Console.WriteLine("Url: " + urlPath);
@@ -97,9 +102,10 @@ namespace Calico.interfaces.clientes
             }
 
             // LLamando al SP por cada cliente
-            int? tipoProceso = source.Configs[INTERFACE].GetInt(Constants.NUMERO_INTERFACE);
+            int? tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_INTERFACE);
+
             int? tipoMensaje = 0;
-            int codigoCliente = source.Configs[INTERFACE].GetInt(Constants.NUMERO_CLIENTE_INTERFACE_CLIENTE);
+            int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
             int count = 0;
             int countError = 0;
             Console.WriteLine("Codigo de interface: " + tipoProceso);
