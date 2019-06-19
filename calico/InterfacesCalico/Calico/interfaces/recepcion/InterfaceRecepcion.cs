@@ -111,7 +111,7 @@ namespace Calico.interfaces.recepcion
             int countError = 0;
             int countAlreadyProcess = 0;
             int? tipoMensaje = 0;
-            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.TIPO_PROCESO);
+            int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_INTERFACE);
             int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
             Console.WriteLine("Codigo de interface: " + tipoProceso);
 

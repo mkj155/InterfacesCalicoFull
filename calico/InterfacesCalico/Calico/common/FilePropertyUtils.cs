@@ -37,46 +37,79 @@ namespace Calico.common
                 source = new IniConfigSource(fileName);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
 
         public String GetValueString(String group, String key)
         {
-            if (source != null && !String.IsNullOrWhiteSpace(group) && !String.IsNullOrWhiteSpace(key))
-            {
-                return source.Configs[group.Trim()].Get(key.Trim());
+            try
+            { 
+                if (source != null && !String.IsNullOrWhiteSpace(group) && !String.IsNullOrWhiteSpace(key))
+                {
+                    return source.Configs[group.Trim()].Get(key.Trim());
+                }
+                return String.Empty;
             }
-            return String.Empty;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return String.Empty;
+            }
         }
 
         public int GetValueInt(String group, String key)
         {
-            if (source != null && !String.IsNullOrWhiteSpace(group) && !String.IsNullOrWhiteSpace(key))
+            try
             {
-                return source.Configs[group.Trim()].GetInt(key.Trim());
+                if (source != null && !String.IsNullOrWhiteSpace(group) && !String.IsNullOrWhiteSpace(key))
+                {
+                    return source.Configs[group.Trim()].GetInt(key.Trim());
+                }
+                return 0;
             }
-            return 0;
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                return 0;
+            }
         }
 
         public String[] GetValueArrayString(String group)
         {
-            if (source != null && !String.IsNullOrWhiteSpace(group))
-            {
-                return source.Configs[group].GetValues();
+            try
+            { 
+                if (source != null && !String.IsNullOrWhiteSpace(group))
+                {
+                    return source.Configs[group].GetValues();
+                }
+                return new String[] { };
             }
-            return new String[] { };
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new String[] { };
+            }
+
         }
 
         public String[] GetKeysArrayString(String group)
         {
-            if (source != null && !String.IsNullOrWhiteSpace(group))
-            {
-                return source.Configs[group].GetKeys();
+            try
+            { 
+                if (source != null && !String.IsNullOrWhiteSpace(group))
+                {
+                    return source.Configs[group].GetKeys();
+                }
+                return new String[] { };
             }
-            return new String[] { };
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new String[] { };
+            }
         }
 
     }
