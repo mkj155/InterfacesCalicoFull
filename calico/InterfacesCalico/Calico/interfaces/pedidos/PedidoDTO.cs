@@ -59,5 +59,6 @@ namespace Calico.interfaces.pedido
         public string F4006_BKML { get; set; }
         public string F4006_CRTE { get; set; }
         public string F4006_CTR { get; set; }
+        public string F4211_SRP1 { get; set; }
     }
 }

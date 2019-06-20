@@ -17,20 +17,20 @@ namespace Calico.interfaces.informeRecepcion
     {
         public static String LAST_ERROR = String.Empty;
 
-        public static String JsonToString(InformeRecepcionJson obj)
+        public String JsonToString(InformeRecepcionJson obj)
         {
             var json = JsonConvert.SerializeObject(obj);
             return json;
         }
 
-        public static InformeRecepcionJson GetObjectJsonFromDTO(InformeRecepcionDTO detalle, String receiptsVersion)
+        public InformeRecepcionJson GetObjectJsonFromDTO(InformeRecepcionDTO detalle, String receiptsVersion)
         {
             List<InformeRecepcionDTO> list = new List<InformeRecepcionDTO>();
             list.Add(detalle);
             return new InformeRecepcionJson(list, receiptsVersion);
         }
 
-        public static bool ExistChildrenInJson(String jsonString, String father, String children)
+        public bool ExistChildrenInJson(String jsonString, String father, String children)
         {
             JObject jsonObj = JObject.Parse(jsonString);
             if (jsonObj[father] != null)
@@ -43,7 +43,7 @@ namespace Calico.interfaces.informeRecepcion
             }
         }
 
-        public static Boolean SendRequestPost(string url, String user, String pass, String json)
+        public Boolean SendRequestPost(string url, String user, String pass, String json)
         {
             String myJsonString = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -98,7 +98,7 @@ namespace Calico.interfaces.informeRecepcion
 
         }
 
-        public static void handleErrorRest(String myJsonString, out string error)
+        public void handleErrorRest(String myJsonString, out string error)
         {
                 JObject json = JObject.Parse(myJsonString);
 
@@ -109,7 +109,7 @@ namespace Calico.interfaces.informeRecepcion
                 error = json["message"].ToString();
         }
 
-        internal static List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany, String OrderType, String receiptsVersion)
+        internal List<InformeRecepcionJson> MappingInforme(tblInformeRecepcion informe, String OrderCompany, String OrderType, String receiptsVersion)
         {
             List<InformeRecepcionJson> jsonList = new List<InformeRecepcionJson>();
 
