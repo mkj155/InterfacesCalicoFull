@@ -1,4 +1,5 @@
 ﻿using Calico.common;
+using Calico.interfaces.pedido;
 using Calico.interfaces.pedidos;
 using Calico.persistencia;
 using Calico.service;
@@ -7,16 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Calico.interfaces.pedido
+namespace Calico.interfaces.recepcionOR
 {
-    class InterfacePedido : InterfaceGeneric
+    class InterfaceRecepcionOR : InterfaceGeneric
     {
+
         private const String INTERFACE = Constants.INTERFACE_PEDIDOS;
 
         private BianchiService service = new BianchiService();
         private TblPedidoService servicePedido = new TblPedidoService();
-        private PedidoUtils pedidoUtils = new PedidoUtils();
-        
+        private RecepcionORUtils recepcionORUtils = new RecepcionORUtils();
+
         public bool ValidateDate() => false;
 
         public bool Process(DateTime? dateTime)
@@ -59,10 +61,11 @@ namespace Calico.interfaces.pedido
 
             // INICIO BUSQUEDA DE DATOS
             String numeroInterfaz = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.NUMERO_INTERFACE);
-            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
-            String cliente = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_CLIENTE);
             String fromStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.FROM_STATUS);
             String toStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.TO_STATUS);
+            String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
+            String cliente = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_CLIENTE);
+            // .....
 
             /* Obtenemos usuario y contraseña del archivo para el servicio Rest */
             String urlPath = String.Empty;
@@ -71,10 +74,12 @@ namespace Calico.interfaces.pedido
             Console.WriteLine("Usuario del Servicio Rest: " + user);
 
             /* Obtenemos la URL del archivo */
-            String urlPost = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.INTERFACE_PEDIDOS_URL_POST);
+            String urlPost = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.RECEPCION_OR_URL_POST);
 
-            /* Obtenemos los tipos de pedidos del archivo externo */
-            String[] tiposPedido = FilePropertyUtils.Instance.GetKeysArrayString(INTERFACE + "." + Constants.TIPO_PEDIDO);
+            /* Obtenemos el tipo de pedido del archivo externo */
+            String[] tiposPedido = {
+                FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.TIPO_PEDIDO)
+            };
 
             int countOKPedido = 0;
             int countErrorPedido = 0;
@@ -89,16 +94,16 @@ namespace Calico.interfaces.pedido
             Dictionary<string, tblPedido> dictionary = new Dictionary<string, tblPedido>();
 
             /* Preparamos y enviamos la URL */
-            PedidoJson json = pedidoUtils.getJson(fromStatus, toStatus, tiposPedido);
-            var jsonString = pedidoUtils.JsonToString(json);
+            PedidoJson json = recepcionORUtils.getJson(fromStatus, toStatus, tiposPedido);
+            var jsonString = recepcionORUtils.JsonToString(json);
             Console.WriteLine("Se enviara el siguiente Json al servicio REST: ");
             Console.WriteLine(jsonString);
             Console.WriteLine("Se realiza el envio al servicio REST : " + urlPost);
-            pedidosDTO = pedidoUtils.SendRequestPost(urlPost, user, pass, jsonString);
+            pedidosDTO = recepcionORUtils.SendRequestPost(urlPost, user, pass, jsonString);
 
             if (pedidosDTO.Any())
             {
-                pedidoUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente);
+                recepcionORUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {
@@ -155,6 +160,7 @@ namespace Calico.interfaces.pedido
             Console.WriteLine("Proceso Finalizado correctamente");
 
             return true;
+
         }
 
     }

@@ -77,7 +77,12 @@ namespace Calico.interfaces.recepcion
             String url = FilePropertyUtils.Instance.GetValueString(INTERFACE + "." + Constants.URLS, Constants.INTERFACE_RECEPCION_URL);
 
             /* Armamos la URL con parametros */
-            urlPath = recepcionUtils.BuildUrl(url, lastStringTime);
+            String tipoOrden = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.TIPO_ORDER);
+            Dictionary<String, String> URLdictionary = new Dictionary<string, string>();
+            URLdictionary.Add(Constants.PARAM_FECHA, lastStringTime);
+            URLdictionary.Add(Constants.PARAM_TIPO_ORDER, tipoOrden);
+            urlPath = Utils.BuildUrl(url, URLdictionary);
+
             Console.WriteLine("URL: " + urlPath);
 
             /* Obtenemos los datos */

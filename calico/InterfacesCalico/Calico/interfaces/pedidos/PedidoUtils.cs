@@ -148,7 +148,7 @@ namespace Calico.interfaces.pedidos
                 dictionary.TryGetValue(pedidoDTO.F4201_DOCO, out pedido);
                 if (pedido == null)
                 {
-                    String tipoPedido = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_TIPO_PEDIDO, pedidoDTO.F4201_DCTO));
+                    String tipoPedido = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.TIPO_PEDIDO, pedidoDTO.F4201_DCTO));
                     String letra = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_PEDIDOS + "." + Constants.INTERFACE_PEDIDOS_LETRA, pedidoDTO.F4201_DCTO));
                     String almacen = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, pedidoDTO.F4201_MCU));
                     String sucursal = Utils.GetValueOrEmpty(FilePropertyUtils.Instance.GetValueString(Constants.SUCURSAL, pedidoDTO.F4201_MCU));
