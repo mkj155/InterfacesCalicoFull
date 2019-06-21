@@ -2,7 +2,9 @@
 using Calico.persistencia;
 using System;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace Calico.DAOs
 {
@@ -57,13 +59,10 @@ namespace Calico.DAOs
 
         public void Update(BIANCHI_PROCESS obj)
         {
-            using (CalicoEntities context = new CalicoEntities())
-            {
-                var result = context.BIANCHI_PROCESS.Find(obj.id);
-                if (result == null) return;
-                context.Entry(result).CurrentValues.SetValues(obj);
-                context.SaveChanges();
-            }
+            var result = this.entity.BIANCHI_PROCESS.Find(obj.id);
+            if (result == null) return;
+            this.entity.Entry(result).CurrentValues.SetValues(obj);
+            this.entity.SaveChanges();
         }
 
         public bool updateEnCurso(string interfaz)
@@ -117,7 +116,7 @@ namespace Calico.DAOs
         {
             this.entity = new CalicoEntities();
             this.scope = this.entity.Database.BeginTransaction();
-            this.entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK) where id = " + id);
+            this.entity.Database.ExecuteSqlCommand("SELECT * FROM BIANCHI_PROCESS WITH (ROWLOCK, UPDLOCK) where id = " + id);
         }
 
         public void UnlockRow()
