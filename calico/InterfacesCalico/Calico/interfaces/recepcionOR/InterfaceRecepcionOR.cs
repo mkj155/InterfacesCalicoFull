@@ -13,10 +13,11 @@ namespace Calico.interfaces.recepcionOR
     class InterfaceRecepcionOR : InterfaceGeneric
     {
 
-        private const String INTERFACE = Constants.INTERFACE_PEDIDOS;
+        private const String INTERFACE = Constants.INTERFACE_RECEPCION_OR;
 
         private BianchiService service = new BianchiService();
         private TblPedidoService servicePedido = new TblPedidoService();
+        private TblRecepcionService serviceRecepcion = new TblRecepcionService();
         private RecepcionORUtils recepcionORUtils = new RecepcionORUtils();
 
         public bool ValidateDate() => false;
@@ -64,6 +65,7 @@ namespace Calico.interfaces.recepcionOR
             String fromStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.FROM_STATUS);
             String toStatus = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.TO_STATUS);
             String emplazamiento = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.EMPLAZAMIENTO);
+            String emplazamientoRecept = FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_RECEPCION, Constants.EMPLAZAMIENTO);
             String cliente = FilePropertyUtils.Instance.GetValueString(INTERFACE, Constants.INTERFACE_CLIENTE);
             // .....
 
@@ -82,8 +84,11 @@ namespace Calico.interfaces.recepcionOR
             };
 
             int countOKPedido = 0;
+            int countOKRecepcion = 0;
             int countErrorPedido = 0;
+            int countErrorRecepcion = 0;
             int countAlreadyProcessPedido = 0;
+            int countAlreadyProcessRecepcion = 0;
             int? tipoMensaje = 0;
             int tipoProceso = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.TIPO_PROCESO);
             int codigoCliente = FilePropertyUtils.Instance.GetValueInt(INTERFACE, Constants.NUMERO_CLIENTE);
@@ -92,6 +97,7 @@ namespace Calico.interfaces.recepcionOR
             /* Mapping */
             List<PedidoDTO> pedidosDTO = null;
             Dictionary<string, tblPedido> dictionary = new Dictionary<string, tblPedido>();
+            Dictionary<string, tblRecepcion> dictionaryRecept = new Dictionary<string, tblRecepcion>();
 
             /* Preparamos y enviamos la URL */
             PedidoJson json = recepcionORUtils.getJson(fromStatus, toStatus, tiposPedido);
@@ -104,6 +110,7 @@ namespace Calico.interfaces.recepcionOR
             if (pedidosDTO.Any())
             {
                 recepcionORUtils.MappingPedidoDTOPedido(pedidosDTO, dictionary, emplazamiento, cliente);
+                recepcionORUtils.MappingPedidoDTORecepcion(pedidosDTO, dictionaryRecept, emplazamientoRecept);
                 // Validamos si hay que insertar o descartar el pedido
                 foreach (KeyValuePair<string, tblPedido> entry in dictionary)
                 {
@@ -128,6 +135,38 @@ namespace Calico.interfaces.recepcionOR
                         else countErrorPedido++;
                     }
                 }
+
+                // Validamos si hay que insertar o descartar la recepcion
+                foreach (KeyValuePair<string, tblRecepcion> entry in dictionaryRecept)
+                {
+                    entry.Value.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, entry.Value.recc_proveedor); 
+                    entry.Value.recc_trec_codigo = FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_RECEPCION_OR + '.' + Constants.TIPO_ORDER, entry.Value.recc_trec_codigo);
+                    // ¿Ya está procesada?
+                    if (serviceRecepcion.IsAlreadyProcess(entry.Value.recc_emplazamiento, entry.Value.recc_almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
+                    {
+                        Console.WriteLine("La recepcion " + entry.Value.recc_numero + " ya fue tratada, no se procesara");
+                        countAlreadyProcessRecepcion++;
+                    }
+                    // No está procesada! la voy a guardar
+                    else
+                    {
+                        // LLamo al SP y seteo su valor a la cabecera y sus detalles
+                        int recc_proc_id = serviceRecepcion.CallProcedure(tipoProceso, tipoMensaje);
+                        entry.Value.recc_proc_id = recc_proc_id;
+
+                        foreach (tblRecepcionDetalle detalle in entry.Value.tblRecepcionDetalle)
+                        {
+                            detalle.recd_compania = FilePropertyUtils.Instance.GetValueString(Constants.INTERFACE_RECEPCION + "." + Constants.COMPANIA, detalle.recd_compania);
+                            detalle.recd_proc_id = recc_proc_id;
+                        }
+                        // ¿La pude guardar?
+                        Console.WriteLine("Procesando recepcion: " + entry.Value.recc_numero);
+                        if (serviceRecepcion.Save(entry.Value))
+                            countOKRecepcion++;
+                        else
+                            countErrorRecepcion++;
+                    }
+                }
             }
             else
             {
@@ -146,6 +185,9 @@ namespace Calico.interfaces.recepcionOR
             Console.WriteLine("Cantidad de pedidos procesados OK: " + process.cant_lineas);
             Console.WriteLine("Cantidad de pedidos procesados con ERROR: " + countErrorPedido);
             Console.WriteLine("Cantidad de pedidos evitados: " + countAlreadyProcessPedido);
+            Console.WriteLine("Cantidad de Recepciones procesadas OK: " + countOKRecepcion);
+            Console.WriteLine("Cantidad de Recepciones procesadas con ERROR: " + countErrorRecepcion);
+            Console.WriteLine("Cantidad de Recepciones evitadas: " + countAlreadyProcessRecepcion);
             Console.WriteLine("Estado: " + process.estado);
 
             /* Actualizamos la tabla BIANCHI_PROCESS */
