@@ -174,6 +174,7 @@ namespace Calico.interfaces.recepcionOR
             }
 
             Console.WriteLine("Finalizó el proceso de actualización de Pedidos");
+            Console.WriteLine("Finalizó el proceso de actualización de Recepcion");
 
             /* Agregamos datos faltantes de la tabla de procesos */
             Console.WriteLine("Preparamos los datos a actualizar en BIANCHI_PROCESS");
