@@ -37,7 +37,7 @@ namespace Calico.interfaces.recepcion
 
         public void MappingReceptionDTORecepcion(List<ReceptionDTO> receptionDTOList, Dictionary<String, tblRecepcion> dictionary, String emplazamiento)
         {
-            foreach(ReceptionDTO receptionDTO in receptionDTOList)
+            foreach (ReceptionDTO receptionDTO in receptionDTOList)
             {
                 tblRecepcion recepcion = null;
                 dictionary.TryGetValue(receptionDTO.F4201_DOCO, out recepcion);
@@ -81,8 +81,13 @@ namespace Calico.interfaces.recepcion
                 recepcion.recc_fechaEntrega = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
             }
 
+            /*
             recepcion.recc_proveedor = !String.IsNullOrWhiteSpace(receptionDTO.F4211_AN8) ? receptionDTO.F4211_AN8.Trim() : String.Empty;
             recepcion.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, recepcion.recc_proveedor);
+            */
+            recepcion.recc_proveedor = !String.IsNullOrWhiteSpace(receptionDTO.F4211_MCU) ? receptionDTO.F4211_MCU.Trim() : String.Empty;
+            String an8 = !String.IsNullOrWhiteSpace(receptionDTO.F4211_AN8) ? receptionDTO.F4211_AN8.Trim() : String.Empty;
+            recepcion.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, an8);
 
             // VERY HARDCODE
             recepcion.recc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
