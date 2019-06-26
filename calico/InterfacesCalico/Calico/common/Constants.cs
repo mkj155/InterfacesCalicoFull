@@ -24,6 +24,7 @@ namespace Calico.common
         public const String TO_STATUS = "toStatus";
         // CLIENTES
         public const String INTERFACE_CLIENTES = "Clientes";
+        public const String ADD1ADD2ADD3 = "ADD";
         // RECEPCION
         public const String INTERFACE_RECEPCION = "Recepcion";
         public const String INTERFACE_RECEPCION_URL = "ReceptionURL";
@@ -58,6 +59,7 @@ namespace Calico.common
         public const String JSON_PREFIX = "fs_DATABROWSE_";
         public const String JSON_SUBFIX_MLNM = "F0111";
         public const String JSON_SUBFIX_TAX = "F0101";
+        public const String JSON_SUBFIX_F0116 = "F0116";
         public const String JSON_SUBFIX_RECEPTION = "V554211";
         public const String JSON_SUBFIX_PEDIDO = "V554211";
         public const String JSON_TAG_DATA = "data";
@@ -80,6 +82,11 @@ namespace Calico.common
         public const String URLS = "URLs";
         public const String MLNM = "MLNM";
         public const String TAX = "TAX";
+        public const String ADDZ = "ADDZ";
+        public const String ADD1 = "ADD1";
+        public const String ADD2 = "ADD2";
+        public const String ADD3 = "ADD3";
+        public const String CTY1 = "CTY1";
         public const String USER = "user";
         public const String PASS = "pass";
         public const String BASIC_AUTH = "BasicAuth";
