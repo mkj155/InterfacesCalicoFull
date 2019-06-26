@@ -81,7 +81,8 @@ namespace Calico.interfaces.recepcion
                 recepcion.recc_fechaEntrega = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");
             }
 
-            recepcion.recc_proveedor = !String.IsNullOrWhiteSpace(receptionDTO.F4201_AN8) ? receptionDTO.F4201_AN8.Trim() : String.Empty;
+            recepcion.recc_proveedor = !String.IsNullOrWhiteSpace(receptionDTO.F4211_AN8) ? receptionDTO.F4211_AN8.Trim() : String.Empty;
+            recepcion.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, recepcion.recc_proveedor);
 
             // VERY HARDCODE
             recepcion.recc_fechaEmision = Utils.ParseDate(Constants.FECHA_DEFAULT, "yyyy/MM/dd");

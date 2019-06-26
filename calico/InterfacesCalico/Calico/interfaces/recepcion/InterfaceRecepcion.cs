@@ -123,7 +123,6 @@ namespace Calico.interfaces.recepcion
             // Validamos si hay que insertar o descartar la recepcion
             foreach (KeyValuePair<string, tblRecepcion> entry in dictionary)
             {
-                entry.Value.recc_almacen = FilePropertyUtils.Instance.GetValueString(Constants.ALMACEN, entry.Value.recc_proveedor);
                 // ¿Ya está procesada?
                 if (serviceRecepcion.IsAlreadyProcess(entry.Value.recc_emplazamiento, entry.Value.recc_almacen, entry.Value.recc_trec_codigo, entry.Value.recc_numero))
                 {
